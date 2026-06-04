@@ -1,0 +1,27 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary-blue: #1e3a8a;
+  --color-primary-green: #22c55e;
+  --color-whatsapp: #25d366;
+  --color-gray-bg: #f9fafb;
+  --color-dark-footer: #0f172a;
+}
+
+@layer base {
+  body {
+    font-family: 'Poppins', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+@layer utilities {
+  @keyframes cta-car-shine {
+    0%, 100% { filter: drop-shadow(0 12px 20px rgba(0,0,0,0.25)) brightness(1); }
+    50% { filter: drop-shadow(0 12px 20px rgba(0,0,0,0.25)) brightness(1.08); }
+  }
+  .animate-premium-shine {
+    animation: cta-car-shine 3s ease-in-out infinite;
+  }
+}
