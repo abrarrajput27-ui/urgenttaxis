@@ -242,12 +242,12 @@ export default function App() {
             
             {/* Left Col */}
             <div className="w-full lg:w-[52%] lg:-ml-10 xl:-ml-[50px] pt-6 flex flex-col">
-              <h1 className="text-[44px] lg:text-[52px] xl:text-[56px] font-black text-[#0f172a] leading-[1.1] mb-4 tracking-tight">
+              <h1 className="text-[36px] md:text-[44px] lg:text-[52px] xl:text-[56px] font-black text-[#0f172a] leading-[1.1] mb-4 tracking-tight">
                 Book Trusted <br/><span className="text-[#1e3b8a]">Taxi</span> in Seconds
               </h1>
               
-              <p className="text-[18px] md:text-[20px] text-gray-600 font-medium mb-10">
-                One Way <span className="mx-2 font-light">|</span> Round Trip <span className="mx-2 font-light">|</span> Airport Transfers
+              <p className="text-[15px] md:text-[18px] lg:text-[20px] text-gray-600 font-medium mb-10">
+                One Way <span className="mx-1.5 md:mx-2 font-light">|</span> Round Trip <span className="mx-1.5 md:mx-2 font-light">|</span> Airport Transfers
               </p>
               
               <div className="space-y-6 mb-16">
@@ -412,52 +412,52 @@ export default function App() {
 
       {/* 4. Stats Section (Floating Pill overlapping Hero) */}
       <section className="relative z-30 max-w-[1150px] mx-auto px-4 lg:px-0 -mt-[100px] lg:-mt-[110px] mb-24">
-        <div className="bg-white rounded-[24px] shadow-[0_15px_40px_rgba(0,0,0,0.06)] py-6 px-4 md:px-10 flex flex-wrap lg:flex-nowrap justify-between items-center border border-gray-50">
+        <div className="bg-white rounded-[24px] shadow-[0_15px_40px_rgba(0,0,0,0.06)] py-6 px-4 md:px-10 grid grid-cols-2 gap-y-8 lg:flex lg:flex-nowrap justify-between items-center border border-gray-50">
           
-          <div className="flex items-center w-full lg:w-[24%] py-4 lg:py-0 justify-center lg:justify-start">
-            <div className="bg-[#1e3b8a] text-white p-3.5 rounded-full mr-4 shrink-0 shadow-sm"><Users className="w-[26px] h-[26px]" /></div>
+          <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start text-center sm:text-left">
+            <div className="bg-[#1e3b8a] text-white p-3.5 rounded-full sm:mr-4 shrink-0 shadow-sm mb-2 sm:mb-0"><Users className="w-[22px] h-[22px] sm:w-[26px] sm:h-[26px]" /></div>
             <div>
-              <h3 className="font-bold text-[17px] text-[#1e3b8a] leading-tight">10,000+</h3>
-              <p className="text-[13px] font-bold text-gray-800 leading-snug">Happy Customers</p>
-              <p className="text-[11px] font-medium text-gray-400">and counting</p>
+              <h3 className="font-bold text-[15px] sm:text-[17px] text-[#1e3b8a] leading-tight">10,000+</h3>
+              <p className="text-[11px] sm:text-[13px] font-bold text-gray-800 leading-snug">Happy Customers</p>
+              <p className="text-[9px] sm:text-[11px] font-medium text-gray-400">and counting</p>
             </div>
           </div>
           
           <div className="hidden lg:block w-[1px] h-12 bg-gray-200"></div>
 
-          <div className="flex items-center w-full lg:w-[24%] py-4 lg:py-0 justify-center lg:pl-6">
-            <div className="mr-4 shrink-0">
-              <svg viewBox="0 0 24 24" className="w-14 h-14" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <div className="flex flex-col sm:flex-row items-center justify-center lg:pl-6 text-center sm:text-left">
+            <div className="sm:mr-4 shrink-0 mb-2 sm:mb-0">
+              <svg viewBox="0 0 24 24" className="w-[42px] h-[42px] sm:w-14 sm:h-14" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M12 2L3 6v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V6l-9-4z" fill="#00a859"/>
                 <path d="M10.5 16l-4.5-4.5 1.41-1.41L10.5 13.17l6.59-6.59L18.5 8l-8 8z" fill="#ffffff"/>
               </svg>
             </div>
             <div>
-              <h3 className="font-bold text-[17px] text-[#1e3b8a] leading-tight">Verified</h3>
-              <p className="text-[13px] font-bold text-gray-800 leading-snug">Drivers</p>
-              <p className="text-[11px] font-medium text-gray-400">Background verified</p>
+              <h3 className="font-bold text-[15px] sm:text-[17px] text-[#1e3b8a] leading-tight">Verified</h3>
+              <p className="text-[11px] sm:text-[13px] font-bold text-gray-800 leading-snug">Drivers</p>
+              <p className="text-[9px] sm:text-[11px] font-medium text-gray-400">Background verified</p>
             </div>
           </div>
           
           <div className="hidden lg:block w-[1px] h-12 bg-gray-200"></div>
 
-          <div className="flex items-center w-full lg:w-[24%] py-4 lg:py-0 justify-center lg:pl-6">
-            <div className="bg-[#1e3b8a] text-white w-[52px] h-[52px] rounded-full mr-4 shrink-0 flex items-center justify-center font-serif font-bold text-[28px] shadow-sm relative">
-              <div className="absolute -top-[6px] left-[50%] -translate-x-[50%] w-[2px] h-2 bg-gray-300"></div>
+          <div className="flex flex-col sm:flex-row items-center justify-center lg:pl-6 text-center sm:text-left">
+            <div className="bg-[#1e3b8a] text-white w-[42px] h-[42px] sm:w-[52px] sm:h-[52px] rounded-full sm:mr-4 shrink-0 flex items-center justify-center font-serif font-bold text-[22px] sm:text-[28px] shadow-sm relative mb-2 sm:mb-0">
+              <div className="absolute -top-[5px] sm:-top-[6px] left-[50%] -translate-x-[50%] w-[2px] h-2 bg-gray-300"></div>
               ₹
             </div>
             <div>
-              <h3 className="font-bold text-[17px] text-[#1e3b8a] leading-tight">No Hidden</h3>
-              <p className="text-[13px] font-bold text-gray-800 leading-snug">Charges</p>
-              <p className="text-[11px] font-medium text-gray-400">100% Transparent</p>
+              <h3 className="font-bold text-[15px] sm:text-[17px] text-[#1e3b8a] leading-tight">No Hidden</h3>
+              <p className="text-[11px] sm:text-[13px] font-bold text-gray-800 leading-snug">Charges</p>
+              <p className="text-[9px] sm:text-[11px] font-medium text-gray-400">100% Transparent</p>
             </div>
           </div>
 
           <div className="hidden lg:block w-[1px] h-12 bg-gray-200"></div>
 
-          <div className="flex items-center w-full lg:w-[24%] py-4 lg:py-0 justify-center lg:justify-end lg:pr-2">
-            <div className="mr-4 shrink-0">
-               <svg viewBox="0 0 24 24" className="w-[52px] h-[52px]" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-end lg:pr-2 text-center sm:text-left">
+            <div className="sm:mr-4 shrink-0 mb-2 sm:mb-0">
+               <svg viewBox="0 0 24 24" className="w-[42px] h-[42px] sm:w-[52px] sm:h-[52px]" fill="none" xmlns="http://www.w3.org/2000/svg">
                  <circle cx="12" cy="12" r="11" fill="#ffffff" />
                  <circle cx="12" cy="12" r="8" fill="none" stroke="#00a859" strokeWidth="2" />
                  <path d="M12 1V4 M12 20V23 M1 12H4 M20 12H23" stroke="#00a859" strokeWidth="2" strokeLinecap="round" />
@@ -466,9 +466,9 @@ export default function App() {
                </svg>
             </div>
             <div>
-              <h3 className="font-bold text-[17px] text-[#1e3b8a] leading-tight">24/7</h3>
-              <p className="text-[13px] font-bold text-gray-800 leading-snug">Support</p>
-              <p className="text-[11px] font-medium text-gray-400">We're here anytime</p>
+              <h3 className="font-bold text-[15px] sm:text-[17px] text-[#1e3b8a] leading-tight">24/7</h3>
+              <p className="text-[11px] sm:text-[13px] font-bold text-gray-800 leading-snug">Support</p>
+              <p className="text-[9px] sm:text-[11px] font-medium text-gray-400">We're here anytime</p>
             </div>
           </div>
 
