@@ -35,7 +35,7 @@ import serviceAirport from './assets/images/service-airport.png';
 import serviceLocal from './assets/images/service-local.png';
 import serviceTour from './assets/images/service-tour.png';
 
-const WHATSAPP_NUMBER = '917310651940';
+const WHATSAPP_NUMBER = '918595066033';
 const CALL_NUMBER = '+917310651940';
 
 // Social Icons
