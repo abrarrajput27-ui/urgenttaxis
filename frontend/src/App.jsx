@@ -774,9 +774,9 @@ export default function App() {
                   <Mail className="w-[18px] h-[18px] mr-3 text-white flex-shrink-0 mt-0.5" />
                   <a href="mailto:info@urgenttaxis.com" className="text-white hover:opacity-80 transition-opacity">info@urgenttaxis.com</a>
                 </li>
-                <li className="flex items-start">
-                  <MapPin className="w-[18px] h-[18px] mr-3 text-white flex-shrink-0 mt-0.5" />
-                  <span className="text-white">Gurgaon, Haryana, India<br/>122001</span>
+                <li className="flex items-start pr-4 sm:pr-0">
+                  <MapPin className="w-[18px] h-[18px] mr-3 text-white flex-shrink-0 mt-1" />
+                  <span className="text-white leading-relaxed text-[13px] sm:text-[14px] break-words">Shop No. 09, S. R. Complex, Railway Station Road, Masuri, Ghaziabad, Uttar Pradesh 201302</span>
                 </li>
               </ul>
             </div>
