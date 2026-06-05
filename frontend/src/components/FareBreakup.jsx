@@ -292,7 +292,7 @@ const FareBreakup = ({
             <button 
               type="submit" 
               disabled={isSubmitting}
-              className="w-full bg-[#1e3a8a] hover:bg-blue-900 text-white font-bold py-3.5 rounded-[10px] flex items-center justify-center transition-colors text-[15px] shadow-md disabled:bg-gray-400"
+              className="w-full mt-6 rounded-2xl bg-[#0b1324] hover:bg-black text-white py-4 font-bold flex items-center justify-center gap-3 transition-colors disabled:bg-gray-400"
             >
               {isSubmitting ? (
                 <><Loader2 className="w-5 h-5 mr-2 animate-spin" /> Processing...</>
