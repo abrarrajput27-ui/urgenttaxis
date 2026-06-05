@@ -1,4 +1,6 @@
-import React from 'react';
+import os
+
+content = """import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { CheckCircle2, Clock, MapPin, CreditCard, HelpCircle, ArrowRight, Link as LinkIcon, MessageCircle, Info } from 'lucide-react';
 import { fareData, calculateFare } from '../data/fareData';
@@ -210,4 +212,7 @@ const RouteSEOContent = ({ data }) => {
   );
 };
 
-export default RouteSEOContent;
+export default RouteSEOContent;"""
+
+with open("c:/Users/91859/Desktop/Antigravity Work/Urgent Taxis/frontend/src/components/RouteSEOContent.jsx", "w", encoding="utf-8") as f:
+    f.write(content)
