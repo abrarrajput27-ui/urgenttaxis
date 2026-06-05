@@ -30,6 +30,50 @@ export const getRouteDistance = async (pickup, drop) => {
   }
 
   try {
+    // Use the native Google Maps JavaScript SDK if loaded
+    if (window.google && window.google.maps && window.google.maps.DistanceMatrixService) {
+      console.log("Using Google Maps JS SDK for Distance Matrix...");
+      const service = new window.google.maps.DistanceMatrixService();
+      
+      return new Promise((resolve, reject) => {
+        service.getDistanceMatrix({
+          origins: [pickup],
+          destinations: [drop],
+          travelMode: window.google.maps.TravelMode.DRIVING,
+          unitSystem: window.google.maps.UnitSystem.METRIC,
+        }, (response, status) => {
+          if (status === 'OK' && response.rows[0].elements[0].status === 'OK') {
+            const distanceKm = Math.round(response.rows[0].elements[0].distance.value / 1000);
+            const travelTime = response.rows[0].elements[0].duration.text;
+            
+            console.log("Resolved Distance KM (JS SDK):", distanceKm);
+            resolve({
+              distanceKm,
+              travelTime,
+              estimatedToll: staticData ? fallback.estimatedToll : "To be confirmed",
+              estimatedStateTax: staticData ? fallback.estimatedStateTax : "As applicable",
+              tollCount: staticData ? fallback.tollCount : "Varies",
+              source: 'google_maps',
+              distanceSource: 'Google Maps',
+              isUnknownRoute: false
+            });
+          } else if (status === 'OK' && response.rows[0].elements[0].status === 'ZERO_RESULTS') {
+            console.error("No route found on Google Maps.");
+            reject(new Error("No route found between these locations on Google Maps."));
+          } else {
+            console.error("Distance Matrix Service failed:", status, response);
+            reject(new Error("Distance Matrix Service failed."));
+          }
+        });
+      }).catch((error) => {
+        console.error("Distance Matrix SDK Error:", error);
+        if (staticData) return fallback;
+        throw error;
+      });
+    }
+
+    // Fallback to fetch if JS SDK is not loaded for some reason
+    console.log("JS SDK not loaded, falling back to fetch...");
     const url = `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${encodeURIComponent(pickup)}&destinations=${encodeURIComponent(drop)}&key=${apiKey}`;
     const response = await fetch(url);
     const data = await response.json();
@@ -48,7 +92,6 @@ export const getRouteDistance = async (pickup, drop) => {
       return {
         distanceKm,
         travelTime,
-        // Keep static tolls/taxes as fallback because Distance Matrix doesn't return toll cost natively
         estimatedToll: staticData ? fallback.estimatedToll : "To be confirmed",
         estimatedStateTax: staticData ? fallback.estimatedStateTax : "As applicable",
         tollCount: staticData ? fallback.tollCount : "Varies",

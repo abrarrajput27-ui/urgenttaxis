@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, useLocation, Link } from 'react-router-dom';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
 import ReactGA from 'react-ga4';
+import { useJsApiLoader } from '@react-google-maps/api';
 import { 
   Phone, Mail, MapPin, Calendar, Clock, Car, ChevronDown,
   Zap, Tag, Headphones, Users, ShieldCheck, ArrowRight, 
@@ -82,6 +83,12 @@ ReactGA.initialize(GA_MEASUREMENT_ID);
 
 function Home() {
   const location = useLocation();
+
+  const { isLoaded } = useJsApiLoader({
+    id: 'google-map-script',
+    googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
+    libraries: ['places']
+  });
 
   useEffect(() => {
     ReactGA.send({ hitType: "pageview", page: location.pathname + location.search });
@@ -502,14 +509,14 @@ function Home() {
           <path d="M0 0 L0 120 L1440 120 L1440 0 Q720 150 0 0 Z" fill="#ffffff" />
         </svg>
 
-        <div className="max-w-[1200px] mx-auto px-4 relative z-10">
+        <div className="max-w-[1200px] mx-auto px-4 relative z-30">
           
           {/* Car Image - Mathematically positioned to sit perfectly in the gap without overlapping */}
-          <div className="hidden lg:block absolute left-[52%] -translate-x-1/2 ml-[-80px] bottom-[-90px] w-[420px] xl:w-[490px] z-20 pointer-events-none opacity-90 xl:opacity-100">
+          <div className="hidden lg:block absolute left-[52%] -translate-x-1/2 ml-[-80px] bottom-[-90px] w-[420px] xl:w-[490px] z-10 pointer-events-none opacity-90 xl:opacity-100">
              <img src={heroCar} alt="Toyota Innova" className="w-full h-auto object-contain" />
           </div>
 
-          <div className="flex flex-col lg:flex-row justify-between items-center lg:items-start gap-10 lg:gap-0 relative z-10">
+          <div className="flex flex-col lg:flex-row justify-between items-center lg:items-start gap-10 lg:gap-0 relative z-30">
             
             {/* Left Col */}
             <div className="w-full lg:w-[48%] lg:-ml-10 xl:-ml-[50px] pt-6 flex flex-col">
@@ -608,6 +615,7 @@ function Home() {
                         value={pickup}
                         onChange={(e) => setPickup(e.target.value)}
                         iconColor="text-[#00a859]"
+                        isLoaded={isLoaded}
                       />
                     ) : (
                       <div className="relative flex flex-col">
@@ -617,6 +625,7 @@ function Home() {
                           value={pickup}
                           onChange={(e) => setPickup(e.target.value)}
                           iconColor="text-[#00a859]"
+                          isLoaded={isLoaded}
                         />
                         
                         <div className="flex justify-center -my-2 relative z-10 pointer-events-none">
@@ -635,6 +644,7 @@ function Home() {
                           value={drop}
                           onChange={(e) => setDrop(e.target.value)}
                           iconColor="text-red-500"
+                          isLoaded={isLoaded}
                         />
                       </div>
                     )}
