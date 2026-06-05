@@ -7,33 +7,69 @@
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://urgenttaxis.com/#services</loc>
+    <loc>https://urgenttaxis.com/services</loc>
     <lastmod>2026-06-05T00:00:00+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://urgenttaxis.com/#routes</loc>
+    <loc>https://urgenttaxis.com/routes</loc>
     <lastmod>2026-06-05T00:00:00+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://urgenttaxis.com/#about</loc>
+    <loc>https://urgenttaxis.com/about</loc>
     <lastmod>2026-06-05T00:00:00+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://urgenttaxis.com/#blog</loc>
+    <loc>https://urgenttaxis.com/blog</loc>
     <lastmod>2026-06-05T00:00:00+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://urgenttaxis.com/#contact</loc>
+    <loc>https://urgenttaxis.com/contact</loc>
     <lastmod>2026-06-05T00:00:00+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://urgenttaxis.com/delhi-to-haldwani-taxi</loc>
+    <lastmod>2026-06-05T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://urgenttaxis.com/delhi-to-nainital-taxi</loc>
+    <lastmod>2026-06-05T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://urgenttaxis.com/delhi-to-ramnagar-taxi</loc>
+    <lastmod>2026-06-05T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://urgenttaxis.com/delhi-airport-to-haldwani-taxi</loc>
+    <lastmod>2026-06-05T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://urgenttaxis.com/ghaziabad-taxi-service</loc>
+    <lastmod>2026-06-05T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://urgenttaxis.com/noida-taxi-service</loc>
+    <lastmod>2026-06-05T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
   </url>
 </urlset>
