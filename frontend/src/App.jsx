@@ -31,6 +31,8 @@ import user2 from './assets/images/user2.jpg';
 import user3 from './assets/images/user3.jpg';
 
 import { googleReviews } from './data/googleReviews';
+import { routesData } from './data/routesData';
+import RouteSEOContent from './components/RouteSEOContent';
 
 import serviceOneWay from './assets/images/service-oneway.png';
 import serviceRoundTrip from './assets/images/service-roundtrip.png';
@@ -782,6 +784,9 @@ function Home() {
           </div>
         </div>
       </section>
+
+      {/* 7.5 SEO Route Content (Only shows on specific routes) */}
+      <RouteSEOContent data={routesData[location.pathname]} />
 
       {/* 8. Testimonials (About) */}
       <section id="about" className="py-8 bg-white relative">
