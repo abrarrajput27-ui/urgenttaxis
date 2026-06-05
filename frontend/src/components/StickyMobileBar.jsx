@@ -1,0 +1,55 @@
+import React from 'react';
+import { PhoneCall, MessageCircle, FileText } from 'lucide-react';
+import ReactGA from 'react-ga4';
+
+const StickyMobileBar = ({ onOpenLeadForm }) => {
+  const WHATSAPP_NUMBER = '918595066033';
+  const CALL_NUMBER = '+917310651940';
+
+  const handleCall = () => {
+    ReactGA.event("sticky_call_click", { category: "Conversion", label: "Mobile Sticky Bar" });
+  };
+
+  const handleWhatsApp = () => {
+    ReactGA.event("sticky_whatsapp_click", { category: "Conversion", label: "Mobile Sticky Bar" });
+  };
+
+  const handleQuoteClick = () => {
+    ReactGA.event("get_quote_click", { category: "Conversion", label: "Mobile Sticky Bar" });
+    onOpenLeadForm();
+  };
+
+  return (
+    <div className="fixed bottom-0 left-0 w-full bg-white border-t border-gray-200 shadow-[0_-4px_10px_rgba(0,0,0,0.05)] z-[90] flex items-center md:hidden pb-safe">
+      <a 
+        href={`tel:${CALL_NUMBER}`} 
+        onClick={handleCall}
+        className="flex-1 flex flex-col items-center justify-center py-2.5 px-2 text-[#00a859] hover:bg-green-50 transition-colors border-r border-gray-100"
+      >
+        <PhoneCall className="w-5 h-5 mb-1" />
+        <span className="text-[10px] font-bold uppercase tracking-wide">Call Now</span>
+      </a>
+      
+      <button 
+        onClick={handleQuoteClick}
+        className="flex-[1.2] flex flex-col items-center justify-center py-2.5 px-2 bg-gray-900 text-white hover:bg-black transition-colors"
+      >
+        <FileText className="w-5 h-5 mb-1 text-[#fbbf24]" />
+        <span className="text-[10px] font-bold uppercase tracking-wide">Get Quote</span>
+      </button>
+
+      <a 
+        href={`https://wa.me/${WHATSAPP_NUMBER}?text=Hi,%20I%20am%20looking%20for%20a%20taxi.`}
+        target="_blank"
+        rel="noopener noreferrer"
+        onClick={handleWhatsApp}
+        className="flex-1 flex flex-col items-center justify-center py-2.5 px-2 text-[#1877F2] hover:bg-blue-50 transition-colors border-l border-gray-100"
+      >
+        <MessageCircle className="w-5 h-5 mb-1" />
+        <span className="text-[10px] font-bold uppercase tracking-wide">WhatsApp</span>
+      </a>
+    </div>
+  );
+};
+
+export default StickyMobileBar;

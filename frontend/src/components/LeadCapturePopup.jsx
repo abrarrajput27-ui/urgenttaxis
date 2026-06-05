@@ -1,0 +1,178 @@
+import React, { useState, useEffect } from 'react';
+import ReactGA from 'react-ga4';
+import { X, Loader2, CheckCircle2 } from 'lucide-react';
+import { supabase } from '../lib/supabase';
+import { useLocation } from 'react-router-dom';
+
+const LeadCapturePopup = ({ isOpen, onClose, routeName = "General Booking" }) => {
+  const location = useLocation();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+
+  const [formData, setFormData] = useState({
+    name: '',
+    mobile: '',
+    pickup: '',
+    drop_location: '',
+    trip_date: '',
+    vehicle_type: 'Sedan',
+    message: ''
+  });
+
+  // Track Open Event
+  useEffect(() => {
+    if (isOpen) {
+      ReactGA.event("lead_form_open", {
+        category: "Conversion",
+        label: routeName,
+        page_path: location.pathname
+      });
+      setIsSuccess(false); // Reset success state when opened
+    }
+  }, [isOpen, routeName, location.pathname]);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+
+    try {
+      // 1. Fire GA4 Event
+      ReactGA.event("lead_form_submit", {
+        category: "Conversion",
+        label: routeName,
+        value: 1
+      });
+
+      // 2. Prepare Payload
+      const payload = {
+        ...formData,
+        source_page: location.pathname,
+        route_name: routeName,
+        lead_source: "Popup Form"
+      };
+
+      // 3. Insert into Supabase
+      const { error } = await supabase.from('leads').insert([payload]);
+
+      if (error) {
+        throw error;
+      }
+
+      setIsSuccess(true);
+      // Reset form
+      setFormData({
+        name: '', mobile: '', pickup: '', drop_location: '',
+        trip_date: '', vehicle_type: 'Sedan', message: ''
+      });
+
+      // Auto close after 3 seconds
+      setTimeout(() => {
+        onClose();
+        setIsSuccess(false);
+      }, 3000);
+
+    } catch (err) {
+      console.error("Error submitting lead:", err);
+      alert("Something went wrong. Please try calling us directly.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-gray-900/60 backdrop-blur-sm">
+      <div 
+        className="bg-white w-full max-w-md rounded-2xl shadow-2xl overflow-hidden relative animate-in fade-in zoom-in duration-200"
+        onClick={e => e.stopPropagation()}
+      >
+        {/* Close Button */}
+        <button 
+          onClick={onClose}
+          className="absolute top-4 right-4 text-gray-400 hover:text-gray-900 bg-gray-100 hover:bg-gray-200 rounded-full p-2 transition-colors z-10"
+        >
+          <X className="w-5 h-5" />
+        </button>
+
+        {isSuccess ? (
+          <div className="p-10 text-center flex flex-col items-center justify-center min-h-[400px]">
+            <CheckCircle2 className="w-20 h-20 text-green-500 mb-4 animate-bounce" />
+            <h3 className="text-2xl font-black text-gray-900 mb-2">Thank You!</h3>
+            <p className="text-gray-600">Your request has been received. Our team will contact you shortly with the best quote.</p>
+          </div>
+        ) : (
+          <div className="p-6 md:p-8">
+            <h3 className="text-2xl font-black text-gray-900 mb-1">Get Instant Quote</h3>
+            <p className="text-sm text-gray-500 mb-6">Fill out the details below and we will contact you immediately.</p>
+
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Name *</label>
+                  <input required type="text" name="name" value={formData.name} onChange={handleChange} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none" placeholder="Enter name" />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Mobile *</label>
+                  <input required type="tel" name="mobile" value={formData.mobile} onChange={handleChange} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none" placeholder="10-digit number" />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Pickup City *</label>
+                  <input required type="text" name="pickup" value={formData.pickup} onChange={handleChange} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none" placeholder="E.g. Delhi Airport" />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Drop City *</label>
+                  <input required type="text" name="drop_location" value={formData.drop_location} onChange={handleChange} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none" placeholder="E.g. Haldwani" />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Trip Date *</label>
+                  <input required type="date" name="trip_date" value={formData.trip_date} onChange={handleChange} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none" />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Vehicle Preference</label>
+                  <select name="vehicle_type" value={formData.vehicle_type} onChange={handleChange} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none bg-white">
+                    <option value="Sedan">Sedan (4 Pax)</option>
+                    <option value="Ertiga">Ertiga (6 Pax)</option>
+                    <option value="Innova">Innova (6/7 Pax)</option>
+                    <option value="Innova Crysta">Innova Crysta (6/7 Pax)</option>
+                    <option value="Tempo Traveller">Tempo Traveller (12 Pax)</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Any specific requirements?</label>
+                <textarea name="message" value={formData.message} onChange={handleChange} rows="2" className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none" placeholder="Late night pickup, extra luggage, etc..."></textarea>
+              </div>
+
+              <button 
+                type="submit" 
+                disabled={isSubmitting}
+                className="w-full bg-[#1877F2] hover:bg-[#155fc2] text-white font-bold py-3 px-4 rounded-lg transition-colors flex items-center justify-center"
+              >
+                {isSubmitting ? (
+                  <><Loader2 className="w-5 h-5 mr-2 animate-spin" /> Submitting Request...</>
+                ) : (
+                  "Request Quote"
+                )}
+              </button>
+            </form>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default LeadCapturePopup;

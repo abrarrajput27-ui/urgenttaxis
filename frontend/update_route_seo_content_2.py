@@ -1,4 +1,6 @@
-import React from 'react';
+import os
+
+content = """import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { CheckCircle2, Clock, MapPin, CreditCard, HelpCircle, ArrowRight, Link as LinkIcon, MessageCircle, Info, ShieldCheck, Users, Star, ThumbsUp } from 'lucide-react';
 import { fareData, calculateFare } from '../data/fareData';
@@ -219,7 +221,7 @@ const RouteSEOContent = ({ data, onOpenLeadForm }) => {
 
         {/* Route Specific Bottom CTA */}
         <div className="bg-gradient-to-r from-blue-900 to-[#1e3a8a] rounded-3xl p-8 md:p-12 text-center border border-blue-800 mb-16 shadow-2xl relative overflow-hidden">
-          <div className="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg width=\"20\" height=\"20\" viewBox=\"0 0 20 20\" xmlns=\"http://www.w3.org/2000/svg\"%3E%3Cg fill=\"%23ffffff\" fill-opacity=\"1\" fill-rule=\"evenodd\"%3E%3Ccircle cx=\"3\" cy=\"3\" r=\"3\"%3E%3C/circle%3E%3Ccircle cx=\"13\" cy=\"13\" r=\"3\"%3E%3C/circle%3E%3C/g%3E%3C/svg%3E")' }}></div>
+          <div className="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg width=\\"20\\" height=\\"20\\" viewBox=\\"0 0 20 20\\" xmlns=\\"http://www.w3.org/2000/svg\\"%3E%3Cg fill=\\"%23ffffff\\" fill-opacity=\\"1\\" fill-rule=\\"evenodd\\"%3E%3Ccircle cx=\\"3\\" cy=\\"3\\" r=\\"3\\"%3E%3C/circle%3E%3Ccircle cx=\\"13\\" cy=\\"13\\" r=\\"3\\"%3E%3C/circle%3E%3C/g%3E%3C/svg%3E")' }}></div>
           
           <h3 className="text-3xl md:text-4xl font-black text-white mb-4 relative z-10">Book {currentFareData ? currentFareData.route : data.heading} Taxi Now</h3>
           <p className="text-blue-100 mb-8 max-w-2xl mx-auto text-lg relative z-10">Get the best fare and confirm your ride instantly. Our dispatch team is ready 24/7.</p>
@@ -278,4 +280,7 @@ const RouteSEOContent = ({ data, onOpenLeadForm }) => {
   );
 };
 
-export default RouteSEOContent;
+export default RouteSEOContent;"""
+
+with open("c:/Users/91859/Desktop/Antigravity Work/Urgent Taxis/frontend/src/components/RouteSEOContent.jsx", "w", encoding="utf-8") as f:
+    f.write(content)
