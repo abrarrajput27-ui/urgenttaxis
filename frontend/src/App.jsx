@@ -252,26 +252,7 @@ function Home() {
         "@id": "https://urgenttaxis.com/#taxiservice",
         "name": "Urgent Taxis",
         "url": "https://urgenttaxis.com",
-        "telephone": "+91 7310651940",
-        "email": "info@urgenttaxis.com",
-        "description": "Urgent Taxis offers reliable outstation taxi, local rental, airport transfer and one way taxi services.",
-        "address": {
-          "@type": "PostalAddress",
-          "streetAddress": "Shop No. 09, S. R. Complex, Railway Station Road, Masuri",
-          "addressLocality": "Ghaziabad",
-          "addressRegion": "Uttar Pradesh",
-          "postalCode": "201302",
-          "addressCountry": "IN"
-        },
-        "areaServed": [
-          "Delhi", "Noida", "Ghaziabad", "Gurugram", "Faridabad", "Greater Noida", "Haldwani", "Nainital", "Ramnagar", "Haridwar", "Rishikesh", "Dehradun", "Jaipur", "Agra", "Mathura", "Vrindavan"
-        ],
-        "offers": {
-          "@type": "Offer",
-          "category": [
-            "One Way Taxi", "Round Trip Taxi", "Airport Transfer", "Local Rental", "Tour Packages", "Outstation Taxi Service"
-          ]
-        },
+        "telephone": "+917310651940",
         "aggregateRating": {
           "@type": "AggregateRating",
           "ratingValue": "4.9",
