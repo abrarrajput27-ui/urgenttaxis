@@ -229,6 +229,98 @@ function Home() {
     setDrop(temp);
   };
 
+  const schemaData = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Organization",
+        "@id": "https://urgenttaxis.com/#organization",
+        "name": "Urgent Taxis",
+        "url": "https://urgenttaxis.com",
+        "logo": "https://urgenttaxis.com/assets/images/logo.jpg",
+        "contactPoint": {
+          "@type": "ContactPoint",
+          "telephone": "+91-7310651940",
+          "contactType": "customer service",
+          "email": "info@urgenttaxis.com",
+          "areaServed": "IN",
+          "availableLanguage": ["English", "Hindi"]
+        }
+      },
+      {
+        "@type": "TaxiService",
+        "@id": "https://urgenttaxis.com/#taxiservice",
+        "name": "Urgent Taxis",
+        "url": "https://urgenttaxis.com",
+        "telephone": "+91 7310651940",
+        "email": "info@urgenttaxis.com",
+        "description": "Urgent Taxis offers reliable outstation taxi, local rental, airport transfer and one way taxi services.",
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "Shop No. 09, S. R. Complex, Railway Station Road, Masuri",
+          "addressLocality": "Ghaziabad",
+          "addressRegion": "Uttar Pradesh",
+          "postalCode": "201302",
+          "addressCountry": "IN"
+        },
+        "areaServed": [
+          "Delhi", "Noida", "Ghaziabad", "Gurugram", "Faridabad", "Greater Noida", "Haldwani", "Nainital", "Ramnagar", "Haridwar", "Rishikesh", "Dehradun", "Jaipur", "Agra", "Mathura", "Vrindavan"
+        ],
+        "offers": {
+          "@type": "Offer",
+          "category": [
+            "One Way Taxi", "Round Trip Taxi", "Airport Transfer", "Local Rental", "Tour Packages", "Outstation Taxi Service"
+          ]
+        },
+        "aggregateRating": {
+          "@type": "AggregateRating",
+          "ratingValue": "4.9",
+          "reviewCount": "88"
+        }
+      },
+      {
+        "@type": "WebSite",
+        "@id": "https://urgenttaxis.com/#website",
+        "url": "https://urgenttaxis.com",
+        "name": "Urgent Taxis",
+        "description": "Book affordable outstation taxis, airport transfers, and local rentals.",
+        "publisher": {
+          "@id": "https://urgenttaxis.com/#organization"
+        }
+      },
+      {
+        "@type": "FAQPage",
+        "@id": "https://urgenttaxis.com/#faq",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "How do I book a taxi with Urgent Taxis?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "You can book a taxi by calling +91 7310651940, messaging us on WhatsApp, or using the booking form on our website."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What areas do you serve?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "We serve Delhi, Noida, Ghaziabad, Gurugram, Faridabad, Greater Noida, and provide outstation trips to Haldwani, Nainital, Haridwar, Rishikesh, Dehradun, Jaipur, Agra, and more."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Do you provide one-way outstation taxis?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes, we specialize in affordable one-way taxi services as well as round trips across North India."
+            }
+          }
+        ]
+      }
+    ]
+  };
+
   return (
     <div className="font-sans text-gray-800 bg-white min-h-screen">
       <Helmet>
@@ -241,6 +333,9 @@ function Home() {
         <meta property="twitter:url" content={canonicalUrl} />
         <meta property="twitter:title" content={routeData.title} />
         <meta property="twitter:description" content={routeData.desc} />
+        <script type="application/ld+json">
+          {JSON.stringify(schemaData)}
+        </script>
       </Helmet>
       
       {/* 1. Top Bar */}
