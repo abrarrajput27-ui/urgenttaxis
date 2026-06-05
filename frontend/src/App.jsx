@@ -164,6 +164,7 @@ function Home() {
   const canonicalUrl = `https://urgenttaxis.com${location.pathname === '/' ? '' : location.pathname}`;
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isLeadFormOpen, setIsLeadFormOpen] = useState(false);
   const [pickup, setPickup] = useState('');
   const [drop, setDrop] = useState('');
   const [date, setDate] = useState('');
@@ -1044,10 +1045,10 @@ function Home() {
         </button>
       </div>
 
-        <StickyMobileBar onOpenLeadForm={() => setIsLeadFormOpen(true)} />
-        <FloatingQuoteWidget onOpenLeadForm={() => setIsLeadFormOpen(true)} />
-        <LeadCapturePopup isOpen={isLeadFormOpen} onClose={() => setIsLeadFormOpen(false)} routeName={routeData.heading || "General"} />
-      </div>
+      <StickyMobileBar onOpenLeadForm={() => setIsLeadFormOpen(true)} />
+      <FloatingQuoteWidget onOpenLeadForm={() => setIsLeadFormOpen(true)} />
+      <LeadCapturePopup isOpen={isLeadFormOpen} onClose={() => setIsLeadFormOpen(false)} routeName={routeData.heading || "General"} />
+    </div>
   );
 }
 
