@@ -1161,7 +1161,7 @@ function Home() {
       </div>
 
       <StickyMobileBar onOpenLeadForm={() => setIsLeadFormOpen(true)} />
-      <FloatingQuoteWidget onOpenLeadForm={() => setIsLeadFormOpen(true)} isHidden={showFareBreakup} />
+      {!showFareBreakup && <FloatingQuoteWidget onOpenLeadForm={() => setIsLeadFormOpen(true)} />}
       <LeadCapturePopup isOpen={isLeadFormOpen} onClose={() => setIsLeadFormOpen(false)} routeName={routeData.heading || "General"} />
     </div>
   );

@@ -119,7 +119,7 @@ const FareBreakup = ({
   }
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+    <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden relative z-[100]">
       {/* Header */}
       <div className="bg-gradient-to-r from-[#1e3a8a] to-blue-800 p-4 text-white flex items-center justify-between">
         <button onClick={onBack} className="text-blue-100 hover:text-white transition-colors flex items-center text-sm font-medium">
@@ -190,7 +190,7 @@ const FareBreakup = ({
       </div>
 
       {/* Fare Breakdown */}
-      <div className="w-full max-w-full p-5 pb-8">
+      <div className="w-full max-w-full p-5 pb-[80px]">
         <h4 className="font-bold text-gray-900 mb-4 flex items-center">
           <CreditCard className="w-5 h-5 mr-2 text-blue-600" /> Fare Breakup
         </h4>
@@ -247,7 +247,7 @@ const FareBreakup = ({
             </>
           )}
           
-          <div className="bg-yellow-50 text-yellow-800 p-2.5 rounded-lg text-[11px] leading-relaxed flex items-start mt-3 border border-yellow-100">
+          <div className="bg-yellow-50 text-yellow-800 p-2.5 rounded-lg text-[11px] leading-relaxed flex items-start mt-3 mb-6 border border-yellow-100">
             <AlertCircle className="w-4 h-4 mr-1.5 flex-shrink-0 mt-0.5 text-yellow-600" />
             <span>Final fare may vary based on actual toll, state tax, parking, exact pickup/drop location and vehicle availability. Night/Peak charges may apply.</span>
           </div>
