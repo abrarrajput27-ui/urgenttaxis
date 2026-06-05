@@ -3,6 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { CheckCircle2, Clock, MapPin, CreditCard, HelpCircle, ArrowRight, Link as LinkIcon, MessageCircle, Info, ShieldCheck, Users, Star, ThumbsUp } from 'lucide-react';
 import { fareData, calculateFare } from '../data/fareData';
 import { googleReviews } from '../data/googleReviews';
+import { VEHICLE_RATES } from '../lib/pricingRules';
 
 const RouteSEOContent = ({ data, onOpenLeadForm }) => {
   const location = useLocation();
@@ -77,7 +78,7 @@ const RouteSEOContent = ({ data, onOpenLeadForm }) => {
               </h3>
               <p className="text-sm text-gray-500 font-medium mt-2 md:mt-0">
                 <span className="w-2 h-2 inline-block bg-green-500 rounded-full mr-1.5 animate-pulse"></span>
-                Fare Last Updated: {currentFareData.lastUpdated}
+                Fare Last Updated: {new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}
               </p>
             </div>
             
@@ -92,7 +93,7 @@ const RouteSEOContent = ({ data, onOpenLeadForm }) => {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100">
-                  {Object.entries(currentFareData.vehicles).map(([type, details]) => {
+                  {['Sedan', 'Ertiga', 'Innova', 'Innova Crysta', 'Traveller 12', 'Urbania 12'].map((type) => {
                     const calcInfo = calculateFare(location.pathname, type);
                     if(!calcInfo) return null;
 
@@ -100,7 +101,7 @@ const RouteSEOContent = ({ data, onOpenLeadForm }) => {
                       <tr key={type} className="hover:bg-gray-50 transition-colors">
                         <td className="px-6 py-4 text-gray-900 font-bold">{type}</td>
                         <td className="px-6 py-4 text-gray-600 font-medium">{calcInfo.seats} Pax</td>
-                        <td className="px-6 py-4 text-gray-400 font-medium text-right line-through hidden sm:table-cell">₹{details.mmtReference}</td>
+                        <td className="px-6 py-4 text-gray-400 font-medium text-right line-through hidden sm:table-cell">₹{calcInfo.mmtReference}</td>
                         <td className="px-6 py-4 text-[#00a859] font-black text-right text-lg">₹{calcInfo.fare}</td>
                       </tr>
                     )
@@ -113,7 +114,7 @@ const RouteSEOContent = ({ data, onOpenLeadForm }) => {
               <Info className="w-5 h-5 mr-3 flex-shrink-0 text-yellow-500 mt-0.5" />
               <div>
                 <p className="font-semibold mb-1">Fare Calculation Disclaimer</p>
-                <p>The taxi fare displayed above is estimated for one-way drops. {currentFareData.tollNote} Driver allowance is {currentFareData.driverAllowance}. Final fare may vary slightly based on exact pickup/drop locations.</p>
+                <p>The taxi fare displayed above is estimated for one-way drops. Toll tax & state tax are extra as per actuals. Driver allowance is applicable per day based on vehicle type. Final fare may vary slightly based on exact pickup/drop locations.</p>
               </div>
             </div>
             

@@ -10,7 +10,7 @@ import {
 import { supabase } from './lib/supabase';
 import { getRouteDistance } from './lib/mapsApi';
 import { getAllVehicleFares } from './lib/pricingEngine';
-import { TRIP_TYPES } from './lib/pricingRules';
+import { TRIP_TYPES, VEHICLE_RATES } from './lib/pricingRules';
 import FareBreakup from './components/FareBreakup';
 
 // Import images statically
@@ -832,11 +832,11 @@ function Home() {
           
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-5 mb-8">
             {[
-              { name: 'Swift Dzire', seats: 4, ac: 'AC', bags: '1 Bag', price: '9', img: fleetAssets.dzire },
-              { name: 'Maruti Ertiga', seats: 6, ac: 'AC', bags: '2 Bag', price: '12', img: fleetAssets.ertiga },
-              { name: 'Toyota Innova', seats: 6, ac: 'AC', bags: '2 Bag', price: '15', img: fleetAssets.innova },
-              { name: 'Innova Crysta', seats: 6, ac: 'AC', bags: '3 Bag', price: '18', img: fleetAssets.crysta },
-              { name: 'Tempo Traveller', seats: 12, ac: 'AC', bags: '5 Bag', price: '22', img: fleetAssets.traveller },
+              { name: 'Swift Dzire', seats: 4, ac: 'AC', bags: '1 Bag', price: VEHICLE_RATES['Sedan']?.oneWayRate || 14, img: fleetAssets.dzire },
+              { name: 'Maruti Ertiga', seats: 6, ac: 'AC', bags: '2 Bag', price: VEHICLE_RATES['Ertiga']?.oneWayRate || 16, img: fleetAssets.ertiga },
+              { name: 'Toyota Innova', seats: 6, ac: 'AC', bags: '2 Bag', price: VEHICLE_RATES['Innova']?.oneWayRate || 24, img: fleetAssets.innova },
+              { name: 'Innova Crysta', seats: 6, ac: 'AC', bags: '3 Bag', price: VEHICLE_RATES['Innova Crysta']?.oneWayRate || 25, img: fleetAssets.crysta },
+              { name: 'Tempo Traveller', seats: 12, ac: 'AC', bags: '5 Bag', price: VEHICLE_RATES['Traveller 12']?.oneWayRate || 26, img: fleetAssets.traveller },
             ].map((car, idx) => (
               <div key={idx} className="bg-white rounded-[16px] border border-gray-100 p-4 shadow-sm hover:shadow-lg transition-all duration-300 text-center flex flex-col h-[240px]">
                 <div className="h-[95px] flex items-end justify-center mb-3">
@@ -882,18 +882,23 @@ function Home() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
             {[
-              { to: 'Delhi to Haridwar', price: '4,499', img: routeHaridwar },
-              { to: 'Delhi to Dehradun', price: '5,499', img: routeDehradun },
-              { to: 'Delhi to Haldwani', price: '6,999', img: routeHaldwani },
-              { to: 'Delhi to Rishikesh', price: '4,799', img: routeRishikesh },
-              { to: 'Delhi to Shimla', price: '7,999', img: routeShimla },
-            ].map((route, idx) => (
+              { to: 'Delhi to Haridwar', distance: 230, img: routeHaridwar },
+              { to: 'Delhi to Dehradun', distance: 260, img: routeDehradun },
+              { to: 'Delhi to Haldwani', distance: 280, img: routeHaldwani },
+              { to: 'Delhi to Rishikesh', distance: 250, img: routeRishikesh },
+              { to: 'Delhi to Shimla', distance: 350, img: routeShimla },
+            ].map((route, idx) => {
+              const sedanRate = VEHICLE_RATES['Sedan']?.oneWayRate || 14;
+              const sedanMin = VEHICLE_RATES['Sedan']?.minOneWayFare || 4000;
+              const startingFare = route.distance ? Math.max(route.distance * sedanRate, sedanMin) : null;
+              
+              return (
               <div key={idx} className="bg-white rounded-[16px] shadow-sm border border-gray-100 overflow-hidden hover:shadow-lg transition-all duration-300 flex flex-col h-[225px]">
                 <img src={route.img} alt={route.to} className="w-full h-[105px] object-cover" />
                 <div className="p-3.5 flex-1 flex flex-col justify-between">
                   <div>
                     <h3 className="font-bold text-[14px] text-gray-900 mb-1">{route.to}</h3>
-                    <p className="text-[10px] font-bold text-gray-400 mb-2">One Way</p>
+                    <p className="text-[10px] font-bold text-gray-400 mb-2">Toll & state tax extra</p>
                   </div>
                   
                   <div className="flex justify-between items-end pt-2.5 border-t border-gray-50 mt-auto">
@@ -902,13 +907,16 @@ function Home() {
                       One Way
                     </span>
                     <div className="text-right">
-                      <div className="font-black text-[18px] text-gray-900 leading-none mb-1">₹{route.price}</div>
-                      <div className="text-[9px] font-bold text-gray-500 uppercase">Starting Price</div>
+                      <div className="font-black text-[18px] text-gray-900 leading-none mb-1">
+                        {startingFare ? `₹${startingFare.toLocaleString('en-IN')}` : 'Check Fare'}
+                      </div>
+                      <div className="text-[9px] font-bold text-gray-500 uppercase">Starting from</div>
                     </div>
                   </div>
                 </div>
               </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>
