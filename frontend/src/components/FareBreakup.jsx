@@ -297,7 +297,7 @@ const FareBreakup = ({
               {isSubmitting ? (
                 <><Loader2 className="w-5 h-5 mr-2 animate-spin" /> Processing...</>
               ) : (
-                <>Lock This Price & Book <ArrowRight className="w-5 h-5 ml-2" /></>
+                <>Get Instant Quote <ArrowRight className="w-5 h-5 ml-2" /></>
               )}
             </button>
             <p className="text-[11px] text-center text-gray-500 mt-2 flex items-center justify-center">
