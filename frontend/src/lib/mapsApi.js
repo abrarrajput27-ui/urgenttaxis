@@ -1,4 +1,4 @@
-import { getStaticRouteData } from './pricingEngine';
+import { getStaticRouteData } from './fareData';
 
 /**
  * Attempts to get distance using Google Maps Distance Matrix API.
@@ -13,34 +13,44 @@ export const getRouteDistance = async (pickup, drop) => {
   const staticData = getStaticRouteData(pickup, drop);
   
   const fallback = {
-    distanceKm: staticData ? staticData.distance : 300, // Safe default assumption if unknown
-    tollsAndTaxes: staticData ? (staticData.tolls + staticData.stateTax) : 500,
-    source: staticData ? 'static_db' : 'default_estimation'
+    distanceKm: staticData ? staticData.distance : null,
+    travelTime: staticData && staticData.travelTime ? staticData.travelTime : null,
+    estimatedToll: staticData ? staticData.tolls : 0,
+    estimatedStateTax: staticData ? staticData.stateTax : 0,
+    tollCount: staticData && staticData.tollCount !== undefined ? staticData.tollCount : 0,
+    source: staticData ? 'static_route' : 'fallback_estimate',
+    distanceSource: staticData ? 'Static Route' : 'Estimated',
+    isUnknownRoute: !staticData
   };
 
-  // If no API key is provided, use fallback immediately
   if (!apiKey) {
     console.log("No Google Maps API Key found. Using static/fallback route data.");
     return fallback;
   }
 
   try {
-    // In a real implementation, you would call the Distance Matrix API here:
-    // const url = `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${encodeURIComponent(pickup)}&destinations=${encodeURIComponent(drop)}&key=${apiKey}`;
-    // const response = await fetch(url);
-    // const data = await response.json();
-    // if (data.rows[0].elements[0].status === 'OK') {
-    //   const distanceKm = Math.round(data.rows[0].elements[0].distance.value / 1000);
-    //   return {
-    //     distanceKm,
-    //     tollsAndTaxes: staticData ? (staticData.tolls + staticData.stateTax) : 500, // API doesn't easily return tolls without specific routing
-    //     source: 'google_maps_api'
-    //   };
-    // }
+    const url = `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${encodeURIComponent(pickup)}&destinations=${encodeURIComponent(drop)}&key=${apiKey}`;
+    const response = await fetch(url);
+    const data = await response.json();
     
-    // For now, since we don't have a backend proxy to protect the API key from CORS/billing abuse,
-    // we simulate the API call and just rely on the robust static database.
+    if (data.status === 'OK' && data.rows[0].elements[0].status === 'OK') {
+      const distanceKm = Math.round(data.rows[0].elements[0].distance.value / 1000);
+      const travelTime = data.rows[0].elements[0].duration.text;
+      
+      return {
+        distanceKm,
+        travelTime,
+        // Keep static tolls/taxes as fallback because Distance Matrix doesn't return toll cost natively
+        estimatedToll: fallback.estimatedToll,
+        estimatedStateTax: fallback.estimatedStateTax,
+        tollCount: fallback.tollCount,
+        source: 'google_maps',
+        distanceSource: 'Google Maps',
+        isUnknownRoute: false
+      };
+    }
     
+    console.warn("Google Maps API returned non-OK status. Falling back.");
     return fallback;
   } catch (error) {
     console.error("Error fetching distance from Google Maps API:", error);

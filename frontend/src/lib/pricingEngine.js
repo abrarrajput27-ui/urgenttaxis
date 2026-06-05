@@ -1,121 +1,120 @@
-export const VEHICLE_RATES = {
-  "Sedan": {
-    baseFare: 0,
-    perKmRate: 11,
-    seats: 4,
-    description: "Swift Dzire, Etios or similar"
-  },
-  "Ertiga": {
-    baseFare: 0,
-    perKmRate: 14,
-    seats: 6,
-    description: "Maruti Ertiga or similar"
-  },
-  "Innova": {
-    baseFare: 0,
-    perKmRate: 16,
-    seats: 6,
-    description: "Toyota Innova"
-  },
-  "Innova Crysta": {
-    baseFare: 0,
-    perKmRate: 18,
-    seats: 6,
-    description: "Toyota Innova Crysta"
-  },
-  "Tempo Traveller": {
-    baseFare: 0,
-    perKmRate: 24,
-    seats: 12,
-    description: "Force Tempo Traveller 12 Seater"
-  }
-};
+import { VEHICLE_RATES, DRIVER_ALLOWANCE, MIN_BILLABLE_ONE_WAY_KM, MIN_BILLABLE_ROUND_TRIP_KM_PER_DAY, TRIP_TYPES, AIRPORT_TRANSFER_SURCHARGE } from './pricingRules';
 
-export const DRIVER_ALLOWANCE = 300; // Per day allowance
-
-export const STATIC_ROUTES = {
-  "delhi-haldwani": { distance: 285, tolls: 450, stateTax: 250 },
-  "delhi-nainital": { distance: 315, tolls: 450, stateTax: 300 },
-  "delhi-ramnagar": { distance: 265, tolls: 350, stateTax: 250 },
-  "delhi-dehradun": { distance: 255, tolls: 350, stateTax: 250 },
-  "delhi-rishikesh": { distance: 245, tolls: 350, stateTax: 250 },
-  "delhi-haridwar": { distance: 225, tolls: 300, stateTax: 200 }
+/**
+ * Parses dates to calculate number of days between pickup and return.
+ */
+const calculateDays = (pickupDate, returnDate) => {
+  if (!returnDate) return 1;
+  const start = new Date(pickupDate);
+  const end = new Date(returnDate);
+  const diffTime = Math.abs(end - start);
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  return Math.max(1, diffDays + 1); // If same day, it counts as 1 day. If next day, it's 2 days.
 };
 
 /**
- * Calculates the exact fare breakdown for a one-way outstation trip.
- * @param {number} distanceKm - The total distance in kilometers.
- * @param {string} vehicleCategory - The category of vehicle (e.g. "Sedan").
- * @param {number} extraTolls - (Optional) Pre-calculated tolls + state tax.
- * @returns {Object} Fare breakdown object.
+ * Calculates the exact fare breakdown based on trip type.
+ * @param {Object} params
+ * @param {string} params.tripType
+ * @param {number} params.distanceKm
+ * @param {string} params.vehicleCategory
+ * @param {number} params.extraTolls
+ * @param {string} params.pickupDate
+ * @param {string} params.returnDate
+ * @param {string} params.localPackage
+ * @returns {Object} Fare breakdown object
  */
-export const calculateOneWayFare = (distanceKm, vehicleCategory, extraTolls = 0) => {
+export const calculateFare = ({ tripType, distanceKm, vehicleCategory, estimatedToll = 0, estimatedStateTax = 0, pickupDate, returnDate, localPackage, travelTime = "N/A", tollCount = 0, routeSource = "fallback_estimate", distanceSource = "Estimated", isUnknownRoute = false }) => {
   const vehicle = VEHICLE_RATES[vehicleCategory];
   if (!vehicle) return null;
 
-  // Minimum billing of 130 km for any outstation trip
-  const billableDistance = Math.max(distanceKm, 130);
+  let totalFare = 0;
+  let distanceCharge = 0;
+  let billableDistance = 0;
+  let driverAllowanceTotal = 0;
+  let perKmRate = 0;
+  let baseFare = 0;
+  let description = vehicle.description;
+  let finalTollCount = tollCount;
+  let finalEstimatedToll = estimatedToll;
+  let finalEstimatedStateTax = estimatedStateTax;
+
+  if (tripType === TRIP_TYPES.ONE_WAY) {
+    billableDistance = isUnknownRoute ? 0 : Math.max(distanceKm, MIN_BILLABLE_ONE_WAY_KM);
+    perKmRate = vehicle.oneWayRate;
+    distanceCharge = isUnknownRoute ? 0 : Math.round(billableDistance * perKmRate);
+    driverAllowanceTotal = isUnknownRoute ? 0 : DRIVER_ALLOWANCE;
+    totalFare = isUnknownRoute ? 0 : (distanceCharge + driverAllowanceTotal + finalEstimatedToll + finalEstimatedStateTax);
+  } 
   
-  const distanceCharge = Math.round(billableDistance * vehicle.perKmRate);
-  const totalFare = vehicle.baseFare + distanceCharge + DRIVER_ALLOWANCE + extraTolls;
+  else if (tripType === TRIP_TYPES.ROUND_TRIP) {
+    const tripDays = calculateDays(pickupDate, returnDate);
+    const minKmForTrip = tripDays * MIN_BILLABLE_ROUND_TRIP_KM_PER_DAY;
+    
+    // For round trip, we double the one-way distance to get estimated total journey
+    const estTotalDistance = isUnknownRoute ? 0 : (distanceKm * 2);
+    billableDistance = isUnknownRoute ? 0 : Math.max(estTotalDistance, minKmForTrip);
+    perKmRate = vehicle.roundTripRate;
+    distanceCharge = isUnknownRoute ? 0 : Math.round(billableDistance * perKmRate);
+    driverAllowanceTotal = isUnknownRoute ? 0 : (tripDays * DRIVER_ALLOWANCE);
+    
+    // We double the one-way tolls as an estimate for the return journey
+    finalEstimatedToll = isUnknownRoute ? 0 : (estimatedToll * 2);
+    finalEstimatedStateTax = isUnknownRoute ? 0 : (estimatedStateTax * 2);
+    finalTollCount = isUnknownRoute ? 0 : (tollCount * 2);
+    
+    totalFare = isUnknownRoute ? 0 : (distanceCharge + driverAllowanceTotal + finalEstimatedToll + finalEstimatedStateTax);
+  }
+
+  else if (tripType === TRIP_TYPES.LOCAL) {
+    // localPackage is like "8hr/80km"
+    const pkg = localPackage || "8hr/80km";
+    baseFare = vehicle.localRates[pkg];
+    totalFare = baseFare;
+    perKmRate = vehicle.localExtraKmRate;
+    billableDistance = parseInt(pkg.split('/')[1]); // Extract 80 from "8hr/80km"
+    finalEstimatedToll = 0; // Usually paid directly by customer in local
+    finalEstimatedStateTax = 0;
+    finalTollCount = 0;
+    driverAllowanceTotal = 0; // Included in local base rate mostly
+    description = `${vehicle.description} - ${pkg}`;
+  }
+
+  else if (tripType === TRIP_TYPES.AIRPORT) {
+    billableDistance = isUnknownRoute ? 0 : Math.max(distanceKm, 30); // Minimal billing distance for airport
+    perKmRate = vehicle.oneWayRate;
+    distanceCharge = isUnknownRoute ? 0 : Math.round(billableDistance * perKmRate);
+    baseFare = AIRPORT_TRANSFER_SURCHARGE; // Extra surcharge for airport commercial parking/entry
+    totalFare = isUnknownRoute ? 0 : (distanceCharge + baseFare + finalEstimatedToll + finalEstimatedStateTax); // No driver allowance for local airport drops
+  }
 
   return {
     category: vehicleCategory,
-    description: vehicle.description,
+    description: description,
     seats: vehicle.seats,
-    distanceKm: billableDistance,
-    perKmRate: vehicle.perKmRate,
+    tripType: tripType,
+    distanceKm: billableDistance, // this is billable, let's keep original distance too
+    originalDistanceKm: distanceKm,
+    perKmRate: perKmRate,
     distanceCharge: distanceCharge,
-    driverAllowance: DRIVER_ALLOWANCE,
-    tollsAndTaxes: extraTolls,
-    baseFare: vehicle.baseFare,
+    driverAllowance: driverAllowanceTotal,
+    estimatedToll: finalEstimatedToll,
+    estimatedStateTax: finalEstimatedStateTax,
+    tollCount: finalTollCount,
+    travelTime: travelTime,
+    routeSource: routeSource,
+    distanceSource: distanceSource,
+    isUnknownRoute: isUnknownRoute,
+    baseFare: baseFare,
     totalFare: totalFare
   };
 };
 
 /**
- * Generates an array of all vehicle fares for a specific distance.
- * @param {number} distanceKm - The distance in KM
- * @param {number} extraTolls - Extra tolls/taxes
- * @returns {Array} Array of fare breakdown objects
+ * Generates an array of all vehicle fares for a specific trip.
  */
-export const getAllVehicleFares = (distanceKm, extraTolls = 0) => {
+export const getAllVehicleFares = (params) => {
   return Object.keys(VEHICLE_RATES).map(category => 
-    calculateOneWayFare(distanceKm, category, extraTolls)
+    calculateFare({ ...params, vehicleCategory: category })
   );
-};
-
-/**
- * Normalizes a location string to check against static routes.
- */
-const normalizeLocation = (loc) => loc.toLowerCase().replace(/[^a-z0-9]/g, '');
-
-/**
- * Attempts to match pickup and drop against our static database.
- */
-export const getStaticRouteData = (pickup, drop) => {
-  const p = normalizeLocation(pickup);
-  const d = normalizeLocation(drop);
-  
-  // Basic matching logic
-  if (p.includes('delhi') || p.includes('ncr') || p.includes('airport')) {
-    if (d.includes('haldwani')) return STATIC_ROUTES["delhi-haldwani"];
-    if (d.includes('nainital')) return STATIC_ROUTES["delhi-nainital"];
-    if (d.includes('ramnagar') || d.includes('corbett')) return STATIC_ROUTES["delhi-ramnagar"];
-    if (d.includes('dehradun')) return STATIC_ROUTES["delhi-dehradun"];
-    if (d.includes('rishikesh')) return STATIC_ROUTES["delhi-rishikesh"];
-    if (d.includes('haridwar')) return STATIC_ROUTES["delhi-haridwar"];
-  }
-  
-  // Reverse matching
-  if (d.includes('delhi') || d.includes('ncr') || d.includes('airport')) {
-    if (p.includes('haldwani')) return STATIC_ROUTES["delhi-haldwani"];
-    if (p.includes('nainital')) return STATIC_ROUTES["delhi-nainital"];
-    if (p.includes('ramnagar') || p.includes('corbett')) return STATIC_ROUTES["delhi-ramnagar"];
-    if (p.includes('dehradun')) return STATIC_ROUTES["delhi-dehradun"];
-    if (p.includes('rishikesh')) return STATIC_ROUTES["delhi-rishikesh"];
-    if (p.includes('haridwar')) return STATIC_ROUTES["delhi-haridwar"];
-  }
-
-  return null; // No static match found
 };

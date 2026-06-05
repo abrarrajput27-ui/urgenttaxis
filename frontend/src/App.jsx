@@ -10,6 +10,7 @@ import {
 import { supabase } from './lib/supabase';
 import { getRouteDistance } from './lib/mapsApi';
 import { getAllVehicleFares } from './lib/pricingEngine';
+import { TRIP_TYPES } from './lib/pricingRules';
 import FareBreakup from './components/FareBreakup';
 
 // Import images statically
@@ -40,6 +41,7 @@ import RouteSEOContent from './components/RouteSEOContent';
 import StickyMobileBar from './components/StickyMobileBar';
 import FloatingQuoteWidget from './components/FloatingQuoteWidget';
 import LeadCapturePopup from './components/LeadCapturePopup';
+import LocationInput from './components/LocationInput';
 
 import serviceOneWay from './assets/images/service-oneway.png';
 import serviceRoundTrip from './assets/images/service-roundtrip.png';
@@ -173,7 +175,11 @@ function Home() {
   const [drop, setDrop] = useState('');
   const [date, setDate] = useState('');
   const [time, setTime] = useState('');
-  const [vehicle, setVehicle] = useState('Select cab type');
+  
+  // Trip State
+  const [tripType, setTripType] = useState(TRIP_TYPES.ONE_WAY);
+  const [returnDate, setReturnDate] = useState('');
+  const [localPackage, setLocalPackage] = useState('8hr/80km');
   
   // Fare Engine State
   const [isCalculating, setIsCalculating] = useState(false);
@@ -214,26 +220,51 @@ function Home() {
 
   const handleCalculateFare = async (e) => {
     e.preventDefault();
-    if (!pickup || !drop || !date || !time) {
+    if (!pickup || !date || !time) {
       alert("Please fill all required fields");
+      return;
+    }
+    if (tripType !== TRIP_TYPES.LOCAL && !drop) {
+      alert("Please fill drop location");
+      return;
+    }
+    if (tripType === TRIP_TYPES.ROUND_TRIP && !returnDate) {
+      alert("Please select a return date");
       return;
     }
     
     setIsCalculating(true);
 
     try {
-      ReactGA.event("fare_calculation_started", {
+      ReactGA.event("fare_search", {
         category: "Engagement",
-        label: `${pickup} to ${drop}`
+        label: `${tripType}: ${pickup} to ${drop || localPackage}`
       });
 
-      // 1. Get Distance
-      const routeData = await getRouteDistance(pickup, drop);
+      // 1. Get Distance (Mocked to static for local/airport if needed, else via Maps)
+      const routeData = tripType === TRIP_TYPES.LOCAL ? 
+                        { distanceKm: 0, tollsAndTaxes: 0 } : 
+                        await getRouteDistance(pickup, drop);
       
       // 2. Generate Fares
-      const fares = getAllVehicleFares(routeData.distanceKm, routeData.tollsAndTaxes);
+      const fares = getAllVehicleFares({
+        tripType,
+        distanceKm: routeData.distanceKm,
+        estimatedToll: routeData.estimatedToll,
+        estimatedStateTax: routeData.estimatedStateTax,
+        tollCount: routeData.tollCount,
+        travelTime: routeData.travelTime,
+        routeSource: routeData.source,
+        distanceSource: routeData.distanceSource,
+        isUnknownRoute: routeData.isUnknownRoute,
+        pickupDate: date,
+        returnDate: returnDate,
+        localPackage: localPackage
+      });
 
       if (fares.length === 0) throw new Error("Could not calculate fares");
+
+      ReactGA.event("fare_result_view", { category: "Engagement" });
 
       setCalculatedDistance(routeData.distanceKm);
       setCalculatedFares(fares);
@@ -541,52 +572,91 @@ function Home() {
                     drop={drop}
                     date={date}
                     time={time}
+                    tripType={tripType}
+                    returnDate={returnDate}
+                    localPackage={localPackage}
                     distanceKm={calculatedDistance}
                     fares={calculatedFares}
                     onBack={() => setShowFareBreakup(false)}
                   />
                 ) : (
-                  <form className="p-6 space-y-4" onSubmit={handleCalculateFare}>
-                    {/* Locations with Swap Icon */}
-                    <div className="relative flex flex-col">
-                      <div>
-                        <label className="block text-[12px] font-bold text-gray-800 mb-1.5 ml-1">Pickup City</label>
-                        <div className="relative">
-                          <MapPin className="absolute left-3.5 top-[12px] w-[18px] h-[18px] text-[#00a859]" />
-                          <input 
-                            type="text" 
-                            placeholder="Enter pickup city" 
-                            value={pickup} onChange={(e) => setPickup(e.target.value)}
-                            className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg text-[13px] outline-none focus:border-blue-500 transition-colors bg-white text-gray-800"
-                            required
-                          />
-                        </div>
-                      </div>
-                      
-                      <div className="flex justify-center -my-2 relative z-10 pointer-events-none">
-                        <button 
-                          type="button" 
-                          onClick={swapLocations}
-                          className="bg-white border border-gray-200 shadow-sm rounded-full p-1.5 hover:bg-gray-50 transition-colors pointer-events-auto"
+                  <form className="p-4 sm:p-6 space-y-4" onSubmit={handleCalculateFare}>
+                    
+                    {/* Trip Type Toggles */}
+                    <div className="flex bg-blue-50/50 p-1 rounded-xl mb-4 overflow-x-auto scrollbar-hide">
+                      {Object.values(TRIP_TYPES).map(type => (
+                        <button
+                          key={type}
+                          type="button"
+                          onClick={() => setTripType(type)}
+                          className={`flex-1 min-w-[85px] py-2 text-[11px] sm:text-[12px] font-bold rounded-lg transition-all whitespace-nowrap px-2 ${
+                            tripType === type 
+                              ? 'bg-white text-[#1e3b8a] shadow-sm' 
+                              : 'text-gray-500 hover:text-gray-700'
+                          }`}
                         >
-                          <ArrowLeftRight className="w-[16px] h-[16px] text-[#1e3b8a] rotate-90" />
+                          {type}
                         </button>
+                      ))}
+                    </div>
+
+                    {/* Locations */}
+                    {tripType === TRIP_TYPES.LOCAL ? (
+                      <LocationInput
+                        label="Pickup City"
+                        placeholder="Enter pickup city"
+                        value={pickup}
+                        onChange={(e) => setPickup(e.target.value)}
+                        iconColor="text-[#00a859]"
+                      />
+                    ) : (
+                      <div className="relative flex flex-col">
+                        <LocationInput
+                          label={tripType === TRIP_TYPES.AIRPORT ? "Airport / Pickup" : "Pickup City"}
+                          placeholder={tripType === TRIP_TYPES.AIRPORT ? "Enter airport or city" : "Enter pickup city"}
+                          value={pickup}
+                          onChange={(e) => setPickup(e.target.value)}
+                          iconColor="text-[#00a859]"
+                        />
+                        
+                        <div className="flex justify-center -my-2 relative z-10 pointer-events-none">
+                          <button 
+                            type="button" 
+                            onClick={swapLocations}
+                            className="bg-white border border-gray-200 shadow-sm rounded-full p-1.5 hover:bg-gray-50 transition-colors pointer-events-auto"
+                          >
+                            <ArrowLeftRight className="w-[16px] h-[16px] text-[#1e3b8a] rotate-90" />
+                          </button>
+                        </div>
+                        
+                        <LocationInput
+                          label={tripType === TRIP_TYPES.AIRPORT ? "Drop Location" : "Drop City"}
+                          placeholder={tripType === TRIP_TYPES.AIRPORT ? "Enter drop city or hotel" : "Enter drop city"}
+                          value={drop}
+                          onChange={(e) => setDrop(e.target.value)}
+                          iconColor="text-red-500"
+                        />
                       </div>
-                      
+                    )}
+
+                    {/* Local Packages (If Local) */}
+                    {tripType === TRIP_TYPES.LOCAL && (
                       <div>
-                        <label className="block text-[12px] font-bold text-gray-800 mb-1.5 ml-1">Drop City</label>
+                        <label className="block text-[12px] font-bold text-gray-800 mb-1.5 ml-1">Select Package</label>
                         <div className="relative">
-                          <MapPin className="absolute left-3.5 top-[13px] w-[18px] h-[18px] text-red-500" />
-                          <input 
-                            type="text" 
-                            placeholder="Enter drop city" 
-                            value={drop} onChange={(e) => setDrop(e.target.value)}
-                            className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg text-[13px] outline-none focus:border-blue-500 transition-colors bg-white text-gray-800"
-                            required
-                          />
+                          <Clock className="absolute left-3.5 top-[13px] w-[18px] h-[18px] text-[#1e3b8a]" />
+                          <select 
+                            value={localPackage} onChange={(e) => setLocalPackage(e.target.value)}
+                            className="w-full pl-10 pr-10 py-3 border border-gray-200 rounded-lg text-[14px] text-gray-700 outline-none focus:border-blue-500 appearance-none bg-white"
+                          >
+                            <option value="4hr/40km">4 Hrs / 40 Kms</option>
+                            <option value="8hr/80km">8 Hrs / 80 Kms</option>
+                            <option value="12hr/120km">12 Hrs / 120 Kms</option>
+                          </select>
+                          <ChevronDown className="absolute right-3.5 top-[13px] w-[18px] h-[18px] text-gray-400 pointer-events-none" />
                         </div>
                       </div>
-                    </div>
+                    )}
 
                     {/* Date & Time */}
                     <div>
@@ -612,6 +682,22 @@ function Home() {
                         </div>
                       </div>
                     </div>
+
+                    {/* Return Date (If Round Trip) */}
+                    {tripType === TRIP_TYPES.ROUND_TRIP && (
+                      <div>
+                        <label className="block text-[12px] font-bold text-gray-800 mb-1.5 ml-1">Return Date</label>
+                        <div className="relative">
+                          <Calendar className="absolute left-3.5 top-[14px] w-[18px] h-[18px] text-gray-400 pointer-events-none" />
+                          <input 
+                            type="date" 
+                            value={returnDate} onChange={(e) => setReturnDate(e.target.value)}
+                            className="w-full pl-10 pr-2 py-3 border border-gray-200 rounded-lg text-[14px] sm:text-[13px] text-gray-700 outline-none focus:border-blue-500 bg-white min-h-[46px] appearance-none"
+                            required
+                          />
+                        </div>
+                      </div>
+                    )}
 
                     <button 
                       type="submit" 

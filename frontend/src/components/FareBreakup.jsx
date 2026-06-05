@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { CheckCircle2, ArrowRight, ShieldCheck, MapPin, Calendar, Clock, Car, CreditCard, ArrowLeft, Loader2, MessageCircle } from 'lucide-react';
+import { CheckCircle2, ArrowRight, ShieldCheck, MapPin, Calendar, Clock, Car, CreditCard, ArrowLeft, Loader2, MessageCircle, Map, Navigation, AlertCircle } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import ReactGA from 'react-ga4';
 
@@ -10,6 +10,9 @@ const FareBreakup = ({
   drop, 
   date, 
   time, 
+  tripType,
+  returnDate,
+  localPackage,
   distanceKm, 
   fares, 
   onBack 
@@ -39,19 +42,49 @@ const FareBreakup = ({
         name,
         mobile,
         pickup,
-        drop_location: drop,
+        drop_location: drop || localPackage,
         trip_date: date,
+        trip_type: tripType,
+        return_date: returnDate || null,
+        trip_time: time,
         vehicle_type: selectedFare.category,
-        message: `Time: ${time} | Fare: ₹${selectedFare.totalFare} | Dist: ${distanceKm}km`,
+        estimated_fare: selectedFare.totalFare,
+        distance_km: selectedFare.isUnknownRoute ? 0 : selectedFare.originalDistanceKm,
+        travel_time: selectedFare.isUnknownRoute ? null : selectedFare.travelTime,
+        estimated_toll: selectedFare.estimatedToll,
+        estimated_state_tax: selectedFare.estimatedStateTax,
+        toll_count: selectedFare.tollCount,
+        route_source: selectedFare.routeSource,
+        distance_source: selectedFare.distanceSource,
+        fare_version: "v1",
+        pricing_engine_version: "fare-engine-v2",
+        booking_id: null,
+        customer_id: null,
+        driver_id: null,
+        vendor_id: null,
+        fare_breakup: selectedFare,
+        message: `Type: ${tripType} | Fare: ₹${selectedFare.isUnknownRoute ? 'TBD' : selectedFare.totalFare} | Dist: ${selectedFare.isUnknownRoute ? 'TBD' : selectedFare.originalDistanceKm}km`,
         source_page: window.location.pathname,
-        route_name: `${pickup} to ${drop}`,
+        route_name: `${pickup} to ${drop || localPackage}`,
         lead_source: "Fare Breakup Engine"
       };
 
       const { error } = await supabase.from('leads').insert([payload]);
       if (error) console.error("Supabase insert failed, continuing to WhatsApp:", error);
 
-      const messageText = `🚖 New Confirmed Booking - Urgent Taxis\n\n👤 Name: ${name}\n📞 Mobile: ${mobile}\n📍 Pickup: ${pickup}\n📍 Drop: ${drop}\n📅 Trip Date: ${date} at ${time}\n🚘 Vehicle: ${selectedFare.category}\n\n💰 Quoted Fare: ₹${selectedFare.totalFare}\n📏 Est. Distance: ${distanceKm} km\n\n🌐 Source: Website Auto Fare Engine\n\nPlease call customer immediately to confirm.`;
+      let messageText = `🚖 New Confirmed Booking - Urgent Taxis\n\n👤 Name: ${name}\n📞 Mobile: ${mobile}\n🚕 Trip Type: ${tripType}\n📍 Pickup: ${pickup}\n📍 Drop/Package: ${drop || localPackage}\n📅 Date: ${date} at ${time}`;
+      
+      if (tripType === 'Round Trip' && returnDate) {
+        messageText += `\n📅 Return Date: ${returnDate}`;
+      }
+
+      messageText += `\n\n🚘 Vehicle: ${selectedFare.category}\n`;
+      if (selectedFare.isUnknownRoute) {
+        messageText += `💰 Starting Base Fare: ₹${selectedFare.baseFare}\n\n*Exact distance and fare will be confirmed shortly on WhatsApp.*\n\n🌐 Source: Website Auto Fare Engine\n\nPlease call customer immediately.`;
+      } else {
+        messageText += `📏 Actual Route Distance: ${selectedFare.originalDistanceKm} km\n⏱️ Est. Travel Time: ${selectedFare.travelTime}\n🛣️ Est. Tolls: ${selectedFare.tollCount} (₹${selectedFare.estimatedToll})\n🏢 State Tax: ₹${selectedFare.estimatedStateTax}`;
+        messageText += `\n💰 Final Quoted Fare: ₹${selectedFare.totalFare}\n\n🌐 Source: Website Auto Fare Engine\n\nPlease call customer immediately to confirm.`;
+      }
       
       const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(messageText)}`;
       const newWindow = window.open(whatsappUrl, '_blank');
@@ -94,7 +127,45 @@ const FareBreakup = ({
         </button>
         <div className="text-right">
            <h3 className="font-bold text-lg leading-tight">Select Vehicle</h3>
-           <p className="text-xs text-blue-200">~{distanceKm} km Total Distance</p>
+           <p className="text-xs text-blue-200">{selectedFare.isUnknownRoute ? 'Distance TBD' : `~${distanceKm} km Total Distance`}</p>
+        </div>
+      </div>
+
+      {/* Route Summary Card */}
+      <div className="bg-blue-50/50 p-4 border-b border-gray-100 text-[13px]">
+        <div className="grid grid-cols-2 gap-y-3 gap-x-2">
+          <div className="flex flex-col">
+            <span className="text-gray-500 text-[11px] font-bold uppercase tracking-wider mb-0.5">Route Distance</span>
+            <span className="font-semibold text-gray-900 flex items-center">
+              <Map className="w-3.5 h-3.5 mr-1 text-blue-500" /> {selectedFare.isUnknownRoute ? 'TBD' : `${selectedFare.originalDistanceKm} km`}
+            </span>
+          </div>
+          <div className="flex flex-col">
+            <span className="text-gray-500 text-[11px] font-bold uppercase tracking-wider mb-0.5">Est. Travel Time</span>
+            <span className="font-semibold text-gray-900 flex items-center">
+              <Clock className="w-3.5 h-3.5 mr-1 text-blue-500" /> {selectedFare.isUnknownRoute ? 'TBD' : selectedFare.travelTime}
+            </span>
+          </div>
+          <div className="flex flex-col">
+            <span className="text-gray-500 text-[11px] font-bold uppercase tracking-wider mb-0.5">Estimated Tolls</span>
+            <span className="font-semibold text-gray-900">
+              {selectedFare.tollCount} (Est. ₹{selectedFare.estimatedToll})
+            </span>
+          </div>
+          <div className="flex flex-col">
+            <span className="text-gray-500 text-[11px] font-bold uppercase tracking-wider mb-0.5">Estimated State Tax</span>
+            <span className="font-semibold text-gray-900">₹{selectedFare.estimatedStateTax}</span>
+          </div>
+          <div className="flex flex-col">
+            <span className="text-gray-500 text-[11px] font-bold uppercase tracking-wider mb-0.5">Trip Type</span>
+            <span className="font-semibold text-gray-900 flex items-center">
+              <Navigation className="w-3.5 h-3.5 mr-1 text-blue-500" /> {tripType}
+            </span>
+          </div>
+          <div className="flex flex-col">
+            <span className="text-gray-500 text-[11px] font-bold uppercase tracking-wider mb-0.5">Distance Source</span>
+            <span className="font-semibold text-gray-900">{selectedFare.distanceSource}</span>
+          </div>
         </div>
       </div>
 
@@ -110,7 +181,9 @@ const FareBreakup = ({
               <Car className={`w-8 h-8 mb-2 ${selectedVehicleIndex === idx ? 'text-[#00a859]' : 'text-gray-400'}`} />
               <span className="font-bold text-[13px] text-gray-900 leading-tight">{fare.category}</span>
               <span className="text-[10px] text-gray-500 mb-1">{fare.seats} Seats</span>
-              <span className={`font-black text-[14px] ${selectedVehicleIndex === idx ? 'text-[#00a859]' : 'text-gray-700'}`}>₹{fare.totalFare}</span>
+              <span className={`font-black text-[14px] ${selectedVehicleIndex === idx ? 'text-[#00a859]' : 'text-gray-700'}`}>
+                {fare.isUnknownRoute ? `Start ₹${fare.baseFare}` : `₹${fare.totalFare}`}
+              </span>
             </button>
           ))}
         </div>
@@ -123,23 +196,60 @@ const FareBreakup = ({
         </h4>
         
         <div className="space-y-3 mb-6">
-          <div className="flex justify-between text-sm">
-            <span className="text-gray-600">Base Fare ({distanceKm} km x ₹{selectedFare.perKmRate})</span>
-            <span className="font-semibold text-gray-900">₹{selectedFare.distanceCharge}</span>
-          </div>
-          <div className="flex justify-between text-sm">
-            <span className="text-gray-600">Driver Allowance</span>
-            <span className="font-semibold text-gray-900">₹{selectedFare.driverAllowance}</span>
-          </div>
-          {selectedFare.tollsAndTaxes > 0 && (
-            <div className="flex justify-between text-sm">
-              <span className="text-gray-600">Est. Tolls & State Tax</span>
-              <span className="font-semibold text-gray-900">₹{selectedFare.tollsAndTaxes}</span>
+          {selectedFare.isUnknownRoute ? (
+            <div className="bg-blue-50 text-blue-800 p-3 rounded-lg text-sm border border-blue-100 font-medium">
+              Exact distance and fare will be confirmed shortly on WhatsApp.
             </div>
+          ) : (
+            <>
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-600">Distance Fare ({selectedFare.originalDistanceKm} km)</span>
+                <span className="font-semibold text-gray-900">₹{selectedFare.distanceCharge}</span>
+              </div>
+              {selectedFare.distanceKm > selectedFare.originalDistanceKm && (
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-600">Min. Fare Adjustment (upto {selectedFare.distanceKm} km)</span>
+                  <span className="font-semibold text-gray-900">₹{Math.round((selectedFare.distanceKm - selectedFare.originalDistanceKm) * selectedFare.perKmRate)}</span>
+                </div>
+              )}
+              {selectedFare.driverAllowance > 0 && (
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-600">Driver Allowance</span>
+                  <span className="font-semibold text-gray-900">₹{selectedFare.driverAllowance}</span>
+                </div>
+              )}
+              {selectedFare.baseFare > 0 && (
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-600">Base/Package/Surcharge</span>
+                  <span className="font-semibold text-gray-900">₹{selectedFare.baseFare}</span>
+                </div>
+              )}
+              {selectedFare.estimatedToll > 0 && (
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-600">Estimated Toll</span>
+                  <span className="font-semibold text-gray-900">₹{selectedFare.estimatedToll}</span>
+                </div>
+              )}
+              {selectedFare.estimatedStateTax > 0 && (
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-600">Estimated State Tax</span>
+                  <span className="font-semibold text-gray-900">₹{selectedFare.estimatedStateTax}</span>
+                </div>
+              )}
+              <div className="flex justify-between text-sm text-gray-500">
+                 <span className="text-[12px] italic">Night / Peak Charges</span>
+                 <span className="text-[12px] italic">As applicable</span>
+              </div>
+              <div className="flex justify-between items-center pt-3 border-t border-dashed border-gray-200 mt-2">
+                <span className="font-black text-gray-900">Final Estimated Fare</span>
+                <span className="font-black text-2xl text-[#0aa63f]">₹{selectedFare.totalFare}</span>
+              </div>
+            </>
           )}
-          <div className="flex justify-between items-center pt-3 border-t border-dashed border-gray-200 mt-2">
-            <span className="font-black text-gray-900">Total Estimated Fare</span>
-            <span className="font-black text-2xl text-[#0aa63f]">₹{selectedFare.totalFare}</span>
+          
+          <div className="bg-yellow-50 text-yellow-800 p-2.5 rounded-lg text-[11px] leading-relaxed flex items-start mt-3 border border-yellow-100">
+            <AlertCircle className="w-4 h-4 mr-1.5 flex-shrink-0 mt-0.5 text-yellow-600" />
+            <span>Final fare may vary based on actual toll, state tax, parking, exact pickup/drop location and vehicle availability. Night/Peak charges may apply.</span>
           </div>
         </div>
 
