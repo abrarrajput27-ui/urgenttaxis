@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, useLocation, Link } from 'react-router-dom';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
+import ReactGA from 'react-ga4';
 import { 
   Phone, Mail, MapPin, Calendar, Clock, Car, ChevronDown,
   Zap, Tag, Headphones, Users, ShieldCheck, ArrowRight, 
@@ -65,10 +66,25 @@ export const fleetAssets = {
 
 // NOTE: This is a temporary CSR SEO routing implementation.
 // For full SSR support (for platforms that do not execute JS), this can later be upgraded to Next.js.
+const GA_MEASUREMENT_ID = 'G-9ER9VR8EHT';
+ReactGA.initialize(GA_MEASUREMENT_ID);
+
 function Home() {
   const location = useLocation();
 
   useEffect(() => {
+    ReactGA.send({ hitType: "pageview", page: location.pathname + location.search });
+    const routePages = [
+      '/delhi-to-haldwani-taxi',
+      '/delhi-to-nainital-taxi',
+      '/ghaziabad-taxi-service',
+      '/delhi-to-ramnagar-taxi',
+      '/delhi-airport-to-haldwani-taxi',
+      '/noida-taxi-service'
+    ];
+    if (routePages.includes(location.pathname)) {
+      ReactGA.event({ category: "Route Pages", action: "route_page_visit", label: location.pathname });
+    }
     const path = location.pathname.substring(1);
     const sectionIds = ['services', 'routes', 'fleet', 'about', 'blog', 'contact'];
     if (sectionIds.includes(path)) {
@@ -182,6 +198,8 @@ function Home() {
 
   const handleWhatsAppBooking = (e) => {
     e.preventDefault();
+    ReactGA.event({ category: "Form", action: "booking_form_submit" });
+    ReactGA.event({ category: "Contact", action: "whatsapp_click", label: "Booking Form" });
     const text = `Hello Urgent Taxis, I need a ride:
 - Pickup: ${pickup}
 - Drop: ${drop}
@@ -192,9 +210,19 @@ function Home() {
   };
 
   const handleSimpleWhatsApp = (message) => {
+    ReactGA.event({ category: "Contact", action: "whatsapp_click", label: "Direct WhatsApp Button" });
     window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`, '_blank');
   };
 
+  const handlePhoneClick = () => {
+    ReactGA.event({ category: "Contact", action: "phone_call_click" });
+  };
+  const handleReviewClick = () => {
+    ReactGA.event({ category: "Engagement", action: "review_click" });
+  };
+  const handleCheckFareClick = () => {
+    ReactGA.event({ category: "Engagement", action: "check_fare_click" });
+  };
   const swapLocations = () => {
     const temp = pickup;
     setPickup(drop);
@@ -276,7 +304,7 @@ function Home() {
                 <Phone className="w-5 h-5 fill-current" />
               </div>
               <div className="flex flex-col">
-                <a href={`tel:${CALL_NUMBER}`} className="font-black text-[18px] text-[#1e3a8a] leading-tight tracking-wide">73106 51940</a>
+                <a href={`tel:${CALL_NUMBER}`} onClick={handlePhoneClick} className="font-black text-[18px] text-[#1e3a8a] leading-tight tracking-wide">73106 51940</a>
                 <span className="text-[11px] font-medium text-gray-400 leading-tight">Call Us Anytime</span>
               </div>
             </div>
@@ -478,10 +506,10 @@ function Home() {
                   <button 
                     type="submit" 
                     className="w-full bg-[#0aa63f] hover:bg-[#088c34] text-white font-bold py-3.5 rounded-[10px] flex items-center justify-center transition-colors mt-6 text-[15px] shadow-md shadow-[#0aa63f]/20"
+                    onClick={handleCheckFareClick}
                   >
                     Check Fare <ArrowRight className="w-5 h-5 ml-2" />
                   </button>
-                  
                   <div className="text-center pt-2">
                     <p className="text-[12px] font-bold text-gray-600 flex items-center justify-center">
                       <Zap className="w-3.5 h-3.5 text-yellow-500 mr-1 fill-yellow-500" /> Instant WhatsApp Confirmation
@@ -699,7 +727,7 @@ function Home() {
             </div>
             
             <div className="flex space-x-3">
-              <a href="https://g.page/r/CWwcpluhBRROEBM/review" target="_blank" rel="noopener noreferrer" className="bg-blue-600 hover:bg-blue-700 text-white font-bold text-[13px] px-5 py-2.5 rounded-full transition-colors shadow-sm">
+              <a href="https://g.page/r/CWwcpluhBRROEBM/review" onClick={handleReviewClick} target="_blank" rel="noopener noreferrer" className="bg-blue-600 hover:bg-blue-700 text-white font-bold text-[13px] px-5 py-2.5 rounded-full transition-colors shadow-sm">
                 Write a Review
               </a>
               <a href="https://g.page/r/CWwcpluhBRROEBM" target="_blank" rel="noopener noreferrer" className="bg-white border border-gray-200 hover:border-blue-600 hover:text-blue-600 text-gray-700 font-bold text-[13px] px-5 py-2.5 rounded-full transition-colors shadow-sm">
@@ -806,7 +834,7 @@ function Home() {
           {/* Buttons */}
           <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-3 z-20 shrink-0 lg:ml-auto">
             <a 
-              href={`tel:${CALL_NUMBER}`}
+              href={`tel:${CALL_NUMBER}`} onClick={handlePhoneClick}
               className="bg-white text-[#1e3a8a] px-5 py-2.5 rounded-xl font-bold flex items-center justify-center transition-colors shadow-md hover:bg-gray-50 text-[13px]"
             >
               <Phone className="w-[16px] h-[16px] mr-2 fill-[#1e3a8a]" /> Call Now
@@ -885,7 +913,7 @@ function Home() {
               <ul className="space-y-4 text-[14px] font-medium">
                 <li className="flex items-start">
                   <Phone className="w-[18px] h-[18px] mr-3 text-white flex-shrink-0 mt-0.5 fill-current" />
-                  <a href={`tel:${CALL_NUMBER}`} className="text-white font-bold tracking-wide">73106 51940</a>
+                  <a href={`tel:${CALL_NUMBER}`} onClick={handlePhoneClick} className="text-white font-bold tracking-wide">73106 51940</a>
                 </li>
                 <li className="flex items-start">
                   <Mail className="w-[18px] h-[18px] mr-3 text-white flex-shrink-0 mt-0.5" />
@@ -914,7 +942,7 @@ function Home() {
       {/* Floating Action Buttons */}
       <div className="fixed bottom-6 right-6 flex flex-col space-y-3 z-50">
         <a 
-          href={`tel:${CALL_NUMBER}`}
+          href={`tel:${CALL_NUMBER}`} onClick={handlePhoneClick}
           className="bg-[#1e3a8a] hover:bg-[#152e73] text-white p-3 rounded-full shadow-2xl transition-transform transform hover:scale-110 flex items-center justify-center border-[3px] border-blue-100/50"
         >
           <Phone className="w-[20px] h-[20px] fill-current" />
