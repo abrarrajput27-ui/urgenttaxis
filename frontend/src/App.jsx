@@ -337,7 +337,7 @@ function Home() {
   };
 
   return (
-    <div className="font-sans text-gray-800 bg-white min-h-screen pb-24 md:pb-0">
+    <div className="font-sans text-gray-800 bg-white min-h-screen pb-32 md:pb-24">
       <Helmet>
         <title>{routeData.title}</title>
         <meta name="description" content={routeData.desc} />
@@ -512,7 +512,7 @@ function Home() {
           <div className="flex flex-col lg:flex-row justify-between items-center lg:items-start gap-10 lg:gap-0 relative z-10">
             
             {/* Left Col */}
-            <div className="w-full lg:w-[52%] lg:-ml-10 xl:-ml-[50px] pt-6 flex flex-col">
+            <div className="w-full lg:w-[48%] lg:-ml-10 xl:-ml-[50px] pt-6 flex flex-col">
               <h1 className="text-[36px] md:text-[44px] lg:text-[52px] xl:text-[56px] font-black text-[#0f172a] leading-[1.1] mb-4 tracking-tight">
                 {routeData.h1}
               </h1>
@@ -556,7 +556,7 @@ function Home() {
             </div>
 
             {/* Right Col - Booking Form */}
-            <div className="w-full lg:w-[410px] relative z-40 mt-4 lg:mt-0 lg:ml-auto">
+            <div className="w-full lg:w-[460px] xl:w-[480px] relative z-40 mt-4 lg:mt-0 lg:ml-auto">
               <div className="bg-white rounded-[24px] shadow-[0_20px_50px_-12px_rgba(0,0,0,0.15)] overflow-hidden border border-gray-100">
                 
                 <div className="bg-[#1e3b8a] px-6 py-6 text-center relative overflow-hidden">
@@ -1161,7 +1161,7 @@ function Home() {
       </div>
 
       <StickyMobileBar onOpenLeadForm={() => setIsLeadFormOpen(true)} />
-      <FloatingQuoteWidget onOpenLeadForm={() => setIsLeadFormOpen(true)} />
+      <FloatingQuoteWidget onOpenLeadForm={() => setIsLeadFormOpen(true)} isHidden={showFareBreakup} />
       <LeadCapturePopup isOpen={isLeadFormOpen} onClose={() => setIsLeadFormOpen(false)} routeName={routeData.heading || "General"} />
     </div>
   );

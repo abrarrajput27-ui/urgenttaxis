@@ -2,7 +2,9 @@ import React from 'react';
 import { FileText } from 'lucide-react';
 import ReactGA from 'react-ga4';
 
-const FloatingQuoteWidget = ({ onOpenLeadForm }) => {
+const FloatingQuoteWidget = ({ onOpenLeadForm, isHidden }) => {
+  if (isHidden) return null;
+
   const handleQuoteClick = () => {
     ReactGA.event("get_quote_click", { category: "Conversion", label: "Desktop Floating Widget" });
     onOpenLeadForm();

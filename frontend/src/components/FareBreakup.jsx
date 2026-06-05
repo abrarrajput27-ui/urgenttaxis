@@ -170,7 +170,7 @@ const FareBreakup = ({
       </div>
 
       {/* Vehicle Selection */}
-      <div className="p-4 bg-gray-50 border-b border-gray-100 overflow-x-auto whitespace-nowrap scrollbar-hide pb-5">
+      <div className="w-full max-w-full p-4 bg-gray-50 border-b border-gray-100 overflow-x-auto whitespace-nowrap scrollbar-hide pb-5">
         <div className="flex gap-3">
           {fares.map((fare, idx) => (
             <button 
@@ -190,7 +190,7 @@ const FareBreakup = ({
       </div>
 
       {/* Fare Breakdown */}
-      <div className="p-5">
+      <div className="w-full max-w-full p-5 pb-8">
         <h4 className="font-bold text-gray-900 mb-4 flex items-center">
           <CreditCard className="w-5 h-5 mr-2 text-blue-600" /> Fare Breakup
         </h4>
