@@ -331,7 +331,7 @@ export default function App() {
                     <button 
                       type="button" 
                       onClick={swapLocations}
-                      className="absolute -right-3.5 top-[50%] -translate-y-1/2 bg-white border border-gray-200 shadow-md rounded-full p-2 z-10 hover:bg-gray-50 transition-colors"
+                      className="absolute right-4 top-[50%] -translate-y-1/2 bg-white border border-gray-200 shadow-md rounded-full p-2 z-10 hover:bg-gray-50 transition-colors"
                     >
                       <ArrowLeftRight className="w-[18px] h-[18px] text-[#1e3b8a] rotate-90" />
                     </button>
