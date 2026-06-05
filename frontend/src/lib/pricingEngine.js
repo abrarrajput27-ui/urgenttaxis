@@ -40,11 +40,15 @@ export const calculateFare = ({ tripType, distanceKm, vehicleCategory, estimated
   let finalEstimatedStateTax = estimatedStateTax;
 
   if (tripType === TRIP_TYPES.ONE_WAY) {
-    billableDistance = isUnknownRoute ? 0 : Math.max(distanceKm, MIN_BILLABLE_ONE_WAY_KM);
+    billableDistance = Math.max(distanceKm, MIN_BILLABLE_ONE_WAY_KM);
     perKmRate = vehicle.oneWayRate;
-    distanceCharge = isUnknownRoute ? 0 : Math.round(billableDistance * perKmRate);
-    driverAllowanceTotal = isUnknownRoute ? 0 : DRIVER_ALLOWANCE;
-    totalFare = isUnknownRoute ? 0 : (distanceCharge + driverAllowanceTotal + finalEstimatedToll + finalEstimatedStateTax);
+    distanceCharge = Math.round(billableDistance * perKmRate);
+    driverAllowanceTotal = DRIVER_ALLOWANCE;
+    
+    // Toll and Tax could be strings ("To be confirmed") for dynamic routes
+    const numericToll = typeof finalEstimatedToll === 'number' ? finalEstimatedToll : 0;
+    const numericTax = typeof finalEstimatedStateTax === 'number' ? finalEstimatedStateTax : 0;
+    totalFare = distanceCharge + driverAllowanceTotal + numericToll + numericTax;
   } 
   
   else if (tripType === TRIP_TYPES.ROUND_TRIP) {
@@ -52,18 +56,20 @@ export const calculateFare = ({ tripType, distanceKm, vehicleCategory, estimated
     const minKmForTrip = tripDays * MIN_BILLABLE_ROUND_TRIP_KM_PER_DAY;
     
     // For round trip, we double the one-way distance to get estimated total journey
-    const estTotalDistance = isUnknownRoute ? 0 : (distanceKm * 2);
-    billableDistance = isUnknownRoute ? 0 : Math.max(estTotalDistance, minKmForTrip);
+    const estTotalDistance = distanceKm * 2;
+    billableDistance = Math.max(estTotalDistance, minKmForTrip);
     perKmRate = vehicle.roundTripRate;
-    distanceCharge = isUnknownRoute ? 0 : Math.round(billableDistance * perKmRate);
-    driverAllowanceTotal = isUnknownRoute ? 0 : (tripDays * DRIVER_ALLOWANCE);
+    distanceCharge = Math.round(billableDistance * perKmRate);
+    driverAllowanceTotal = tripDays * DRIVER_ALLOWANCE;
     
-    // We double the one-way tolls as an estimate for the return journey
-    finalEstimatedToll = isUnknownRoute ? 0 : (estimatedToll * 2);
-    finalEstimatedStateTax = isUnknownRoute ? 0 : (estimatedStateTax * 2);
-    finalTollCount = isUnknownRoute ? 0 : (tollCount * 2);
+    // We double the one-way tolls as an estimate for the return journey if they are numbers
+    finalEstimatedToll = typeof estimatedToll === 'number' ? (estimatedToll * 2) : "To be confirmed";
+    finalEstimatedStateTax = typeof estimatedStateTax === 'number' ? (estimatedStateTax * 2) : "As applicable";
+    finalTollCount = typeof tollCount === 'number' ? (tollCount * 2) : "Varies";
     
-    totalFare = isUnknownRoute ? 0 : (distanceCharge + driverAllowanceTotal + finalEstimatedToll + finalEstimatedStateTax);
+    const numericToll = typeof finalEstimatedToll === 'number' ? finalEstimatedToll : 0;
+    const numericTax = typeof finalEstimatedStateTax === 'number' ? finalEstimatedStateTax : 0;
+    totalFare = distanceCharge + driverAllowanceTotal + numericToll + numericTax;
   }
 
   else if (tripType === TRIP_TYPES.LOCAL) {
@@ -81,12 +87,20 @@ export const calculateFare = ({ tripType, distanceKm, vehicleCategory, estimated
   }
 
   else if (tripType === TRIP_TYPES.AIRPORT) {
-    billableDistance = isUnknownRoute ? 0 : Math.max(distanceKm, 30); // Minimal billing distance for airport
+    billableDistance = Math.max(distanceKm, 30); // Minimal billing distance for airport
     perKmRate = vehicle.oneWayRate;
-    distanceCharge = isUnknownRoute ? 0 : Math.round(billableDistance * perKmRate);
+    distanceCharge = Math.round(billableDistance * perKmRate);
     baseFare = AIRPORT_TRANSFER_SURCHARGE; // Extra surcharge for airport commercial parking/entry
-    totalFare = isUnknownRoute ? 0 : (distanceCharge + baseFare + finalEstimatedToll + finalEstimatedStateTax); // No driver allowance for local airport drops
+    
+    const numericToll = typeof finalEstimatedToll === 'number' ? finalEstimatedToll : 0;
+    const numericTax = typeof finalEstimatedStateTax === 'number' ? finalEstimatedStateTax : 0;
+    totalFare = distanceCharge + baseFare + numericToll + numericTax; // No driver allowance for local airport drops
   }
+
+  // Market Fare Logic: Urgent Taxis Fare + 18%, rounded to nearest 50
+  const rawMarketFare = totalFare * 1.18;
+  const marketFare = Math.round(rawMarketFare / 50) * 50;
+  const youSave = marketFare - totalFare;
 
   return {
     category: vehicleCategory,
@@ -106,7 +120,9 @@ export const calculateFare = ({ tripType, distanceKm, vehicleCategory, estimated
     distanceSource: distanceSource,
     isUnknownRoute: isUnknownRoute,
     baseFare: baseFare,
-    totalFare: totalFare
+    totalFare: totalFare,
+    marketFare: marketFare,
+    youSave: youSave
   };
 };
 

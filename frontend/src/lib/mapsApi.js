@@ -41,16 +41,16 @@ export const getRouteDistance = async (pickup, drop) => {
         distanceKm,
         travelTime,
         // Keep static tolls/taxes as fallback because Distance Matrix doesn't return toll cost natively
-        estimatedToll: fallback.estimatedToll,
-        estimatedStateTax: fallback.estimatedStateTax,
-        tollCount: fallback.tollCount,
+        estimatedToll: staticData ? fallback.estimatedToll : "To be confirmed",
+        estimatedStateTax: staticData ? fallback.estimatedStateTax : "As applicable",
+        tollCount: staticData ? fallback.tollCount : "Varies",
         source: 'google_maps',
         distanceSource: 'Google Maps',
         isUnknownRoute: false
       };
     }
     
-    console.warn("Google Maps API returned non-OK status. Falling back.");
+    console.error("Google Maps API Error:", data.status, data.error_message || data);
     return fallback;
   } catch (error) {
     console.error("Error fetching distance from Google Maps API:", error);

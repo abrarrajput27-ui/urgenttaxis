@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { CheckCircle2, ArrowRight, ShieldCheck, MapPin, Calendar, Clock, Car, CreditCard, ArrowLeft, Loader2, MessageCircle, Map, Navigation, AlertCircle } from 'lucide-react';
+import { CheckCircle2, ArrowRight, ShieldCheck, MapPin, Calendar, Clock, Car, CreditCard, ArrowLeft, Loader2, MessageCircle, Map, Navigation, AlertCircle, ChevronDown, ChevronUp } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import ReactGA from 'react-ga4';
 
@@ -17,16 +17,14 @@ const FareBreakup = ({
   fares, 
   onBack 
 }) => {
-  const [selectedVehicleIndex, setSelectedVehicleIndex] = useState(0);
+  const [expandedIndex, setExpandedIndex] = useState(null);
   const [name, setName] = useState('');
   const [mobile, setMobile] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
   const [blockedUrl, setBlockedUrl] = useState(null);
 
-  const selectedFare = fares[selectedVehicleIndex];
-
-  const handleBooking = async (e) => {
+  const handleBooking = async (e, selectedFare) => {
     e.preventDefault();
     setIsSubmitting(true);
     setBlockedUrl(null);
@@ -51,9 +49,9 @@ const FareBreakup = ({
         estimated_fare: selectedFare.totalFare,
         distance_km: selectedFare.isUnknownRoute ? 0 : selectedFare.originalDistanceKm,
         travel_time: selectedFare.isUnknownRoute ? null : selectedFare.travelTime,
-        estimated_toll: selectedFare.estimatedToll,
-        estimated_state_tax: selectedFare.estimatedStateTax,
-        toll_count: selectedFare.tollCount,
+        estimated_toll: typeof selectedFare.estimatedToll === 'number' ? selectedFare.estimatedToll : null,
+        estimated_state_tax: typeof selectedFare.estimatedStateTax === 'number' ? selectedFare.estimatedStateTax : null,
+        toll_count: typeof selectedFare.tollCount === 'number' ? selectedFare.tollCount : null,
         route_source: selectedFare.routeSource,
         distance_source: selectedFare.distanceSource,
         fare_version: "v1",
@@ -82,7 +80,7 @@ const FareBreakup = ({
       if (selectedFare.isUnknownRoute) {
         messageText += `💰 Starting Base Fare: ₹${selectedFare.baseFare}\n\n*Exact distance and fare will be confirmed shortly on WhatsApp.*\n\n🌐 Source: Website Auto Fare Engine\n\nPlease call customer immediately.`;
       } else {
-        messageText += `📏 Actual Route Distance: ${selectedFare.originalDistanceKm} km\n⏱️ Est. Travel Time: ${selectedFare.travelTime}\n🛣️ Est. Tolls: ${selectedFare.tollCount} (₹${selectedFare.estimatedToll})\n🏢 State Tax: ₹${selectedFare.estimatedStateTax}`;
+        messageText += `📏 Actual Route Distance: ${selectedFare.originalDistanceKm} km\n⏱️ Est. Travel Time: ${selectedFare.travelTime}\n🛣️ Est. Tolls: ${selectedFare.tollCount} (${selectedFare.estimatedToll === "To be confirmed" ? "TBD" : '₹' + selectedFare.estimatedToll})\n🏢 State Tax: ${selectedFare.estimatedStateTax === "As applicable" ? "TBD" : '₹' + selectedFare.estimatedStateTax}`;
         messageText += `\n💰 Final Quoted Fare: ₹${selectedFare.totalFare}\n\n🌐 Source: Website Auto Fare Engine\n\nPlease call customer immediately to confirm.`;
       }
       
@@ -112,199 +110,203 @@ const FareBreakup = ({
       <div className="p-8 text-center flex flex-col items-center justify-center min-h-[450px]">
         <CheckCircle2 className="w-20 h-20 text-[#0aa63f] mb-4 animate-bounce" />
         <h3 className="text-2xl font-black text-gray-900 mb-2">Booking Requested!</h3>
-        <p className="text-gray-600 mb-6">We have received your request for a {selectedFare.category}. Our team will call you at {mobile} shortly to confirm the ride.</p>
+        <p className="text-gray-600 mb-6">We have received your request. Our team will call you at {mobile} shortly to confirm the ride.</p>
         <button onClick={onBack} className="text-blue-600 font-bold hover:underline">Calculate another route</button>
       </div>
     );
   }
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden relative z-[100]">
-      {/* Header */}
-      <div className="bg-gradient-to-r from-[#1e3a8a] to-blue-800 p-4 text-white flex items-center justify-between">
-        <button onClick={onBack} className="text-blue-100 hover:text-white transition-colors flex items-center text-sm font-medium">
+    <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden relative z-[100] w-full">
+      {/* Header & Route Summary */}
+      <div className="bg-[#0b1324] p-4 text-white">
+        <button onClick={onBack} className="text-gray-300 hover:text-white transition-colors flex items-center text-[13px] font-bold mb-3">
           <ArrowLeft className="w-4 h-4 mr-1" /> Edit Route
         </button>
-        <div className="text-right">
-           <h3 className="font-bold text-lg leading-tight">Select Vehicle</h3>
-           <p className="text-xs text-blue-200">{selectedFare.isUnknownRoute ? 'Distance TBD' : `~${distanceKm} km Total Distance`}</p>
-        </div>
-      </div>
-
-      {/* Route Summary Card */}
-      <div className="bg-blue-50/50 p-4 border-b border-gray-100 text-[13px]">
-        <div className="grid grid-cols-2 gap-y-3 gap-x-2">
-          <div className="flex flex-col">
-            <span className="text-gray-500 text-[11px] font-bold uppercase tracking-wider mb-0.5">Route Distance</span>
-            <span className="font-semibold text-gray-900 flex items-center">
-              <Map className="w-3.5 h-3.5 mr-1 text-blue-500" /> {selectedFare.isUnknownRoute ? 'TBD' : `${selectedFare.originalDistanceKm} km`}
-            </span>
-          </div>
-          <div className="flex flex-col">
-            <span className="text-gray-500 text-[11px] font-bold uppercase tracking-wider mb-0.5">Est. Travel Time</span>
-            <span className="font-semibold text-gray-900 flex items-center">
-              <Clock className="w-3.5 h-3.5 mr-1 text-blue-500" /> {selectedFare.isUnknownRoute ? 'TBD' : selectedFare.travelTime}
-            </span>
-          </div>
-          <div className="flex flex-col">
-            <span className="text-gray-500 text-[11px] font-bold uppercase tracking-wider mb-0.5">Estimated Tolls</span>
-            <span className="font-semibold text-gray-900">
-              {selectedFare.tollCount} (Est. ₹{selectedFare.estimatedToll})
-            </span>
-          </div>
-          <div className="flex flex-col">
-            <span className="text-gray-500 text-[11px] font-bold uppercase tracking-wider mb-0.5">Estimated State Tax</span>
-            <span className="font-semibold text-gray-900">₹{selectedFare.estimatedStateTax}</span>
-          </div>
-          <div className="flex flex-col">
-            <span className="text-gray-500 text-[11px] font-bold uppercase tracking-wider mb-0.5">Trip Type</span>
-            <span className="font-semibold text-gray-900 flex items-center">
-              <Navigation className="w-3.5 h-3.5 mr-1 text-blue-500" /> {tripType}
-            </span>
-          </div>
-          <div className="flex flex-col">
-            <span className="text-gray-500 text-[11px] font-bold uppercase tracking-wider mb-0.5">Distance Source</span>
-            <span className="font-semibold text-gray-900">{selectedFare.distanceSource}</span>
-          </div>
-        </div>
-      </div>
-
-      {/* Vehicle Selection */}
-      <div className="w-full max-w-full p-4 bg-gray-50 border-b border-gray-100 overflow-x-auto whitespace-nowrap scrollbar-hide pb-5">
-        <div className="flex gap-3">
-          {fares.map((fare, idx) => (
-            <button 
-              key={idx}
-              onClick={() => setSelectedVehicleIndex(idx)}
-              className={`flex-shrink-0 flex flex-col items-center p-3 rounded-xl border-2 transition-all min-w-[110px] ${selectedVehicleIndex === idx ? 'border-[#00a859] bg-[#e6f6ec] shadow-sm' : 'border-transparent bg-white hover:border-gray-200'}`}
-            >
-              <Car className={`w-8 h-8 mb-2 ${selectedVehicleIndex === idx ? 'text-[#00a859]' : 'text-gray-400'}`} />
-              <span className="font-bold text-[13px] text-gray-900 leading-tight">{fare.category}</span>
-              <span className="text-[10px] text-gray-500 mb-1">{fare.seats} Seats</span>
-              <span className={`font-black text-[14px] ${selectedVehicleIndex === idx ? 'text-[#00a859]' : 'text-gray-700'}`}>
-                {fare.isUnknownRoute ? `Start ₹${fare.baseFare}` : `₹${fare.totalFare}`}
-              </span>
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Fare Breakdown */}
-      <div className="w-full max-w-full p-5 pb-[80px]">
-        <h4 className="font-bold text-gray-900 mb-4 flex items-center">
-          <CreditCard className="w-5 h-5 mr-2 text-blue-600" /> Fare Breakup
-        </h4>
-        
-        <div className="space-y-3 mb-6">
-          {selectedFare.isUnknownRoute ? (
-            <div className="bg-blue-50 text-blue-800 p-3 rounded-lg text-sm border border-blue-100 font-medium">
-              Exact distance and fare will be confirmed shortly on WhatsApp.
+        <div className="flex justify-between items-start">
+          <div>
+            <div className="flex items-center space-x-2 text-[15px] font-black tracking-wide">
+              <span>{pickup}</span>
+              <ArrowRight className="w-4 h-4 text-yellow-400" />
+              <span>{drop || localPackage}</span>
             </div>
-          ) : (
-            <>
-              <div className="flex justify-between text-sm">
-                <span className="text-gray-600">Distance Fare ({selectedFare.originalDistanceKm} km)</span>
-                <span className="font-semibold text-gray-900">₹{selectedFare.distanceCharge}</span>
-              </div>
-              {selectedFare.distanceKm > selectedFare.originalDistanceKm && (
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-600">Min. Fare Adjustment (upto {selectedFare.distanceKm} km)</span>
-                  <span className="font-semibold text-gray-900">₹{Math.round((selectedFare.distanceKm - selectedFare.originalDistanceKm) * selectedFare.perKmRate)}</span>
-                </div>
-              )}
-              {selectedFare.driverAllowance > 0 && (
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-600">Driver Allowance</span>
-                  <span className="font-semibold text-gray-900">₹{selectedFare.driverAllowance}</span>
-                </div>
-              )}
-              {selectedFare.baseFare > 0 && (
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-600">Base/Package/Surcharge</span>
-                  <span className="font-semibold text-gray-900">₹{selectedFare.baseFare}</span>
-                </div>
-              )}
-              {selectedFare.estimatedToll > 0 && (
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-600">Estimated Toll</span>
-                  <span className="font-semibold text-gray-900">₹{selectedFare.estimatedToll}</span>
-                </div>
-              )}
-              {selectedFare.estimatedStateTax > 0 && (
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-600">Estimated State Tax</span>
-                  <span className="font-semibold text-gray-900">₹{selectedFare.estimatedStateTax}</span>
-                </div>
-              )}
-              <div className="flex justify-between text-sm text-gray-500">
-                 <span className="text-[12px] italic">Night / Peak Charges</span>
-                 <span className="text-[12px] italic">As applicable</span>
-              </div>
-              <div className="flex justify-between items-center pt-3 border-t border-dashed border-gray-200 mt-2">
-                <span className="font-black text-gray-900">Final Estimated Fare</span>
-                <span className="font-black text-2xl text-[#0aa63f]">₹{selectedFare.totalFare}</span>
-              </div>
-            </>
-          )}
-          
-          <div className="bg-yellow-50 text-yellow-800 p-2.5 rounded-lg text-[11px] leading-relaxed flex items-start mt-3 mb-6 border border-yellow-100">
-            <AlertCircle className="w-4 h-4 mr-1.5 flex-shrink-0 mt-0.5 text-yellow-600" />
-            <span>Final fare may vary based on actual toll, state tax, parking, exact pickup/drop location and vehicle availability. Night/Peak charges may apply.</span>
+            <div className="mt-2 text-[12px] text-gray-400 font-medium flex items-center space-x-3">
+              <span className="flex items-center"><Navigation className="w-3.5 h-3.5 mr-1" /> {tripType}</span>
+              {distanceKm > 0 && <span className="flex items-center"><Map className="w-3.5 h-3.5 mr-1" /> {distanceKm} km</span>}
+            </div>
           </div>
         </div>
+      </div>
 
-        {/* Lead Capture Form to Confirm */}
-        {blockedUrl ? (
-          <div className="mt-2 p-4 bg-blue-50 rounded-xl w-full text-center">
-            <p className="text-[13px] text-blue-800 mb-3 font-medium">To confirm this fare, please send your details to our WhatsApp:</p>
-            <a 
-              href={blockedUrl} 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="bg-[#25D366] hover:bg-[#1ebd5a] text-white font-bold py-3 px-6 rounded-lg transition-colors inline-flex items-center justify-center w-full shadow-lg text-[14px]"
-            >
-              <MessageCircle className="w-4 h-4 mr-2" /> Confirm via WhatsApp
-            </a>
-          </div>
+      {/* Confidence Badge */}
+      <div className="bg-blue-50 border-b border-blue-100 p-2.5 flex items-center justify-center text-blue-800 text-[11px] font-bold">
+        {fares[0]?.isUnknownRoute ? (
+          <><AlertCircle className="w-3.5 h-3.5 mr-1.5" /> Fare confirmation required for this route.</>
+        ) : fares[0]?.distanceSource === 'Google Maps' ? (
+          <><CheckCircle2 className="w-3.5 h-3.5 mr-1.5 text-green-600" /> Exact route distance via Google Maps.</>
         ) : (
-          <form onSubmit={handleBooking} className="space-y-4">
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <input 
-                  type="text" 
-                  placeholder="Your Name *" 
-                  value={name} onChange={(e) => setName(e.target.value)}
-                  className="w-full px-3 py-3 border border-gray-200 rounded-lg text-[13px] outline-none focus:border-blue-500 bg-gray-50"
-                  required
-                />
-              </div>
-              <div>
-                <input 
-                  type="tel" 
-                  placeholder="Mobile No. *" 
-                  value={mobile} onChange={(e) => setMobile(e.target.value)}
-                  className="w-full px-3 py-3 border border-gray-200 rounded-lg text-[13px] outline-none focus:border-blue-500 bg-gray-50"
-                  required
-                />
-              </div>
-            </div>
-            
-            <button 
-              type="submit" 
-              disabled={isSubmitting}
-              className="w-full mt-6 rounded-2xl bg-[#0b1324] hover:bg-black text-white py-4 font-bold flex items-center justify-center gap-3 transition-colors disabled:bg-gray-400"
-            >
-              {isSubmitting ? (
-                <><Loader2 className="w-5 h-5 mr-2 animate-spin" /> Processing...</>
-              ) : (
-                <>Get Instant Quote <ArrowRight className="w-5 h-5 ml-2" /></>
-              )}
-            </button>
-            <p className="text-[11px] text-center text-gray-500 mt-2 flex items-center justify-center">
-              <ShieldCheck className="w-3.5 h-3.5 mr-1 text-green-500" /> No Advance Payment Required
-            </p>
-          </form>
+          <><CheckCircle2 className="w-3.5 h-3.5 mr-1.5 text-blue-600" /> Estimated route distance.</>
         )}
+      </div>
+
+      {/* Vehicle List */}
+      <div className="flex flex-col divide-y divide-gray-100">
+        {fares.map((fare, idx) => {
+          const isExpanded = expandedIndex === idx;
+          
+          return (
+            <div key={idx} className={`bg-white transition-all ${isExpanded ? 'ring-2 ring-blue-500 z-10 relative shadow-lg' : 'hover:bg-gray-50'}`}>
+              <div 
+                className="p-4 cursor-pointer"
+                onClick={() => setExpandedIndex(isExpanded ? null : idx)}
+              >
+                <div className="flex items-center justify-between">
+                  {/* Left: Image & Details */}
+                  <div className="flex items-center flex-1">
+                    <div className="bg-gray-100 p-2 rounded-xl mr-4 flex-shrink-0">
+                      <Car className="w-8 h-8 text-gray-600" />
+                    </div>
+                    <div>
+                      <h3 className="font-black text-[15px] text-gray-900 leading-tight">{fare.category}</h3>
+                      <p className="text-[11px] text-gray-500 mt-0.5">{fare.description || `${fare.seats} Seats`}</p>
+                      
+                      {!fare.isUnknownRoute && (
+                        <div className="flex items-center mt-1.5 space-x-2">
+                          <span className="bg-green-100 text-green-800 text-[10px] font-bold px-1.5 py-0.5 rounded uppercase">Save ₹{fare.youSave}</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Right: Pricing & CTA */}
+                  <div className="text-right flex flex-col items-end justify-center ml-2">
+                    {fare.isUnknownRoute ? (
+                      <span className="font-black text-[16px] text-gray-900">TBD</span>
+                    ) : (
+                      <>
+                        <span className="text-[12px] text-gray-400 line-through font-semibold mb-0.5">₹{fare.marketFare}</span>
+                        <span className="font-black text-[18px] text-gray-900 leading-none">₹{fare.totalFare}</span>
+                      </>
+                    )}
+                    <button 
+                      className={`mt-2 text-[11px] font-bold px-4 py-1.5 rounded-full transition-colors ${isExpanded ? 'bg-blue-600 text-white' : 'bg-gray-900 text-white hover:bg-black'}`}
+                    >
+                      {isExpanded ? 'Close' : 'Select'}
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Expandable Content */}
+              {isExpanded && (
+                <div className="px-4 pb-5 pt-2 border-t border-gray-100 bg-gray-50">
+                  <div className="space-y-3 mb-6 bg-white p-4 rounded-xl border border-gray-200">
+                    <h4 className="font-bold text-gray-900 text-[13px] flex items-center border-b border-gray-100 pb-2 mb-2">
+                      <CreditCard className="w-4 h-4 mr-1.5 text-blue-600" /> Fare Breakup
+                    </h4>
+                    
+                    {fare.isUnknownRoute ? (
+                      <div className="text-sm font-medium text-gray-600">Exact distance and fare will be confirmed shortly on WhatsApp.</div>
+                    ) : (
+                      <>
+                        <div className="flex justify-between text-[12px]">
+                          <span className="text-gray-600">Base Fare / Distance Charge ({fare.distanceKm} km)</span>
+                          <span className="font-semibold text-gray-900">₹{fare.distanceCharge || fare.baseFare}</span>
+                        </div>
+                        {fare.driverAllowance > 0 && (
+                          <div className="flex justify-between text-[12px]">
+                            <span className="text-gray-600">Driver Allowance</span>
+                            <span className="font-semibold text-gray-900">₹{fare.driverAllowance}</span>
+                          </div>
+                        )}
+                        {fare.estimatedToll > 0 || typeof fare.estimatedToll === 'string' ? (
+                          <div className="flex justify-between text-[12px]">
+                            <span className="text-gray-600">Estimated Tolls</span>
+                            <span className="font-semibold text-gray-900">
+                              {typeof fare.estimatedToll === 'number' ? `₹${fare.estimatedToll}` : fare.estimatedToll}
+                            </span>
+                          </div>
+                        ) : null}
+                        {fare.estimatedStateTax > 0 || typeof fare.estimatedStateTax === 'string' ? (
+                          <div className="flex justify-between text-[12px]">
+                            <span className="text-gray-600">State Tax</span>
+                            <span className="font-semibold text-gray-900">
+                              {typeof fare.estimatedStateTax === 'number' ? `₹${fare.estimatedStateTax}` : fare.estimatedStateTax}
+                            </span>
+                          </div>
+                        ) : null}
+
+                        <div className="flex justify-between text-[11px] text-gray-500 mt-1">
+                           <span className="italic">Night / Peak Charges</span>
+                           <span className="italic">As applicable</span>
+                        </div>
+
+                        <div className="flex justify-between items-center pt-3 border-t border-dashed border-gray-200 mt-2">
+                          <span className="font-black text-gray-900 text-[14px]">Final Estimated Fare</span>
+                          <span className="font-black text-[18px] text-[#0aa63f]">₹{fare.totalFare}</span>
+                        </div>
+                      </>
+                    )}
+                    
+                    <div className="bg-yellow-50 text-yellow-800 p-2 rounded-lg text-[10px] leading-relaxed flex items-start mt-3 border border-yellow-100">
+                      <AlertCircle className="w-3.5 h-3.5 mr-1 flex-shrink-0 mt-0.5 text-yellow-600" />
+                      <span>Final fare may vary based on actual toll, state tax, parking, exact pickup/drop location and vehicle availability. Night/Peak charges may apply.</span>
+                    </div>
+                  </div>
+
+                  {/* Lead Capture Form to Confirm */}
+                  {blockedUrl ? (
+                    <div className="p-4 bg-blue-50 rounded-xl w-full text-center border border-blue-100">
+                      <p className="text-[13px] text-blue-800 mb-3 font-medium">To confirm this fare, please send your details to our WhatsApp:</p>
+                      <a 
+                        href={blockedUrl} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="bg-[#25D366] hover:bg-[#1ebd5a] text-white font-bold py-3 px-6 rounded-lg transition-colors inline-flex items-center justify-center w-full shadow-md text-[14px]"
+                      >
+                        <MessageCircle className="w-4 h-4 mr-2" /> Confirm via WhatsApp
+                      </a>
+                    </div>
+                  ) : (
+                    <form onSubmit={(e) => handleBooking(e, fare)} className="space-y-3">
+                      <div className="grid grid-cols-2 gap-3">
+                        <input 
+                          type="text" 
+                          placeholder="Your Name *" 
+                          value={name} onChange={(e) => setName(e.target.value)}
+                          className="w-full px-3 py-3 border border-gray-200 rounded-lg text-[13px] outline-none focus:border-blue-500 bg-white"
+                          required
+                        />
+                        <input 
+                          type="tel" 
+                          placeholder="Mobile No. *" 
+                          value={mobile} onChange={(e) => setMobile(e.target.value)}
+                          className="w-full px-3 py-3 border border-gray-200 rounded-lg text-[13px] outline-none focus:border-blue-500 bg-white"
+                          required
+                        />
+                      </div>
+                      
+                      <button 
+                        type="submit" 
+                        disabled={isSubmitting}
+                        className="w-full mt-2 rounded-xl bg-[#0b1324] hover:bg-black text-white py-3.5 font-bold flex items-center justify-center gap-2 transition-colors disabled:bg-gray-400 text-[14px] shadow-lg"
+                      >
+                        {isSubmitting ? (
+                          <><Loader2 className="w-4 h-4 animate-spin" /> Processing...</>
+                        ) : (
+                          <>Get Instant Quote <ArrowRight className="w-4 h-4" /></>
+                        )}
+                      </button>
+                      <p className="text-[10px] text-center text-gray-500 mt-2 flex items-center justify-center">
+                        <ShieldCheck className="w-3 h-3 mr-1 text-green-500" /> No Advance Payment Required
+                      </p>
+                    </form>
+                  )}
+                </div>
+              )}
+            </div>
+          );
+        })}
       </div>
     </div>
   );
