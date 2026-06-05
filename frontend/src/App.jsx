@@ -8,6 +8,9 @@ import {
   ChevronRight, ChevronLeft, Star, CheckCircle2, Menu, X, ArrowLeftRight, MessageCircle, Loader2
 } from 'lucide-react';
 import { supabase } from './lib/supabase';
+import { getRouteDistance } from './lib/mapsApi';
+import { getAllVehicleFares } from './lib/pricingEngine';
+import FareBreakup from './components/FareBreakup';
 
 // Import images statically
 import heroBg from './assets/images/hero-bg.png';
@@ -171,11 +174,12 @@ function Home() {
   const [date, setDate] = useState('');
   const [time, setTime] = useState('');
   const [vehicle, setVehicle] = useState('Select cab type');
-  const [name, setName] = useState('');
-  const [mobile, setMobile] = useState('');
-  const [isHeroSubmitting, setIsHeroSubmitting] = useState(false);
-  const [heroFormSuccess, setHeroFormSuccess] = useState(false);
-  const [heroBlockedUrl, setHeroBlockedUrl] = useState(null);
+  
+  // Fare Engine State
+  const [isCalculating, setIsCalculating] = useState(false);
+  const [showFareBreakup, setShowFareBreakup] = useState(false);
+  const [calculatedFares, setCalculatedFares] = useState([]);
+  const [calculatedDistance, setCalculatedDistance] = useState(0);
 
   // Testimonial Slider State
   const [testiSlide, setTestiSlide] = useState(0);
@@ -208,75 +212,39 @@ function Home() {
   const handleTestiNext = () => setTestiSlide(prev => (prev >= maxTestiSlide ? 0 : prev + 1));
   const handleTestiPrev = () => setTestiSlide(prev => (prev <= 0 ? maxTestiSlide : prev - 1));
 
-  const handleWhatsAppBooking = async (e) => {
+  const handleCalculateFare = async (e) => {
     e.preventDefault();
-    setIsHeroSubmitting(true);
-    setHeroBlockedUrl(null);
+    if (!pickup || !drop || !date || !time) {
+      alert("Please fill all required fields");
+      return;
+    }
+    
+    setIsCalculating(true);
 
     try {
-      ReactGA.event({ category: "Form", action: "booking_form_submit" });
-      ReactGA.event("lead_form_submit", {
-        category: "Conversion",
-        label: "Hero Booking Form",
-        value: 1
+      ReactGA.event("fare_calculation_started", {
+        category: "Engagement",
+        label: `${pickup} to ${drop}`
       });
 
-      const payload = {
-        name: name,
-        mobile: mobile,
-        pickup: pickup,
-        drop_location: drop,
-        trip_date: date,
-        vehicle_type: vehicle,
-        message: `Time: ${time}`,
-        source_page: location.pathname,
-        route_name: routeData.heading || "Homepage",
-        lead_source: "Hero Form"
-      };
-
-      const { error } = await supabase.from('leads').insert([payload]);
-      if (error) throw error;
-
-      const messageText = `🚖 New Quote Request - Urgent Taxis\n\n👤 Name: ${name}\n📞 Mobile: ${mobile}\n📍 Pickup: ${pickup}\n📍 Drop: ${drop}\n📅 Trip Date: ${date} at ${time}\n🚘 Vehicle: ${vehicle}\n\n🌐 Source Page: ${location.pathname}\n🛣️ Route Name: ${routeData.heading || "Homepage"}\n📌 Lead Source: Website Hero Form\n\nPlease call customer as soon as possible.`;
+      // 1. Get Distance
+      const routeData = await getRouteDistance(pickup, drop);
       
-      const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(messageText)}`;
-      const newWindow = window.open(whatsappUrl, '_blank');
+      // 2. Generate Fares
+      const fares = getAllVehicleFares(routeData.distanceKm, routeData.tollsAndTaxes);
 
-      let isBlocked = false;
-      if (!newWindow || newWindow.closed || typeof newWindow.closed === 'undefined') {
-        isBlocked = true;
-        setHeroBlockedUrl(whatsappUrl);
-      } else {
-        ReactGA.event("whatsapp_lead_notification_opened", {
-          category: "Conversion",
-          label: "Auto Opened (Hero)"
-        });
-      }
+      if (fares.length === 0) throw new Error("Could not calculate fares");
 
-      setHeroFormSuccess(true);
-      setName(''); setMobile(''); setPickup(''); setDrop(''); setDate(''); setTime(''); setVehicle('Select cab type');
-
-      if (!isBlocked) {
-        setTimeout(() => setHeroFormSuccess(false), 4000);
-      }
+      setCalculatedDistance(routeData.distanceKm);
+      setCalculatedFares(fares);
+      setShowFareBreakup(true);
 
     } catch (err) {
-      console.error("Error submitting hero lead:", err);
-      alert("Something went wrong. Please try calling us directly.");
+      console.error("Error calculating fare:", err);
+      alert("Unable to calculate fare for this route. Please contact us directly.");
     } finally {
-      setIsHeroSubmitting(false);
+      setIsCalculating(false);
     }
-  };
-
-  const handleHeroFallbackClick = () => {
-    ReactGA.event("whatsapp_lead_notification_opened", {
-      category: "Conversion",
-      label: "Fallback Clicked (Hero)"
-    });
-    setTimeout(() => {
-      setHeroFormSuccess(false);
-      setHeroBlockedUrl(null);
-    }, 1500);
   };
 
   const handleSimpleWhatsApp = (message) => {
@@ -567,62 +535,27 @@ function Home() {
                   </div>
                 </div>
                 
-                {heroFormSuccess ? (
-                  <div className="p-8 text-center flex flex-col items-center justify-center min-h-[380px]">
-                    <CheckCircle2 className="w-16 h-16 text-[#0aa63f] mb-4 animate-bounce" />
-                    <h3 className="text-xl font-black text-gray-900 mb-2">Request Received!</h3>
-                    <p className="text-gray-600 mb-6 text-[14px]">Our team will contact you shortly with the best quote.</p>
-                    
-                    {heroBlockedUrl && (
-                      <div className="mt-2 p-4 bg-blue-50 rounded-xl w-full animate-in slide-in-from-bottom-4 duration-500">
-                        <p className="text-[13px] text-blue-800 mb-3 font-medium">To ensure immediate processing, please send your details to our WhatsApp:</p>
-                        <a 
-                          href={heroBlockedUrl} 
-                          target="_blank" 
-                          rel="noopener noreferrer"
-                          onClick={handleHeroFallbackClick}
-                          className="bg-[#25D366] hover:bg-[#1ebd5a] text-white font-bold py-3 px-6 rounded-lg transition-colors inline-flex items-center justify-center w-full shadow-lg text-[14px]"
-                        >
-                          <MessageCircle className="w-4 h-4 mr-2" /> Send Lead to WhatsApp
-                        </a>
-                      </div>
-                    )}
-                  </div>
+                {showFareBreakup ? (
+                  <FareBreakup 
+                    pickup={pickup}
+                    drop={drop}
+                    date={date}
+                    time={time}
+                    distanceKm={calculatedDistance}
+                    fares={calculatedFares}
+                    onBack={() => setShowFareBreakup(false)}
+                  />
                 ) : (
-                  <form className="p-6 space-y-4" onSubmit={handleWhatsAppBooking}>
-                    {/* Name & Mobile */}
-                    <div className="grid grid-cols-2 gap-3">
-                      <div>
-                        <label className="block text-[12px] font-bold text-gray-800 mb-1.5 ml-1">Name *</label>
-                        <input 
-                          type="text" 
-                          placeholder="Your Name" 
-                          value={name} onChange={(e) => setName(e.target.value)}
-                          className="w-full px-3 py-3 border border-gray-200 rounded-lg text-[13px] outline-none focus:border-blue-500 bg-white"
-                          required
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-[12px] font-bold text-gray-800 mb-1.5 ml-1">Mobile *</label>
-                        <input 
-                          type="tel" 
-                          placeholder="10-digit no." 
-                          value={mobile} onChange={(e) => setMobile(e.target.value)}
-                          className="w-full px-3 py-3 border border-gray-200 rounded-lg text-[13px] outline-none focus:border-blue-500 bg-white"
-                          required
-                        />
-                      </div>
-                    </div>
-
+                  <form className="p-6 space-y-4" onSubmit={handleCalculateFare}>
                     {/* Locations with Swap Icon */}
                     <div className="relative flex flex-col">
                       <div>
-                        <label className="block text-[12px] font-bold text-gray-800 mb-1.5 ml-1">Pickup Location</label>
+                        <label className="block text-[12px] font-bold text-gray-800 mb-1.5 ml-1">Pickup City</label>
                         <div className="relative">
                           <MapPin className="absolute left-3.5 top-[12px] w-[18px] h-[18px] text-[#00a859]" />
                           <input 
                             type="text" 
-                            placeholder="Enter pickup location" 
+                            placeholder="Enter pickup city" 
                             value={pickup} onChange={(e) => setPickup(e.target.value)}
                             className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg text-[13px] outline-none focus:border-blue-500 transition-colors bg-white text-gray-800"
                             required
@@ -641,12 +574,12 @@ function Home() {
                       </div>
                       
                       <div>
-                        <label className="block text-[12px] font-bold text-gray-800 mb-1.5 ml-1">Drop Location</label>
+                        <label className="block text-[12px] font-bold text-gray-800 mb-1.5 ml-1">Drop City</label>
                         <div className="relative">
                           <MapPin className="absolute left-3.5 top-[13px] w-[18px] h-[18px] text-red-500" />
                           <input 
                             type="text" 
-                            placeholder="Enter drop location" 
+                            placeholder="Enter drop city" 
                             value={drop} onChange={(e) => setDrop(e.target.value)}
                             className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg text-[13px] outline-none focus:border-blue-500 transition-colors bg-white text-gray-800"
                             required
@@ -657,7 +590,7 @@ function Home() {
 
                     {/* Date & Time */}
                     <div>
-                      <label className="block text-[12px] font-bold text-gray-800 mb-1.5 ml-1">Date & Time</label>
+                      <label className="block text-[12px] font-bold text-gray-800 mb-1.5 ml-1">Pickup Date & Time</label>
                       <div className="grid grid-cols-2 gap-3">
                         <div className="relative">
                           <Calendar className="absolute left-3.5 top-[14px] w-[18px] h-[18px] text-gray-400 pointer-events-none" />
@@ -680,40 +613,20 @@ function Home() {
                       </div>
                     </div>
 
-                    {/* Vehicle */}
-                    <div>
-                      <label className="block text-[12px] font-bold text-gray-700 mb-1.5 ml-1">Select Vehicle</label>
-                      <div className="relative">
-                        <Car className="absolute left-3.5 top-[13px] w-[18px] h-[18px] text-gray-400" />
-                        <select 
-                          value={vehicle} onChange={(e) => setVehicle(e.target.value)}
-                          className="w-full pl-10 pr-10 py-3 border border-gray-200 rounded-lg text-[14px] text-gray-700 outline-none focus:border-blue-500 appearance-none bg-white"
-                        >
-                          <option value="Select cab type">Select cab type</option>
-                          <option value="Swift Dzire">Swift Dzire (4 Seater)</option>
-                          <option value="Maruti Ertiga">Maruti Ertiga (6 Seater)</option>
-                          <option value="Toyota Innova">Toyota Innova (6 Seater)</option>
-                          <option value="Innova Crysta">Innova Crysta (6 Seater)</option>
-                          <option value="Tempo Traveller">Tempo Traveller (12 Seater)</option>
-                        </select>
-                        <ChevronDown className="absolute right-3.5 top-[13px] w-[18px] h-[18px] text-gray-400 pointer-events-none" />
-                      </div>
-                    </div>
-
                     <button 
                       type="submit" 
-                      disabled={isHeroSubmitting}
+                      disabled={isCalculating}
                       className="w-full bg-[#0aa63f] hover:bg-[#088c34] text-white font-bold py-3.5 rounded-[10px] flex items-center justify-center transition-colors mt-6 text-[15px] shadow-md shadow-[#0aa63f]/20 disabled:bg-gray-400"
                     >
-                      {isHeroSubmitting ? (
-                        <><Loader2 className="w-5 h-5 mr-2 animate-spin" /> Processing...</>
+                      {isCalculating ? (
+                        <><Loader2 className="w-5 h-5 mr-2 animate-spin" /> Calculating Fare...</>
                       ) : (
-                        <>Get Instant Quote <ArrowRight className="w-5 h-5 ml-2" /></>
+                        <>Calculate Fare <ArrowRight className="w-5 h-5 ml-2" /></>
                       )}
                     </button>
                     <div className="text-center pt-2">
                       <p className="text-[12px] font-bold text-gray-600 flex items-center justify-center">
-                        <Zap className="w-3.5 h-3.5 text-yellow-500 mr-1 fill-yellow-500" /> Instant WhatsApp Confirmation
+                        <Zap className="w-3.5 h-3.5 text-yellow-500 mr-1 fill-yellow-500" /> Transparent Pricing • No Hidden Fees
                       </p>
                     </div>
                   </form>
@@ -914,8 +827,6 @@ function Home() {
         </div>
       </section>
 
-      {/* 7.5 SEO Route Content (Only shows on specific routes) */}
-      <RouteSEOContent data={routesData[location.pathname]} onOpenLeadForm={() => setIsLeadFormOpen(true)} />
 
       {/* 8. Testimonials (About) */}
       <section id="about" className="py-8 bg-white relative">
@@ -1054,6 +965,9 @@ function Home() {
           </div>
         </div>
       </section>
+
+      {/* 7.5 SEO Route Content (Moved to bottom) */}
+      <RouteSEOContent data={routesData[location.pathname]} onOpenLeadForm={() => setIsLeadFormOpen(true)} />
 
       {/* 10. Footer */}
       <footer id="contact" className="bg-[#0B132B] text-gray-400 pt-16 pb-8">
