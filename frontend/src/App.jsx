@@ -46,8 +46,8 @@ const YoutubeIcon = ({ className }) => <svg className={className} fill="currentC
 
 // APPROVED ASSET LOCKS (DO NOT MODIFY OR REPLACE)
 export const servicesAssets = {
-  oneWay: <img src={serviceOneWay} alt="One Way Taxi" className="w-full h-full object-contain mix-blend-multiply" />,
-  roundTrip: <img src={serviceRoundTrip} alt="Round Trip Taxi" className="w-full h-full object-contain mix-blend-multiply" />,
+  oneWay: <img src={serviceOneWay} alt="One Way Outstation" className="w-full h-full object-contain mix-blend-multiply" />,
+  roundTrip: <img src={serviceRoundTrip} alt="Round Trip Outstation" className="w-full h-full object-contain mix-blend-multiply" />,
   airport: <img src={serviceAirport} alt="Airport Transfer" className="w-full h-full object-contain mix-blend-multiply" />,
   local: <img src={serviceLocal} alt="Local Rental" className="w-full h-full object-contain mix-blend-multiply" />,
   tour: <img src={serviceTour} alt="Tour Packages" className="w-full h-full object-contain mix-blend-multiply" />
@@ -482,8 +482,8 @@ export default function App() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-5">
             {[
-              { title: 'One Way Taxi', desc: 'Affordable one way drops at best prices', svg: servicesAssets.oneWay },
-              { title: 'Round Trip Taxi', desc: 'Round trips with flexible packages', svg: servicesAssets.roundTrip },
+              { title: 'One Way Outstation', desc: 'Affordable one way drops at best prices', svg: servicesAssets.oneWay },
+              { title: 'Round Trip Outstation', desc: 'Round trips with flexible packages', svg: servicesAssets.roundTrip },
               { title: 'Airport Transfer', desc: 'On-time airport pickup & drop', svg: servicesAssets.airport },
               { title: 'Local Rental', desc: 'Hourly / Daily local taxi rentals', svg: servicesAssets.local },
               { title: 'Tour Packages', desc: 'Outstation & Tour packages', svg: servicesAssets.tour }
@@ -769,8 +769,8 @@ export default function App() {
             <div>
               <h4 className="text-white font-bold text-[18px] mb-6 tracking-wide">Our Services</h4>
               <ul className="space-y-4 text-[14px] font-medium">
-                <li><a href="#" className="hover:text-white transition-colors flex items-center"><ChevronRight className="w-4 h-4 mr-2 opacity-50" /> One Way Taxi</a></li>
-                <li><a href="#" className="hover:text-white transition-colors flex items-center"><ChevronRight className="w-4 h-4 mr-2 opacity-50" /> Round Trip Taxi</a></li>
+                <li><a href="#" className="hover:text-white transition-colors flex items-center"><ChevronRight className="w-4 h-4 mr-2 opacity-50" /> One Way Outstation</a></li>
+                <li><a href="#" className="hover:text-white transition-colors flex items-center"><ChevronRight className="w-4 h-4 mr-2 opacity-50" /> Round Trip Outstation</a></li>
                 <li><a href="#" className="hover:text-white transition-colors flex items-center"><ChevronRight className="w-4 h-4 mr-2 opacity-50" /> Airport Transfer</a></li>
                 <li><a href="#" className="hover:text-white transition-colors flex items-center"><ChevronRight className="w-4 h-4 mr-2 opacity-50" /> Local Rental</a></li>
                 <li><a href="#" className="hover:text-white transition-colors flex items-center"><ChevronRight className="w-4 h-4 mr-2 opacity-50" /> Tour Packages</a></li>
