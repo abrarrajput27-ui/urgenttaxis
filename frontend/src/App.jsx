@@ -734,10 +734,10 @@ export default function App() {
       {/* 10. Footer */}
       <footer id="contact" className="bg-[#0B132B] text-gray-400 pt-16 pb-8">
         <div className="max-w-[1200px] mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-12 gap-y-12 mb-16 items-start">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-x-8 gap-y-12 mb-16 items-start">
             
             {/* Col 1: Brand */}
-            <div className="pr-0 lg:pr-6 h-full">
+            <div className="pr-0 lg:pr-4 h-full">
               <div className="mb-6">
                 <img src={logoImg} alt="Urgent Taxis" className="h-[45px] w-auto rounded-md mix-blend-lighten" />
               </div>
@@ -777,7 +777,7 @@ export default function App() {
               </ul>
             </div>
 
-            {/* Col 4: Contact */}
+            {/* Col 4: Top Routes */}
             <div>
               <h4 className="text-white font-bold text-[18px] mb-6 tracking-wide">Top Routes</h4>
               <ul className="space-y-3.5 text-[14px] font-medium mb-8">
@@ -787,7 +787,10 @@ export default function App() {
                 <li><a href="#" className="hover:text-white transition-colors flex items-center"><ChevronRight className="w-4 h-4 mr-2 opacity-50" /> Delhi to Rishikesh</a></li>
                 <li><a href="#" className="hover:text-white transition-colors flex items-center"><ChevronRight className="w-4 h-4 mr-2 opacity-50" /> Delhi to Shimla</a></li>
               </ul>
+            </div>
               
+            {/* Col 5: Contact Us */}
+            <div>
               <h4 className="text-white font-bold text-[18px] mb-6 tracking-wide">Contact Us</h4>
               <ul className="space-y-4 text-[14px] font-medium">
                 <li className="flex items-start">
