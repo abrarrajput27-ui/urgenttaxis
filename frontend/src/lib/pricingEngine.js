@@ -1,4 +1,4 @@
-import { VEHICLE_RATES, DRIVER_ALLOWANCE, MIN_BILLABLE_ONE_WAY_KM, MIN_BILLABLE_ROUND_TRIP_KM_PER_DAY, TRIP_TYPES, AIRPORT_TRANSFER_SURCHARGE } from './pricingRules';
+import { VEHICLE_RATES, MIN_BILLABLE_ROUND_TRIP_KM_PER_DAY, TRIP_TYPES, AIRPORT_TRANSFER_SURCHARGE } from './pricingRules';
 
 /**
  * Parses dates to calculate number of days between pickup and return.
@@ -34,6 +34,7 @@ export const calculateFare = ({ tripType, distanceKm, vehicleCategory, estimated
   let totalFare = 0;
   let distanceCharge = 0;
   let billableDistance = 0;
+  let chargeableKm = 0;
   let driverAllowanceTotal = 0;
   let perKmRate = 0;
   let baseFare = 0;
@@ -43,10 +44,12 @@ export const calculateFare = ({ tripType, distanceKm, vehicleCategory, estimated
   let finalEstimatedStateTax = estimatedStateTax;
 
   if (tripType === TRIP_TYPES.ONE_WAY) {
-    billableDistance = Math.max(distanceKm, MIN_BILLABLE_ONE_WAY_KM);
     perKmRate = vehicle.oneWayRate;
-    distanceCharge = Math.round(billableDistance * perKmRate);
-    driverAllowanceTotal = DRIVER_ALLOWANCE;
+    const rawDistanceCharge = Math.round(distanceKm * perKmRate);
+    distanceCharge = Math.max(rawDistanceCharge, vehicle.minOneWayFare || 0);
+    chargeableKm = Math.round(distanceCharge / perKmRate); // What they are essentially billed for given min fare
+    billableDistance = chargeableKm;
+    driverAllowanceTotal = vehicle.driverAllowance || 0;
     
     // Toll and Tax could be strings ("To be confirmed") for dynamic routes
     const numericToll = typeof finalEstimatedToll === 'number' ? finalEstimatedToll : 0;
@@ -61,9 +64,10 @@ export const calculateFare = ({ tripType, distanceKm, vehicleCategory, estimated
     // For round trip, we double the one-way distance to get estimated total journey
     const estTotalDistance = distanceKm * 2;
     billableDistance = Math.max(estTotalDistance, minKmForTrip);
+    chargeableKm = billableDistance;
     perKmRate = vehicle.roundTripRate;
     distanceCharge = Math.round(billableDistance * perKmRate);
-    driverAllowanceTotal = tripDays * DRIVER_ALLOWANCE;
+    driverAllowanceTotal = tripDays * (vehicle.driverAllowance || 0);
     
     // We double the one-way tolls as an estimate for the return journey if they are numbers
     finalEstimatedToll = typeof estimatedToll === 'number' ? (estimatedToll * 2) : "To be confirmed";
@@ -76,12 +80,16 @@ export const calculateFare = ({ tripType, distanceKm, vehicleCategory, estimated
   }
 
   else if (tripType === TRIP_TYPES.LOCAL) {
+    // If vehicle doesn't support local rates, return null to filter it out
+    if (!vehicle.localRates) return null;
+    
     // localPackage is like "8hr/80km"
     const pkg = localPackage || "8hr/80km";
     baseFare = vehicle.localRates[pkg];
     totalFare = baseFare;
     perKmRate = vehicle.localExtraKmRate;
     billableDistance = parseInt(pkg.split('/')[1]); // Extract 80 from "8hr/80km"
+    chargeableKm = billableDistance;
     finalEstimatedToll = 0; // Usually paid directly by customer in local
     finalEstimatedStateTax = 0;
     finalTollCount = 0;
@@ -91,6 +99,7 @@ export const calculateFare = ({ tripType, distanceKm, vehicleCategory, estimated
 
   else if (tripType === TRIP_TYPES.AIRPORT) {
     billableDistance = Math.max(distanceKm, 30); // Minimal billing distance for airport
+    chargeableKm = billableDistance;
     perKmRate = vehicle.oneWayRate;
     distanceCharge = Math.round(billableDistance * perKmRate);
     baseFare = AIRPORT_TRANSFER_SURCHARGE; // Extra surcharge for airport commercial parking/entry
@@ -112,6 +121,7 @@ export const calculateFare = ({ tripType, distanceKm, vehicleCategory, estimated
     tripType: tripType,
     distanceKm: billableDistance, // this is billable, let's keep original distance too
     originalDistanceKm: distanceKm,
+    chargeableKm: chargeableKm,
     perKmRate: perKmRate,
     distanceCharge: distanceCharge,
     driverAllowance: driverAllowanceTotal,
@@ -133,7 +143,7 @@ export const calculateFare = ({ tripType, distanceKm, vehicleCategory, estimated
  * Generates an array of all vehicle fares for a specific trip.
  */
 export const getAllVehicleFares = (params) => {
-  return Object.keys(VEHICLE_RATES).map(category => 
-    calculateFare({ ...params, vehicleCategory: category })
-  );
+  return Object.keys(VEHICLE_RATES)
+    .map(category => calculateFare({ ...params, vehicleCategory: category }))
+    .filter(fare => fare !== null); // Filter out vehicles that returned null (e.g., Local trips with no localRates)
 };

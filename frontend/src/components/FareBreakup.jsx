@@ -209,8 +209,24 @@ const FareBreakup = ({
                       <div className="text-sm font-medium text-gray-600">Exact distance and fare will be confirmed shortly on WhatsApp.</div>
                     ) : (
                       <>
+                        {fare.tripType !== 'Local Rental' && (
+                          <>
+                            <div className="flex justify-between text-[12px]">
+                              <span className="text-gray-600">Distance</span>
+                              <span className="font-semibold text-gray-900">{fare.originalDistanceKm} km</span>
+                            </div>
+                            <div className="flex justify-between text-[12px]">
+                              <span className="text-gray-600">Chargeable KM</span>
+                              <span className="font-semibold text-gray-900">{fare.chargeableKm} km</span>
+                            </div>
+                            <div className="flex justify-between text-[12px]">
+                              <span className="text-gray-600">Per KM Rate</span>
+                              <span className="font-semibold text-gray-900">₹{fare.perKmRate}/km</span>
+                            </div>
+                          </>
+                        )}
                         <div className="flex justify-between text-[12px]">
-                          <span className="text-gray-600">Base Fare / Distance Charge ({fare.distanceKm} km)</span>
+                          <span className="text-gray-600">Base Fare / Distance Charge</span>
                           <span className="font-semibold text-gray-900">₹{fare.distanceCharge || fare.baseFare}</span>
                         </div>
                         {fare.driverAllowance > 0 && (
@@ -237,8 +253,8 @@ const FareBreakup = ({
                         ) : null}
 
                         <div className="flex justify-between text-[11px] text-gray-500 mt-1">
-                           <span className="italic">Night / Peak Charges</span>
-                           <span className="italic">As applicable</span>
+                           <span className="italic">Parking & Airport Entry</span>
+                           <span className="italic">Extra</span>
                         </div>
 
                         <div className="flex justify-between items-center pt-3 border-t border-dashed border-gray-200 mt-2">
