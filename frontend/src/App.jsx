@@ -5,8 +5,9 @@ import ReactGA from 'react-ga4';
 import { 
   Phone, Mail, MapPin, Calendar, Clock, Car, ChevronDown,
   Zap, Tag, Headphones, Users, ShieldCheck, ArrowRight, 
-  ChevronRight, ChevronLeft, Star, CheckCircle2, Menu, X, ArrowLeftRight
+  ChevronRight, ChevronLeft, Star, CheckCircle2, Menu, X, ArrowLeftRight, MessageCircle, Loader2
 } from 'lucide-react';
+import { supabase } from './lib/supabase';
 
 // Import images statically
 import heroBg from './assets/images/hero-bg.png';
@@ -170,6 +171,11 @@ function Home() {
   const [date, setDate] = useState('');
   const [time, setTime] = useState('');
   const [vehicle, setVehicle] = useState('Select cab type');
+  const [name, setName] = useState('');
+  const [mobile, setMobile] = useState('');
+  const [isHeroSubmitting, setIsHeroSubmitting] = useState(false);
+  const [heroFormSuccess, setHeroFormSuccess] = useState(false);
+  const [heroBlockedUrl, setHeroBlockedUrl] = useState(null);
 
   // Testimonial Slider State
   const [testiSlide, setTestiSlide] = useState(0);
@@ -202,17 +208,75 @@ function Home() {
   const handleTestiNext = () => setTestiSlide(prev => (prev >= maxTestiSlide ? 0 : prev + 1));
   const handleTestiPrev = () => setTestiSlide(prev => (prev <= 0 ? maxTestiSlide : prev - 1));
 
-  const handleWhatsAppBooking = (e) => {
+  const handleWhatsAppBooking = async (e) => {
     e.preventDefault();
-    ReactGA.event({ category: "Form", action: "booking_form_submit" });
-    ReactGA.event({ category: "Contact", action: "whatsapp_click", label: "Booking Form" });
-    const text = `Hello Urgent Taxis, I need a ride:
-- Pickup: ${pickup}
-- Drop: ${drop}
-- Date: ${date}
-- Time: ${time}
-- Vehicle: ${vehicle}`;
-    window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`, '_blank');
+    setIsHeroSubmitting(true);
+    setHeroBlockedUrl(null);
+
+    try {
+      ReactGA.event({ category: "Form", action: "booking_form_submit" });
+      ReactGA.event("lead_form_submit", {
+        category: "Conversion",
+        label: "Hero Booking Form",
+        value: 1
+      });
+
+      const payload = {
+        name: name,
+        mobile: mobile,
+        pickup: pickup,
+        drop_location: drop,
+        trip_date: date,
+        vehicle_type: vehicle,
+        message: `Time: ${time}`,
+        source_page: location.pathname,
+        route_name: routeData.heading || "Homepage",
+        lead_source: "Hero Form"
+      };
+
+      const { error } = await supabase.from('leads').insert([payload]);
+      if (error) throw error;
+
+      const messageText = `🚖 New Quote Request - Urgent Taxis\n\n👤 Name: ${name}\n📞 Mobile: ${mobile}\n📍 Pickup: ${pickup}\n📍 Drop: ${drop}\n📅 Trip Date: ${date} at ${time}\n🚘 Vehicle: ${vehicle}\n\n🌐 Source Page: ${location.pathname}\n🛣️ Route Name: ${routeData.heading || "Homepage"}\n📌 Lead Source: Website Hero Form\n\nPlease call customer as soon as possible.`;
+      
+      const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(messageText)}`;
+      const newWindow = window.open(whatsappUrl, '_blank');
+
+      let isBlocked = false;
+      if (!newWindow || newWindow.closed || typeof newWindow.closed === 'undefined') {
+        isBlocked = true;
+        setHeroBlockedUrl(whatsappUrl);
+      } else {
+        ReactGA.event("whatsapp_lead_notification_opened", {
+          category: "Conversion",
+          label: "Auto Opened (Hero)"
+        });
+      }
+
+      setHeroFormSuccess(true);
+      setName(''); setMobile(''); setPickup(''); setDrop(''); setDate(''); setTime(''); setVehicle('Select cab type');
+
+      if (!isBlocked) {
+        setTimeout(() => setHeroFormSuccess(false), 4000);
+      }
+
+    } catch (err) {
+      console.error("Error submitting hero lead:", err);
+      alert("Something went wrong. Please try calling us directly.");
+    } finally {
+      setIsHeroSubmitting(false);
+    }
+  };
+
+  const handleHeroFallbackClick = () => {
+    ReactGA.event("whatsapp_lead_notification_opened", {
+      category: "Conversion",
+      label: "Fallback Clicked (Hero)"
+    });
+    setTimeout(() => {
+      setHeroFormSuccess(false);
+      setHeroBlockedUrl(null);
+    }, 1500);
   };
 
   const handleSimpleWhatsApp = (message) => {
@@ -503,106 +567,157 @@ function Home() {
                   </div>
                 </div>
                 
-                <form className="p-6 space-y-4" onSubmit={handleWhatsAppBooking}>
-                  {/* Locations with Swap Icon */}
-                  <div className="relative flex flex-col">
-                    <div>
-                      <label className="block text-[12px] font-bold text-gray-800 mb-1.5 ml-1">Pickup Location</label>
-                      <div className="relative">
-                        <MapPin className="absolute left-3.5 top-[12px] w-[18px] h-[18px] text-[#00a859]" />
-                        <input 
-                          type="text" 
-                          placeholder="Enter pickup location" 
-                          value={pickup} onChange={(e) => setPickup(e.target.value)}
-                          className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg text-[13px] outline-none focus:border-blue-500 transition-colors bg-white text-gray-800"
-                          required
-                        />
-                      </div>
-                    </div>
+                {heroFormSuccess ? (
+                  <div className="p-8 text-center flex flex-col items-center justify-center min-h-[380px]">
+                    <CheckCircle2 className="w-16 h-16 text-[#0aa63f] mb-4 animate-bounce" />
+                    <h3 className="text-xl font-black text-gray-900 mb-2">Request Received!</h3>
+                    <p className="text-gray-600 mb-6 text-[14px]">Our team will contact you shortly with the best quote.</p>
                     
-                    <div className="flex justify-center -my-2 relative z-10 pointer-events-none">
-                      <button 
-                        type="button" 
-                        onClick={swapLocations}
-                        className="bg-white border border-gray-200 shadow-sm rounded-full p-1.5 hover:bg-gray-50 transition-colors pointer-events-auto"
-                      >
-                        <ArrowLeftRight className="w-[16px] h-[16px] text-[#1e3b8a] rotate-90" />
-                      </button>
-                    </div>
-                    
-                    <div>
-                      <label className="block text-[12px] font-bold text-gray-800 mb-1.5 ml-1">Drop Location</label>
-                      <div className="relative">
-                        <MapPin className="absolute left-3.5 top-[13px] w-[18px] h-[18px] text-red-500" />
-                        <input 
-                          type="text" 
-                          placeholder="Enter drop location" 
-                          value={drop} onChange={(e) => setDrop(e.target.value)}
-                          className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg text-[13px] outline-none focus:border-blue-500 transition-colors bg-white text-gray-800"
-                          required
-                        />
+                    {heroBlockedUrl && (
+                      <div className="mt-2 p-4 bg-blue-50 rounded-xl w-full animate-in slide-in-from-bottom-4 duration-500">
+                        <p className="text-[13px] text-blue-800 mb-3 font-medium">To ensure immediate processing, please send your details to our WhatsApp:</p>
+                        <a 
+                          href={heroBlockedUrl} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          onClick={handleHeroFallbackClick}
+                          className="bg-[#25D366] hover:bg-[#1ebd5a] text-white font-bold py-3 px-6 rounded-lg transition-colors inline-flex items-center justify-center w-full shadow-lg text-[14px]"
+                        >
+                          <MessageCircle className="w-4 h-4 mr-2" /> Send Lead to WhatsApp
+                        </a>
                       </div>
-                    </div>
+                    )}
                   </div>
-
-                  {/* Date & Time */}
-                  <div>
-                    <label className="block text-[12px] font-bold text-gray-800 mb-1.5 ml-1">Date & Time</label>
+                ) : (
+                  <form className="p-6 space-y-4" onSubmit={handleWhatsAppBooking}>
+                    {/* Name & Mobile */}
                     <div className="grid grid-cols-2 gap-3">
-                      <div className="relative">
-                        <Calendar className="absolute left-3.5 top-[14px] w-[18px] h-[18px] text-gray-400 pointer-events-none" />
+                      <div>
+                        <label className="block text-[12px] font-bold text-gray-800 mb-1.5 ml-1">Name *</label>
                         <input 
-                          type="date" 
-                          value={date} onChange={(e) => setDate(e.target.value)}
-                          className="w-full pl-10 pr-2 py-3 border border-gray-200 rounded-lg text-[14px] sm:text-[13px] text-gray-700 outline-none focus:border-blue-500 bg-white min-h-[46px] appearance-none"
+                          type="text" 
+                          placeholder="Your Name" 
+                          value={name} onChange={(e) => setName(e.target.value)}
+                          className="w-full px-3 py-3 border border-gray-200 rounded-lg text-[13px] outline-none focus:border-blue-500 bg-white"
                           required
                         />
                       </div>
-                      <div className="relative">
-                        <Clock className="absolute left-3.5 top-[14px] w-[18px] h-[18px] text-gray-400 pointer-events-none" />
+                      <div>
+                        <label className="block text-[12px] font-bold text-gray-800 mb-1.5 ml-1">Mobile *</label>
                         <input 
-                          type="time" 
-                          value={time} onChange={(e) => setTime(e.target.value)}
-                          className="w-full pl-10 pr-2 py-3 border border-gray-200 rounded-lg text-[14px] sm:text-[13px] text-gray-700 outline-none focus:border-blue-500 bg-white min-h-[46px] appearance-none"
+                          type="tel" 
+                          placeholder="10-digit no." 
+                          value={mobile} onChange={(e) => setMobile(e.target.value)}
+                          className="w-full px-3 py-3 border border-gray-200 rounded-lg text-[13px] outline-none focus:border-blue-500 bg-white"
                           required
                         />
                       </div>
                     </div>
-                  </div>
 
-                  {/* Vehicle */}
-                  <div>
-                    <label className="block text-[12px] font-bold text-gray-700 mb-1.5 ml-1">Select Vehicle</label>
-                    <div className="relative">
-                      <Car className="absolute left-3.5 top-[13px] w-[18px] h-[18px] text-gray-400" />
-                      <select 
-                        value={vehicle} onChange={(e) => setVehicle(e.target.value)}
-                        className="w-full pl-10 pr-10 py-3 border border-gray-200 rounded-lg text-[14px] text-gray-700 outline-none focus:border-blue-500 appearance-none bg-white"
-                      >
-                        <option value="Select cab type">Select cab type</option>
-                        <option value="Swift Dzire">Swift Dzire (4 Seater)</option>
-                        <option value="Maruti Ertiga">Maruti Ertiga (6 Seater)</option>
-                        <option value="Toyota Innova">Toyota Innova (6 Seater)</option>
-                        <option value="Innova Crysta">Innova Crysta (6 Seater)</option>
-                        <option value="Tempo Traveller">Tempo Traveller (12 Seater)</option>
-                      </select>
-                      <ChevronDown className="absolute right-3.5 top-[13px] w-[18px] h-[18px] text-gray-400 pointer-events-none" />
+                    {/* Locations with Swap Icon */}
+                    <div className="relative flex flex-col">
+                      <div>
+                        <label className="block text-[12px] font-bold text-gray-800 mb-1.5 ml-1">Pickup Location</label>
+                        <div className="relative">
+                          <MapPin className="absolute left-3.5 top-[12px] w-[18px] h-[18px] text-[#00a859]" />
+                          <input 
+                            type="text" 
+                            placeholder="Enter pickup location" 
+                            value={pickup} onChange={(e) => setPickup(e.target.value)}
+                            className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg text-[13px] outline-none focus:border-blue-500 transition-colors bg-white text-gray-800"
+                            required
+                          />
+                        </div>
+                      </div>
+                      
+                      <div className="flex justify-center -my-2 relative z-10 pointer-events-none">
+                        <button 
+                          type="button" 
+                          onClick={swapLocations}
+                          className="bg-white border border-gray-200 shadow-sm rounded-full p-1.5 hover:bg-gray-50 transition-colors pointer-events-auto"
+                        >
+                          <ArrowLeftRight className="w-[16px] h-[16px] text-[#1e3b8a] rotate-90" />
+                        </button>
+                      </div>
+                      
+                      <div>
+                        <label className="block text-[12px] font-bold text-gray-800 mb-1.5 ml-1">Drop Location</label>
+                        <div className="relative">
+                          <MapPin className="absolute left-3.5 top-[13px] w-[18px] h-[18px] text-red-500" />
+                          <input 
+                            type="text" 
+                            placeholder="Enter drop location" 
+                            value={drop} onChange={(e) => setDrop(e.target.value)}
+                            className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg text-[13px] outline-none focus:border-blue-500 transition-colors bg-white text-gray-800"
+                            required
+                          />
+                        </div>
+                      </div>
                     </div>
-                  </div>
 
-                  <button 
-                    type="submit" 
-                    className="w-full bg-[#0aa63f] hover:bg-[#088c34] text-white font-bold py-3.5 rounded-[10px] flex items-center justify-center transition-colors mt-6 text-[15px] shadow-md shadow-[#0aa63f]/20"
-                    onClick={handleCheckFareClick}
-                  >
-                    Check Fare <ArrowRight className="w-5 h-5 ml-2" />
-                  </button>
-                  <div className="text-center pt-2">
-                    <p className="text-[12px] font-bold text-gray-600 flex items-center justify-center">
-                      <Zap className="w-3.5 h-3.5 text-yellow-500 mr-1 fill-yellow-500" /> Instant WhatsApp Confirmation
-                    </p>
-                  </div>
-                </form>
+                    {/* Date & Time */}
+                    <div>
+                      <label className="block text-[12px] font-bold text-gray-800 mb-1.5 ml-1">Date & Time</label>
+                      <div className="grid grid-cols-2 gap-3">
+                        <div className="relative">
+                          <Calendar className="absolute left-3.5 top-[14px] w-[18px] h-[18px] text-gray-400 pointer-events-none" />
+                          <input 
+                            type="date" 
+                            value={date} onChange={(e) => setDate(e.target.value)}
+                            className="w-full pl-10 pr-2 py-3 border border-gray-200 rounded-lg text-[14px] sm:text-[13px] text-gray-700 outline-none focus:border-blue-500 bg-white min-h-[46px] appearance-none"
+                            required
+                          />
+                        </div>
+                        <div className="relative">
+                          <Clock className="absolute left-3.5 top-[14px] w-[18px] h-[18px] text-gray-400 pointer-events-none" />
+                          <input 
+                            type="time" 
+                            value={time} onChange={(e) => setTime(e.target.value)}
+                            className="w-full pl-10 pr-2 py-3 border border-gray-200 rounded-lg text-[14px] sm:text-[13px] text-gray-700 outline-none focus:border-blue-500 bg-white min-h-[46px] appearance-none"
+                            required
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Vehicle */}
+                    <div>
+                      <label className="block text-[12px] font-bold text-gray-700 mb-1.5 ml-1">Select Vehicle</label>
+                      <div className="relative">
+                        <Car className="absolute left-3.5 top-[13px] w-[18px] h-[18px] text-gray-400" />
+                        <select 
+                          value={vehicle} onChange={(e) => setVehicle(e.target.value)}
+                          className="w-full pl-10 pr-10 py-3 border border-gray-200 rounded-lg text-[14px] text-gray-700 outline-none focus:border-blue-500 appearance-none bg-white"
+                        >
+                          <option value="Select cab type">Select cab type</option>
+                          <option value="Swift Dzire">Swift Dzire (4 Seater)</option>
+                          <option value="Maruti Ertiga">Maruti Ertiga (6 Seater)</option>
+                          <option value="Toyota Innova">Toyota Innova (6 Seater)</option>
+                          <option value="Innova Crysta">Innova Crysta (6 Seater)</option>
+                          <option value="Tempo Traveller">Tempo Traveller (12 Seater)</option>
+                        </select>
+                        <ChevronDown className="absolute right-3.5 top-[13px] w-[18px] h-[18px] text-gray-400 pointer-events-none" />
+                      </div>
+                    </div>
+
+                    <button 
+                      type="submit" 
+                      disabled={isHeroSubmitting}
+                      className="w-full bg-[#0aa63f] hover:bg-[#088c34] text-white font-bold py-3.5 rounded-[10px] flex items-center justify-center transition-colors mt-6 text-[15px] shadow-md shadow-[#0aa63f]/20 disabled:bg-gray-400"
+                    >
+                      {isHeroSubmitting ? (
+                        <><Loader2 className="w-5 h-5 mr-2 animate-spin" /> Processing...</>
+                      ) : (
+                        <>Get Instant Quote <ArrowRight className="w-5 h-5 ml-2" /></>
+                      )}
+                    </button>
+                    <div className="text-center pt-2">
+                      <p className="text-[12px] font-bold text-gray-600 flex items-center justify-center">
+                        <Zap className="w-3.5 h-3.5 text-yellow-500 mr-1 fill-yellow-500" /> Instant WhatsApp Confirmation
+                      </p>
+                    </div>
+                  </form>
+                )}
               </div>
             </div>
             
