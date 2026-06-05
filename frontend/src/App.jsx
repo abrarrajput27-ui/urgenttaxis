@@ -297,44 +297,44 @@ export default function App() {
                 
                 <form className="p-6 space-y-4" onSubmit={handleWhatsAppBooking}>
                   {/* Locations with Swap Icon */}
-                  <div className="relative">
-                    <div className="space-y-4">
-                      <div>
-                        <label className="block text-[12px] font-bold text-gray-800 mb-1.5 ml-1">Pickup Location</label>
-                        <div className="relative">
-                          <MapPin className="absolute left-3.5 top-[12px] w-[18px] h-[18px] text-[#00a859]" />
-                          <input 
-                            type="text" 
-                            placeholder="Enter pickup location" 
-                            value={pickup} onChange={(e) => setPickup(e.target.value)}
-                            className="w-full pl-10 pr-10 py-3 border border-gray-200 rounded-lg text-[13px] outline-none focus:border-blue-500 transition-colors bg-white text-gray-800"
-                            required
-                          />
-                        </div>
-                      </div>
-                      
-                      <div>
-                        <label className="block text-[12px] font-bold text-gray-800 mb-1.5 ml-1">Drop Location</label>
-                        <div className="relative">
-                          <MapPin className="absolute left-3.5 top-[13px] w-[18px] h-[18px] text-red-500" />
-                          <input 
-                            type="text" 
-                            placeholder="Enter drop location" 
-                            value={drop} onChange={(e) => setDrop(e.target.value)}
-                            className="w-full pl-10 pr-10 py-3 border border-gray-200 rounded-lg text-[13px] outline-none focus:border-blue-500 transition-colors bg-white text-gray-800"
-                            required
-                          />
-                        </div>
+                  <div className="relative flex flex-col">
+                    <div>
+                      <label className="block text-[12px] font-bold text-gray-800 mb-1.5 ml-1">Pickup Location</label>
+                      <div className="relative">
+                        <MapPin className="absolute left-3.5 top-[12px] w-[18px] h-[18px] text-[#00a859]" />
+                        <input 
+                          type="text" 
+                          placeholder="Enter pickup location" 
+                          value={pickup} onChange={(e) => setPickup(e.target.value)}
+                          className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg text-[13px] outline-none focus:border-blue-500 transition-colors bg-white text-gray-800"
+                          required
+                        />
                       </div>
                     </div>
                     
-                    <button 
-                      type="button" 
-                      onClick={swapLocations}
-                      className="absolute right-4 top-[50%] -translate-y-1/2 bg-white border border-gray-200 shadow-md rounded-full p-2 z-10 hover:bg-gray-50 transition-colors"
-                    >
-                      <ArrowLeftRight className="w-[18px] h-[18px] text-[#1e3b8a] rotate-90" />
-                    </button>
+                    <div className="flex justify-center -my-2 relative z-10 pointer-events-none">
+                      <button 
+                        type="button" 
+                        onClick={swapLocations}
+                        className="bg-white border border-gray-200 shadow-sm rounded-full p-1.5 hover:bg-gray-50 transition-colors pointer-events-auto"
+                      >
+                        <ArrowLeftRight className="w-[16px] h-[16px] text-[#1e3b8a] rotate-90" />
+                      </button>
+                    </div>
+                    
+                    <div>
+                      <label className="block text-[12px] font-bold text-gray-800 mb-1.5 ml-1">Drop Location</label>
+                      <div className="relative">
+                        <MapPin className="absolute left-3.5 top-[13px] w-[18px] h-[18px] text-red-500" />
+                        <input 
+                          type="text" 
+                          placeholder="Enter drop location" 
+                          value={drop} onChange={(e) => setDrop(e.target.value)}
+                          className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg text-[13px] outline-none focus:border-blue-500 transition-colors bg-white text-gray-800"
+                          required
+                        />
+                      </div>
+                    </div>
                   </div>
 
                   {/* Date & Time */}
