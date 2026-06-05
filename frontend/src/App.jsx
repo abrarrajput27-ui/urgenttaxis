@@ -695,38 +695,7 @@ export default function App() {
         </div>
       </section>
 
-      {/* Contact & Map Section */}
-      <section id="contact" className="py-12 bg-white">
-        <div className="max-w-[1200px] mx-auto px-4">
-          <div className="flex flex-col lg:flex-row gap-10 items-center">
-            <div className="w-full lg:w-1/3">
-              <p className="text-[#00a859] font-black text-[10px] tracking-[0.2em] uppercase mb-1">GET IN TOUCH</p>
-              <h2 className="text-[30px] font-black text-gray-900 leading-tight mb-4">Visit Our Office</h2>
-              <p className="text-[14px] text-gray-600 mb-6">We are always ready to assist you. Drop by our office or call us for instant bookings.</p>
-              
-              <div className="space-y-4">
-                <div className="flex items-start">
-                  <div className="bg-blue-50 p-2.5 rounded-full mr-4 text-blue-600 shrink-0"><MapPin className="w-5 h-5" /></div>
-                  <div>
-                    <h4 className="font-bold text-[15px] text-gray-900">Office Address</h4>
-                    <p className="text-[13px] text-gray-600 mt-1 leading-relaxed">Shop No. 09, S. R. Complex, Railway Station Road, Masuri, Ghaziabad, Uttar Pradesh 201302</p>
-                  </div>
-                </div>
-                <div className="flex items-start">
-                  <div className="bg-blue-50 p-2.5 rounded-full mr-4 text-blue-600 shrink-0"><Phone className="w-5 h-5 fill-current" /></div>
-                  <div>
-                    <h4 className="font-bold text-[15px] text-gray-900">Phone</h4>
-                    <a href={`tel:${CALL_NUMBER}`} className="text-[13px] text-gray-600 mt-1 block hover:text-blue-600 font-bold">73106 51940</a>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="w-full lg:w-2/3 h-[350px] bg-gray-100 rounded-[20px] overflow-hidden shadow-inner border border-gray-200">
-               <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3500.569941199564!2d77.53034967550228!3d28.67261167564303!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390ce5167f1b7f0f%3A0xc36ce44840eaf3ee!2sMasuri%2C%20Ghaziabad%2C%20Uttar%20Pradesh%20201015!5e0!3m2!1sen!2sin!4v1717598000000!5m2!1sen!2sin" width="100%" height="100%" style={{border:0}} allowFullScreen="" loading="lazy" referrerPolicy="no-referrer-when-downgrade"></iframe>
-            </div>
-          </div>
-        </div>
-      </section>
+
 
       {/* 9. CTA Banner */}
       <section className="max-w-[1200px] mx-auto px-4 pb-5">
@@ -763,7 +732,7 @@ export default function App() {
       </section>
 
       {/* 10. Footer */}
-      <footer className="bg-[#0B132B] text-gray-400 pt-16 pb-8">
+      <footer id="contact" className="bg-[#0B132B] text-gray-400 pt-16 pb-8">
         <div className="max-w-[1200px] mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-12 gap-y-12 mb-16 items-start">
             
