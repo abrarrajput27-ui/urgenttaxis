@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import ReactGA from 'react-ga4';
-import { X, Loader2, CheckCircle2 } from 'lucide-react';
+import { X, Loader2, CheckCircle2, MessageCircle } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useLocation } from 'react-router-dom';
 
@@ -8,6 +8,7 @@ const LeadCapturePopup = ({ isOpen, onClose, routeName = "General Booking" }) =>
   const location = useLocation();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [blockedUrl, setBlockedUrl] = useState(null);
 
   const [formData, setFormData] = useState({
     name: '',
@@ -28,6 +29,7 @@ const LeadCapturePopup = ({ isOpen, onClose, routeName = "General Booking" }) =>
         page_path: location.pathname
       });
       setIsSuccess(false); // Reset success state when opened
+      setBlockedUrl(null);
     }
   }, [isOpen, routeName, location.pathname]);
 
@@ -36,9 +38,23 @@ const LeadCapturePopup = ({ isOpen, onClose, routeName = "General Booking" }) =>
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
+  const handleFallbackClick = () => {
+    ReactGA.event("whatsapp_lead_notification_opened", {
+      category: "Conversion",
+      label: "Fallback Clicked"
+    });
+    // Auto close after clicking
+    setTimeout(() => {
+      onClose();
+      setIsSuccess(false);
+      setBlockedUrl(null);
+    }, 1500);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
+    setBlockedUrl(null);
 
     try {
       // 1. Fire GA4 Event
@@ -63,6 +79,25 @@ const LeadCapturePopup = ({ isOpen, onClose, routeName = "General Booking" }) =>
         throw error;
       }
 
+      // 4. WhatsApp Integration
+      const BUSINESS_WHATSAPP_NUMBER = "918595066033";
+      const messageText = `🚖 New Quote Request - Urgent Taxis\n\n👤 Name: ${formData.name}\n📞 Mobile: ${formData.mobile}\n📍 Pickup: ${formData.pickup}\n📍 Drop: ${formData.drop_location}\n📅 Trip Date: ${formData.trip_date}\n🚘 Vehicle: ${formData.vehicle_type}\n💬 Message: ${formData.message || 'N/A'}\n\n🌐 Source Page: ${location.pathname}\n🛣️ Route Name: ${routeName}\n📌 Lead Source: Website Get Quote Form\n\nPlease call customer as soon as possible.`;
+
+      const whatsappUrl = `https://wa.me/${BUSINESS_WHATSAPP_NUMBER}?text=${encodeURIComponent(messageText)}`;
+      
+      const newWindow = window.open(whatsappUrl, "_blank");
+      
+      let isBlocked = false;
+      if (!newWindow || newWindow.closed || typeof newWindow.closed === 'undefined') {
+        isBlocked = true;
+        setBlockedUrl(whatsappUrl);
+      } else {
+        ReactGA.event("whatsapp_lead_notification_opened", {
+          category: "Conversion",
+          label: "Auto Opened"
+        });
+      }
+
       setIsSuccess(true);
       // Reset form
       setFormData({
@@ -70,11 +105,13 @@ const LeadCapturePopup = ({ isOpen, onClose, routeName = "General Booking" }) =>
         trip_date: '', vehicle_type: 'Sedan', message: ''
       });
 
-      // Auto close after 3 seconds
-      setTimeout(() => {
-        onClose();
-        setIsSuccess(false);
-      }, 3000);
+      // Auto close after 3 seconds only if not blocked
+      if (!isBlocked) {
+        setTimeout(() => {
+          onClose();
+          setIsSuccess(false);
+        }, 3000);
+      }
 
     } catch (err) {
       console.error("Error submitting lead:", err);
@@ -104,7 +141,22 @@ const LeadCapturePopup = ({ isOpen, onClose, routeName = "General Booking" }) =>
           <div className="p-10 text-center flex flex-col items-center justify-center min-h-[400px]">
             <CheckCircle2 className="w-20 h-20 text-green-500 mb-4 animate-bounce" />
             <h3 className="text-2xl font-black text-gray-900 mb-2">Thank You!</h3>
-            <p className="text-gray-600">Your request has been received. Our team will contact you shortly with the best quote.</p>
+            <p className="text-gray-600 mb-6">Your request has been received. Our team will contact you shortly.</p>
+            
+            {blockedUrl && (
+              <div className="mt-2 p-4 bg-blue-50 rounded-xl w-full animate-in slide-in-from-bottom-4 duration-500">
+                <p className="text-sm text-blue-800 mb-3 font-medium">To ensure immediate processing, please send your details to our WhatsApp:</p>
+                <a 
+                  href={blockedUrl} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  onClick={handleFallbackClick}
+                  className="bg-[#25D366] hover:bg-[#1ebd5a] text-white font-bold py-3 px-6 rounded-lg transition-colors inline-flex items-center justify-center w-full shadow-lg"
+                >
+                  <MessageCircle className="w-5 h-5 mr-2" /> Send Lead to WhatsApp
+                </a>
+              </div>
+            )}
           </div>
         ) : (
           <div className="p-6 md:p-8">
