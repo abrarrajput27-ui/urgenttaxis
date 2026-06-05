@@ -167,11 +167,12 @@ export default function App() {
               <a href="#" className="text-[#3b82f6] font-bold text-[14px]">Home</a>
               <div className="absolute bottom-[24px] left-0 w-full h-[2px] bg-[#3b82f6]"></div>
             </div>
-            <a href="#" className="text-[#334155] hover:text-[#3b82f6] font-bold text-[14px] flex items-center transition-colors">Services <ChevronDown className="w-4 h-4 ml-1 text-gray-400" /></a>
-            <a href="#" className="text-[#334155] hover:text-[#3b82f6] font-bold text-[14px] transition-colors">Routes</a>
-            <a href="#" className="text-[#334155] hover:text-[#3b82f6] font-bold text-[14px] transition-colors">Fleet</a>
-            <a href="#" className="text-[#334155] hover:text-[#3b82f6] font-bold text-[14px] transition-colors">About Us</a>
-            <a href="#" className="text-[#334155] hover:text-[#3b82f6] font-bold text-[14px] transition-colors">Contact Us</a>
+            <a href="#services" className="text-[#334155] hover:text-[#3b82f6] font-bold text-[14px] flex items-center transition-colors">Services <ChevronDown className="w-4 h-4 ml-1 text-gray-400" /></a>
+            <a href="#routes" className="text-[#334155] hover:text-[#3b82f6] font-bold text-[14px] transition-colors">Routes</a>
+            <a href="#fleet" className="text-[#334155] hover:text-[#3b82f6] font-bold text-[14px] transition-colors">Fleet</a>
+            <a href="#about" className="text-[#334155] hover:text-[#3b82f6] font-bold text-[14px] transition-colors">About Us</a>
+            <a href="#blog" className="text-[#334155] hover:text-[#3b82f6] font-bold text-[14px] transition-colors">Blog</a>
+            <a href="#contact" className="text-[#334155] hover:text-[#3b82f6] font-bold text-[14px] transition-colors">Contact Us</a>
           </nav>
 
           {/* Spacer */}
@@ -208,12 +209,13 @@ export default function App() {
       {/* Mobile Nav */}
       {mobileMenuOpen && (
         <div className="lg:hidden bg-white px-4 pt-2 pb-6 border-b border-gray-100 shadow-sm absolute w-full z-40">
-           <a href="#" className="block py-3 text-blue-600 font-bold border-b border-gray-50">Home</a>
-           <a href="#" className="block py-3 text-gray-700 font-bold border-b border-gray-50">Services</a>
-           <a href="#" className="block py-3 text-gray-700 font-bold border-b border-gray-50">Routes</a>
-           <a href="#" className="block py-3 text-gray-700 font-bold border-b border-gray-50">Fleet</a>
-           <a href="#" className="block py-3 text-gray-700 font-bold border-b border-gray-50">About Us</a>
-           <a href="#" className="block py-3 text-gray-700 font-bold">Contact Us</a>
+           <a href="#" onClick={() => setMobileMenuOpen(false)} className="block py-3 text-blue-600 font-bold border-b border-gray-50">Home</a>
+           <a href="#services" onClick={() => setMobileMenuOpen(false)} className="block py-3 text-gray-700 font-bold border-b border-gray-50">Services</a>
+           <a href="#routes" onClick={() => setMobileMenuOpen(false)} className="block py-3 text-gray-700 font-bold border-b border-gray-50">Routes</a>
+           <a href="#fleet" onClick={() => setMobileMenuOpen(false)} className="block py-3 text-gray-700 font-bold border-b border-gray-50">Fleet</a>
+           <a href="#about" onClick={() => setMobileMenuOpen(false)} className="block py-3 text-gray-700 font-bold border-b border-gray-50">About Us</a>
+           <a href="#blog" onClick={() => setMobileMenuOpen(false)} className="block py-3 text-gray-700 font-bold border-b border-gray-50">Blog</a>
+           <a href="#contact" onClick={() => setMobileMenuOpen(false)} className="block py-3 text-gray-700 font-bold">Contact Us</a>
         </div>
       )}
 
@@ -342,30 +344,22 @@ export default function App() {
                     <label className="block text-[12px] font-bold text-gray-800 mb-1.5 ml-1">Date & Time</label>
                     <div className="grid grid-cols-2 gap-3">
                       <div className="relative">
-                        <Calendar className="absolute left-3.5 top-[13px] w-[18px] h-[18px] text-gray-400" />
+                        <Calendar className="absolute left-3.5 top-[14px] w-[18px] h-[18px] text-gray-400 pointer-events-none" />
                         <input 
-                          type="text" 
-                          placeholder="Select date"
-                          onFocus={(e) => e.target.type = 'date'}
-                          onBlur={(e) => e.target.value === '' ? e.target.type = 'text' : null}
+                          type="date" 
                           value={date} onChange={(e) => setDate(e.target.value)}
-                          className="w-full pl-10 pr-9 py-3 border border-gray-200 rounded-lg text-[13px] text-gray-600 outline-none focus:border-blue-500 bg-white"
+                          className="w-full pl-10 pr-2 py-3 border border-gray-200 rounded-lg text-[14px] sm:text-[13px] text-gray-700 outline-none focus:border-blue-500 bg-white min-h-[46px] appearance-none"
                           required
                         />
-                        <ChevronDown className="absolute right-3.5 top-[13px] w-[16px] h-[16px] text-gray-400 pointer-events-none" />
                       </div>
                       <div className="relative">
-                        <Clock className="absolute left-3.5 top-[13px] w-[18px] h-[18px] text-gray-400" />
+                        <Clock className="absolute left-3.5 top-[14px] w-[18px] h-[18px] text-gray-400 pointer-events-none" />
                         <input 
-                          type="text" 
-                          placeholder="Select time"
-                          onFocus={(e) => e.target.type = 'time'}
-                          onBlur={(e) => e.target.value === '' ? e.target.type = 'text' : null}
+                          type="time" 
                           value={time} onChange={(e) => setTime(e.target.value)}
-                          className="w-full pl-10 pr-9 py-3 border border-gray-200 rounded-lg text-[13px] text-gray-600 outline-none focus:border-blue-500 bg-white"
+                          className="w-full pl-10 pr-2 py-3 border border-gray-200 rounded-lg text-[14px] sm:text-[13px] text-gray-700 outline-none focus:border-blue-500 bg-white min-h-[46px] appearance-none"
                           required
                         />
-                        <ChevronDown className="absolute right-3.5 top-[13px] w-[16px] h-[16px] text-gray-400 pointer-events-none" />
                       </div>
                     </div>
                   </div>
@@ -476,7 +470,7 @@ export default function App() {
       </section>
 
       {/* 5. Services Section */}
-      <section className="py-8">
+      <section id="services" className="py-8">
         <div className="max-w-[1200px] mx-auto px-4 text-center relative">
           <p className="text-[#00a859] font-black text-[10px] tracking-[0.2em] uppercase mb-1">WHAT WE OFFER</p>
           <h2 className="text-[32px] font-black text-gray-900 mb-2 leading-tight">Our Taxi Services</h2>
@@ -510,7 +504,7 @@ export default function App() {
       </section>
 
       {/* 6. Fleet Section */}
-      <section className="py-10 bg-white">
+      <section id="fleet" className="py-10 bg-white">
         <div className="max-w-[1200px] mx-auto px-4 text-center">
           <p className="text-[#00a859] font-black text-[10px] tracking-[0.2em] uppercase mb-1">OUR FLEET</p>
           <h2 className="text-[32px] font-black text-gray-900 mb-2 leading-tight">Wide Range of Clean & Comfortable Cars</h2>
@@ -554,7 +548,7 @@ export default function App() {
       </section>
 
       {/* 7. Popular Routes */}
-      <section className="py-8 bg-gray-50">
+      <section id="routes" className="py-8 bg-gray-50">
         <div className="max-w-[1200px] mx-auto px-4">
           <div className="flex flex-col md:flex-row justify-between items-center mb-6 border-b border-gray-200 pb-3">
             <div>
@@ -599,8 +593,8 @@ export default function App() {
         </div>
       </section>
 
-      {/* 8. Testimonials */}
-      <section className="py-8 bg-white relative">
+      {/* 8. Testimonials (About) */}
+      <section id="about" className="py-8 bg-white relative">
         <div className="max-w-[1200px] mx-auto px-4 text-center relative">
           <p className="text-[#00a859] font-black text-[10px] tracking-[0.2em] uppercase mb-1">WHAT OUR CUSTOMERS SAY</p>
           <h2 className="text-[30px] font-black text-gray-900 mb-4 leading-tight">Happy Customers, Happy Us</h2>
@@ -670,6 +664,67 @@ export default function App() {
               <button onClick={handleTestiNext} className="hidden lg:flex absolute -right-6 top-1/2 -translate-y-1/2 bg-white border border-gray-100 rounded-full p-3 shadow-md text-gray-400 hover:text-blue-600 transition-colors z-10"><ChevronRight className="w-6 h-6" /></button>
             </>
           )}
+        </div>
+      </section>
+
+      {/* Blog Section */}
+      <section id="blog" className="py-12 bg-gray-50">
+        <div className="max-w-[1200px] mx-auto px-4">
+          <div className="text-center mb-10">
+            <p className="text-[#00a859] font-black text-[10px] tracking-[0.2em] uppercase mb-1">TRAVEL GUIDE</p>
+            <h2 className="text-[30px] font-black text-gray-900 leading-tight">Read Our Top Blogs</h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {[
+              { title: 'Top 5 Places to Visit in Haridwar', snippet: 'Discover the most spiritual and breathtaking places you must visit when travelling to Haridwar.' },
+              { title: 'Why Choose a Taxi for Outstation Travel?', snippet: 'Learn why booking a private taxi is safer, faster, and more comfortable than public transport.' },
+              { title: 'Delhi to Shimla: The Ultimate Road Trip Guide', snippet: 'Everything you need to know for your upcoming road trip to the Queen of Hills, Shimla.' }
+            ].map((blog, i) => (
+              <div key={i} className="bg-white rounded-[16px] overflow-hidden shadow-sm border border-gray-100 hover:shadow-lg transition-all">
+                <div className="h-[180px] bg-gray-100 w-full flex items-center justify-center text-gray-400">
+                   <span className="font-medium text-sm flex items-center"><MapPin className="w-4 h-4 mr-2" /> Image Coming Soon</span>
+                </div>
+                <div className="p-5">
+                  <h3 className="font-bold text-[18px] text-gray-900 mb-2 leading-snug hover:text-blue-600 cursor-pointer transition-colors">{blog.title}</h3>
+                  <p className="text-[13px] text-gray-500 mb-4">{blog.snippet}</p>
+                  <a href="#" className="text-blue-600 font-bold text-[13px] flex items-center hover:text-blue-800">Read Article <ArrowRight className="w-4 h-4 ml-1" /></a>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Contact & Map Section */}
+      <section id="contact" className="py-12 bg-white">
+        <div className="max-w-[1200px] mx-auto px-4">
+          <div className="flex flex-col lg:flex-row gap-10 items-center">
+            <div className="w-full lg:w-1/3">
+              <p className="text-[#00a859] font-black text-[10px] tracking-[0.2em] uppercase mb-1">GET IN TOUCH</p>
+              <h2 className="text-[30px] font-black text-gray-900 leading-tight mb-4">Visit Our Office</h2>
+              <p className="text-[14px] text-gray-600 mb-6">We are always ready to assist you. Drop by our office or call us for instant bookings.</p>
+              
+              <div className="space-y-4">
+                <div className="flex items-start">
+                  <div className="bg-blue-50 p-2.5 rounded-full mr-4 text-blue-600 shrink-0"><MapPin className="w-5 h-5" /></div>
+                  <div>
+                    <h4 className="font-bold text-[15px] text-gray-900">Office Address</h4>
+                    <p className="text-[13px] text-gray-600 mt-1 leading-relaxed">Shop No. 09, S. R. Complex, Railway Station Road, Masuri, Ghaziabad, Uttar Pradesh 201302</p>
+                  </div>
+                </div>
+                <div className="flex items-start">
+                  <div className="bg-blue-50 p-2.5 rounded-full mr-4 text-blue-600 shrink-0"><Phone className="w-5 h-5 fill-current" /></div>
+                  <div>
+                    <h4 className="font-bold text-[15px] text-gray-900">Phone</h4>
+                    <a href={`tel:${CALL_NUMBER}`} className="text-[13px] text-gray-600 mt-1 block hover:text-blue-600 font-bold">73106 51940</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="w-full lg:w-2/3 h-[350px] bg-gray-100 rounded-[20px] overflow-hidden shadow-inner border border-gray-200">
+               <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3500.569941199564!2d77.53034967550228!3d28.67261167564303!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390ce5167f1b7f0f%3A0xc36ce44840eaf3ee!2sMasuri%2C%20Ghaziabad%2C%20Uttar%20Pradesh%20201015!5e0!3m2!1sen!2sin!4v1717598000000!5m2!1sen!2sin" width="100%" height="100%" style={{border:0}} allowFullScreen="" loading="lazy" referrerPolicy="no-referrer-when-downgrade"></iframe>
+            </div>
+          </div>
         </div>
       </section>
 
