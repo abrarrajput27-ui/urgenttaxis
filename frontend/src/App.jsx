@@ -252,12 +252,7 @@ function Home() {
         "@id": "https://urgenttaxis.com/#taxiservice",
         "name": "Urgent Taxis",
         "url": "https://urgenttaxis.com",
-        "telephone": "+917310651940",
-        "aggregateRating": {
-          "@type": "AggregateRating",
-          "ratingValue": "4.9",
-          "reviewCount": "88"
-        }
+        "telephone": "+917310651940"
       },
       {
         "@type": "WebSite",
