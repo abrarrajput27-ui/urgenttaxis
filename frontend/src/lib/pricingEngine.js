@@ -28,6 +28,9 @@ export const calculateFare = ({ tripType, distanceKm, vehicleCategory, estimated
   const vehicle = VEHICLE_RATES[vehicleCategory];
   if (!vehicle) return null;
 
+  // Enforce: if distanceKm is positive, it can never be an unknown route (TBD)
+  const actualIsUnknownRoute = distanceKm > 0 ? false : isUnknownRoute;
+
   let totalFare = 0;
   let distanceCharge = 0;
   let billableDistance = 0;
@@ -118,7 +121,7 @@ export const calculateFare = ({ tripType, distanceKm, vehicleCategory, estimated
     travelTime: travelTime,
     routeSource: routeSource,
     distanceSource: distanceSource,
-    isUnknownRoute: isUnknownRoute,
+    isUnknownRoute: actualIsUnknownRoute,
     baseFare: baseFare,
     totalFare: totalFare,
     marketFare: marketFare,

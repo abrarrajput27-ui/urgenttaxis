@@ -25,6 +25,7 @@ export const getRouteDistance = async (pickup, drop) => {
 
   if (!apiKey) {
     console.log("No Google Maps API Key found. Using static/fallback route data.");
+    if (!staticData) throw new Error("Google Maps distance failed: Missing API Key");
     return fallback;
   }
 
@@ -33,10 +34,17 @@ export const getRouteDistance = async (pickup, drop) => {
     const response = await fetch(url);
     const data = await response.json();
     
+    console.log("Google API Key Exists:", !!apiKey);
+    console.log("Google Maps Response:", data);
+    
     if (data.status === 'OK' && data.rows[0].elements[0].status === 'OK') {
       const distanceKm = Math.round(data.rows[0].elements[0].distance.value / 1000);
       const travelTime = data.rows[0].elements[0].duration.text;
       
+      console.log("Resolved Distance KM:", distanceKm);
+      console.log("Route Source:", 'google_maps');
+      console.log("Is Unknown Route:", false);
+
       return {
         distanceKm,
         travelTime,
@@ -48,12 +56,18 @@ export const getRouteDistance = async (pickup, drop) => {
         distanceSource: 'Google Maps',
         isUnknownRoute: false
       };
+    } else if (data.status === 'OK' && data.rows[0].elements[0].status === 'ZERO_RESULTS') {
+      throw new Error("No route found between these locations on Google Maps.");
     }
     
     console.error("Google Maps API Error:", data.status, data.error_message || data);
-    return fallback;
+    throw new Error(data.error_message || data.status || "Unknown Google Maps API Error");
   } catch (error) {
     console.error("Error fetching distance from Google Maps API:", error);
-    return fallback;
+    if (staticData) {
+      console.log("Falling back to static data.");
+      return fallback;
+    }
+    throw new Error(`Google Maps distance failed: ${error.message}`);
   }
 };

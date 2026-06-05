@@ -272,7 +272,7 @@ function Home() {
 
     } catch (err) {
       console.error("Error calculating fare:", err);
-      alert("Unable to calculate fare for this route. Please contact us directly.");
+      alert(err.message || "Unable to calculate fare for this route. Please contact us directly.");
     } finally {
       setIsCalculating(false);
     }
