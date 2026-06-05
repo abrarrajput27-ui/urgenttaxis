@@ -20,7 +20,7 @@ const StickyMobileBar = ({ onOpenLeadForm }) => {
   };
 
   return (
-    <div className="fixed bottom-0 left-0 w-full bg-white border-t border-gray-200 shadow-[0_-4px_10px_rgba(0,0,0,0.05)] z-[90] flex items-center md:hidden pb-safe">
+    <div className="fixed bottom-4 left-3 right-3 bg-white border border-gray-200 shadow-[0_4px_20px_rgba(0,0,0,0.15)] z-50 flex items-center md:hidden rounded-[18px] overflow-hidden">
       <a 
         href={`tel:${CALL_NUMBER}`} 
         onClick={handleCall}

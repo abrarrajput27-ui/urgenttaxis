@@ -274,7 +274,7 @@ function Home() {
   };
 
   return (
-    <div className="font-sans text-gray-800 bg-white min-h-screen">
+    <div className="font-sans text-gray-800 bg-white min-h-screen pb-24 md:pb-0">
       <Helmet>
         <title>{routeData.title}</title>
         <meta name="description" content={routeData.desc} />
@@ -1030,7 +1030,7 @@ function Home() {
       </footer>
       
       {/* Floating Action Buttons */}
-      <div className="fixed bottom-6 right-6 flex flex-col space-y-3 z-50">
+      <div className="hidden md:flex fixed bottom-6 right-6 flex-col space-y-3 z-50">
         <a 
           href={`tel:${CALL_NUMBER}`} onClick={handlePhoneClick}
           className="bg-[#1e3a8a] hover:bg-[#152e73] text-white p-3 rounded-full shadow-2xl transition-transform transform hover:scale-110 flex items-center justify-center border-[3px] border-blue-100/50"

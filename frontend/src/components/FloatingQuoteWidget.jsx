@@ -11,7 +11,7 @@ const FloatingQuoteWidget = ({ onOpenLeadForm }) => {
   return (
     <button 
       onClick={handleQuoteClick}
-      className="hidden md:flex fixed bottom-8 right-8 z-[90] bg-gray-900 hover:bg-black text-white px-6 py-4 rounded-full shadow-2xl transition-transform transform hover:scale-105 items-center group border border-gray-700"
+      className="hidden md:flex fixed bottom-[160px] right-6 z-[90] bg-gray-900 hover:bg-black text-white px-6 py-4 rounded-full shadow-2xl transition-transform transform hover:scale-105 items-center group border border-gray-700"
     >
       <div className="bg-[#fbbf24] p-2 rounded-full mr-3 group-hover:animate-pulse">
         <FileText className="w-5 h-5 text-gray-900" />
