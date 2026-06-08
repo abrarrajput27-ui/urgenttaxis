@@ -81,13 +81,16 @@ export const fleetAssets = {
 const GA_MEASUREMENT_ID = 'G-9ER9VR8EHT';
 ReactGA.initialize(GA_MEASUREMENT_ID);
 
+const libraries = ['places'];
+
 function Home() {
   const location = useLocation();
+  const isRoutePage = !!routesData[location.pathname];
 
   const { isLoaded } = useJsApiLoader({
     id: 'google-map-script',
     googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
-    libraries: ['places']
+    libraries: libraries
   });
 
   useEffect(() => {
@@ -799,138 +802,136 @@ function Home() {
         </div>
       </section>
 
-      {/* 5. Services Section */}
-      <section id="services" className="py-8">
-        <div className="max-w-[1200px] mx-auto px-4 text-center relative">
-          <p className="text-[#00a859] font-black text-[10px] tracking-[0.2em] uppercase mb-1">WHAT WE OFFER</p>
-          <h2 className="text-[32px] font-black text-gray-900 mb-2 leading-tight">Our Taxi Services</h2>
-          <p className="text-[14px] text-gray-500 font-medium mb-8">Choose from a wide range of taxi services made just for you</p>
-          
-          {/* Slider Arrows Outside Grid */}
-          <button className="hidden lg:flex absolute -left-6 top-[55%] -translate-y-1/2 bg-white border border-gray-100 rounded-full p-3 shadow-md text-gray-400 hover:text-blue-600 transition-colors z-10"><ChevronLeft className="w-6 h-6" /></button>
-          <button className="hidden lg:flex absolute -right-6 top-[55%] -translate-y-1/2 bg-white border border-gray-100 rounded-full p-3 shadow-md text-gray-400 hover:text-blue-600 transition-colors z-10"><ChevronRight className="w-6 h-6" /></button>
+        {!isRoutePage && (
+          <>
+            <section id="services" className="py-8">
+              <div className="max-w-[1200px] mx-auto px-4 text-center relative">
+                <p className="text-[#00a859] font-black text-[10px] tracking-[0.2em] uppercase mb-1">WHAT WE OFFER</p>
+                <h2 className="text-[32px] font-black text-gray-900 mb-2 leading-tight">Our Taxi Services</h2>
+                <p className="text-[14px] text-gray-500 font-medium mb-8">Choose from a wide range of taxi services made just for you</p>
+                
+                {/* Slider Arrows Outside Grid */}
+                <button className="hidden lg:flex absolute -left-6 top-[55%] -translate-y-1/2 bg-white border border-gray-100 rounded-full p-3 shadow-md text-gray-400 hover:text-blue-600 transition-colors z-10"><ChevronLeft className="w-6 h-6" /></button>
+                <button className="hidden lg:flex absolute -right-6 top-[55%] -translate-y-1/2 bg-white border border-gray-100 rounded-full p-3 shadow-md text-gray-400 hover:text-blue-600 transition-colors z-10"><ChevronRight className="w-6 h-6" /></button>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-5">
-            {[
-              { title: 'One Way Outstation', desc: 'Affordable one way drops at best prices', svg: servicesAssets.oneWay },
-              { title: 'Round Trip Outstation', desc: 'Round trips with flexible packages', svg: servicesAssets.roundTrip },
-              { title: 'Airport Transfer', desc: 'On-time airport pickup & drop', svg: servicesAssets.airport },
-              { title: 'Local Rental', desc: 'Hourly / Daily local taxi rentals', svg: servicesAssets.local },
-              { title: 'Tour Packages', desc: 'Outstation & Tour packages', svg: servicesAssets.tour }
-            ].map((service, idx) => (
-              <div key={idx} className="bg-white rounded-[20px] p-4 shadow-sm border border-gray-100 hover:shadow-lg transition-all duration-300 group cursor-pointer flex flex-col items-center justify-between h-[270px]">
-                <div className="w-[120px] h-[100px] flex items-center justify-center mt-2">{service.svg}</div>
-                <div className="flex flex-col items-center">
-                  <h3 className="font-bold text-[16px] text-gray-900 mb-1">{service.title}</h3>
-                  <p className="text-[12px] text-gray-500 font-medium mb-4 leading-relaxed px-1">{service.desc}</p>
-                </div>
-                <div className="text-blue-600 font-bold text-[13px] flex items-center group-hover:text-blue-800 transition-colors mb-2">
-                  Book Now <ArrowRight className="w-4 h-4 ml-1.5 transition-transform group-hover:translate-x-1" />
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* 6. Fleet Section */}
-      <section id="fleet" className="py-10 bg-white">
-        <div className="max-w-[1200px] mx-auto px-4 text-center">
-          <p className="text-[#00a859] font-black text-[10px] tracking-[0.2em] uppercase mb-1">OUR FLEET</p>
-          <h2 className="text-[32px] font-black text-gray-900 mb-2 leading-tight">Wide Range of Clean & Comfortable Cars</h2>
-          <p className="text-[14px] text-gray-500 font-medium mb-8">Choose your perfect ride</p>
-          
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-5 mb-8">
-            {[
-              { name: 'Swift Dzire', seats: 4, ac: 'AC', bags: '1 Bag', price: VEHICLE_RATES['Sedan']?.oneWayRate || 14, img: fleetAssets.dzire },
-              { name: 'Maruti Ertiga', seats: 6, ac: 'AC', bags: '2 Bag', price: VEHICLE_RATES['Ertiga']?.oneWayRate || 16, img: fleetAssets.ertiga },
-              { name: 'Toyota Innova', seats: 6, ac: 'AC', bags: '2 Bag', price: VEHICLE_RATES['Innova']?.oneWayRate || 24, img: fleetAssets.innova },
-              { name: 'Innova Crysta', seats: 6, ac: 'AC', bags: '3 Bag', price: VEHICLE_RATES['Innova Crysta']?.oneWayRate || 25, img: fleetAssets.crysta },
-              { name: 'Tempo Traveller', seats: 12, ac: 'AC', bags: '5 Bag', price: VEHICLE_RATES['Traveller 12']?.oneWayRate || 26, img: fleetAssets.traveller },
-            ].map((car, idx) => (
-              <div key={idx} className="bg-white rounded-[16px] border border-gray-100 p-4 shadow-sm hover:shadow-lg transition-all duration-300 text-center flex flex-col h-[240px]">
-                <div className="h-[95px] flex items-end justify-center mb-3">
-                  <img src={car.img} alt={car.name} className="w-full h-full object-contain drop-shadow-sm" />
-                </div>
-                <div className="flex-1 flex flex-col justify-between">
-                  <div>
-                    <h3 className="font-bold text-[15px] text-gray-900 mb-2">{car.name}</h3>
-                    <div className="flex justify-center items-center space-x-2 text-[10px] font-bold text-gray-400 mb-2 pb-2 border-b border-gray-50">
-                      <span className="flex items-center"><Users className="w-3 h-3 mr-0.5" /> {car.seats} Seater</span>
-                      <span className="flex items-center"><Zap className="w-3 h-3 mr-0.5" /> {car.ac}</span>
-                      <span className="flex items-center"><Car className="w-3 h-3 mr-0.5" /> {car.bags}</span>
-                    </div>
-                  </div>
-                  <div className="text-left mt-auto pt-1">
-                    <span className="text-[20px] font-black text-[#00a859]">₹{car.price}</span> 
-                    <span className="text-[11px] font-bold text-gray-600"> /km</span> 
-                    <span className="text-[10px] text-gray-400 font-medium ml-1">Outstation</span>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-          
-          <p className="text-[11px] font-bold text-gray-600">
-            Driver Allowance Extra <span className="mx-2 text-gray-300">|</span> Toll Tax Extra <span className="mx-2 text-gray-300">|</span> State Tax Extra
-          </p>
-        </div>
-      </section>
-
-      {/* 7. Popular Routes */}
-      <section id="routes" className="py-8 bg-gray-50">
-        <div className="max-w-[1200px] mx-auto px-4">
-          <div className="flex flex-col md:flex-row justify-between items-center mb-6 border-b border-gray-200 pb-3">
-            <div>
-              <p className="text-[#00a859] font-black text-[10px] tracking-[0.2em] uppercase mb-1">POPULAR ROUTES</p>
-              <h2 className="text-[30px] font-black text-gray-900 leading-tight">Most Booked Routes</h2>
-            </div>
-            <button className="hidden md:flex items-center text-blue-600 font-bold border border-blue-200 bg-white rounded-full px-5 py-2 hover:border-blue-600 transition-colors shadow-sm text-sm">
-              View All Routes <ArrowRight className="w-4 h-4 ml-2" />
-            </button>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-            {[
-              { to: 'Delhi to Haridwar', distance: 230, img: routeHaridwar },
-              { to: 'Delhi to Dehradun', distance: 260, img: routeDehradun },
-              { to: 'Delhi to Haldwani', distance: 280, img: routeHaldwani },
-              { to: 'Delhi to Rishikesh', distance: 250, img: routeRishikesh },
-              { to: 'Delhi to Shimla', distance: 350, img: routeShimla },
-            ].map((route, idx) => {
-              const sedanRate = VEHICLE_RATES['Sedan']?.oneWayRate || 14;
-              const sedanMin = VEHICLE_RATES['Sedan']?.minOneWayFare || 4000;
-              const startingFare = route.distance ? Math.max(route.distance * sedanRate, sedanMin) : null;
-              
-              return (
-              <div key={idx} className="bg-white rounded-[16px] shadow-sm border border-gray-100 overflow-hidden hover:shadow-lg transition-all duration-300 flex flex-col h-[225px]">
-                <img src={route.img} alt={route.to} className="w-full h-[105px] object-cover" />
-                <div className="p-3.5 flex-1 flex flex-col justify-between">
-                  <div>
-                    <h3 className="font-bold text-[14px] text-gray-900 mb-1">{route.to}</h3>
-                    <p className="text-[10px] font-bold text-gray-400 mb-2">Toll & state tax extra</p>
-                  </div>
-                  
-                  <div className="flex justify-between items-end pt-2.5 border-t border-gray-50 mt-auto">
-                    <span className="flex items-center text-[10px] font-bold text-[#00a859]">
-                      <div className="w-[5px] h-[5px] bg-[#00a859] rounded-full mr-1.5"></div>
-                      One Way
-                    </span>
-                    <div className="text-right">
-                      <div className="font-black text-[18px] text-gray-900 leading-none mb-1">
-                        {startingFare ? `₹${startingFare.toLocaleString('en-IN')}` : 'Check Fare'}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-5">
+                  {[
+                    { title: 'One Way Outstation', desc: 'Affordable one way drops at best prices', svg: servicesAssets.oneWay },
+                    { title: 'Round Trip Outstation', desc: 'Round trips with flexible packages', svg: servicesAssets.roundTrip },
+                    { title: 'Airport Transfer', desc: 'On-time airport pickup & drop', svg: servicesAssets.airport },
+                    { title: 'Local Rental', desc: 'Hourly / Daily local taxi rentals', svg: servicesAssets.local },
+                    { title: 'Tour Packages', desc: 'Outstation & Tour packages', svg: servicesAssets.tour }
+                  ].map((service, idx) => (
+                    <div key={idx} className="bg-white rounded-[20px] p-4 shadow-sm border border-gray-100 hover:shadow-lg transition-all duration-300 group cursor-pointer flex flex-col items-center justify-between h-[270px]">
+                      <div className="w-[120px] h-[100px] flex items-center justify-center mt-2">{service.svg}</div>
+                      <div className="flex flex-col items-center">
+                        <h3 className="font-bold text-[16px] text-gray-900 mb-1">{service.title}</h3>
+                        <p className="text-[12px] text-gray-500 font-medium mb-4 leading-relaxed px-1">{service.desc}</p>
                       </div>
-                      <div className="text-[9px] font-bold text-gray-500 uppercase">Starting from</div>
+                      <div className="text-blue-600 font-bold text-[13px] flex items-center group-hover:text-blue-800 transition-colors mb-2">
+                        Book Now <ArrowRight className="w-4 h-4 ml-1.5 transition-transform group-hover:translate-x-1" />
+                      </div>
                     </div>
-                  </div>
+                  ))}
                 </div>
               </div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
+            </section>
 
+            <section id="fleet" className="py-10 bg-white">
+              <div className="max-w-[1200px] mx-auto px-4 text-center">
+                <p className="text-[#00a859] font-black text-[10px] tracking-[0.2em] uppercase mb-1">OUR FLEET</p>
+                <h2 className="text-[32px] font-black text-gray-900 mb-2 leading-tight">Wide Range of Clean & Comfortable Cars</h2>
+                <p className="text-[14px] text-gray-500 font-medium mb-8">Choose your perfect ride</p>
+                
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-5 mb-8">
+                  {[
+                    { name: 'Swift Dzire', seats: 4, ac: 'AC', bags: '1 Bag', price: VEHICLE_RATES['Sedan']?.oneWayRate || 14, img: fleetAssets.dzire },
+                    { name: 'Maruti Ertiga', seats: 6, ac: 'AC', bags: '2 Bag', price: VEHICLE_RATES['Ertiga']?.oneWayRate || 16, img: fleetAssets.ertiga },
+                    { name: 'Toyota Innova', seats: 6, ac: 'AC', bags: '2 Bag', price: VEHICLE_RATES['Innova']?.oneWayRate || 24, img: fleetAssets.innova },
+                    { name: 'Innova Crysta', seats: 6, ac: 'AC', bags: '3 Bag', price: VEHICLE_RATES['Innova Crysta']?.oneWayRate || 25, img: fleetAssets.crysta },
+                    { name: 'Tempo Traveller', seats: 12, ac: 'AC', bags: '5 Bag', price: VEHICLE_RATES['Traveller 12']?.oneWayRate || 26, img: fleetAssets.traveller },
+                  ].map((car, idx) => (
+                    <div key={idx} className="bg-white rounded-[16px] border border-gray-100 p-4 shadow-sm hover:shadow-lg transition-all duration-300 text-center flex flex-col h-[240px]">
+                      <div className="h-[95px] flex items-end justify-center mb-3">
+                        <img src={car.img} alt={car.name} className="w-full h-full object-contain drop-shadow-sm" />
+                      </div>
+                      <div className="flex-1 flex flex-col justify-between">
+                        <div>
+                          <h3 className="font-bold text-[15px] text-gray-900 mb-2">{car.name}</h3>
+                          <div className="flex justify-center items-center space-x-2 text-[10px] font-bold text-gray-400 mb-2 pb-2 border-b border-gray-50">
+                            <span className="flex items-center"><Users className="w-3 h-3 mr-0.5" /> {car.seats} Seater</span>
+                            <span className="flex items-center"><Zap className="w-3 h-3 mr-0.5" /> {car.ac}</span>
+                            <span className="flex items-center"><Car className="w-3 h-3 mr-0.5" /> {car.bags}</span>
+                          </div>
+                        </div>
+                        <div className="text-left mt-auto pt-1">
+                          <span className="text-[20px] font-black text-[#00a859]">₹{car.price}</span> 
+                          <span className="text-[11px] font-bold text-gray-600"> /km</span> 
+                          <span className="text-[10px] text-gray-400 font-medium ml-1">Outstation</span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                
+                <p className="text-[11px] font-bold text-gray-600">
+                  Driver Allowance Extra <span className="mx-2 text-gray-300">|</span> Toll Tax Extra <span className="mx-2 text-gray-300">|</span> State Tax Extra
+                </p>
+              </div>
+            </section>
+
+            <section id="routes" className="py-8 bg-gray-50">
+              <div className="max-w-[1200px] mx-auto px-4">
+                <div className="flex flex-col md:flex-row justify-between items-center mb-6 border-b border-gray-200 pb-3">
+                  <div>
+                    <p className="text-[#00a859] font-black text-[10px] tracking-[0.2em] uppercase mb-1">POPULAR ROUTES</p>
+                    <h2 className="text-[30px] font-black text-gray-900 leading-tight">Most Booked Routes</h2>
+                  </div>
+                  <button className="hidden md:flex items-center text-blue-600 font-bold border border-blue-200 bg-white rounded-full px-5 py-2 hover:border-blue-600 transition-colors shadow-sm text-sm">
+                    View All Routes <ArrowRight className="w-4 h-4 ml-2" />
+                  </button>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+                  {[
+                    { to: 'Delhi to Haridwar', distance: 230, img: routeHaridwar },
+                    { to: 'Delhi to Dehradun', distance: 260, img: routeDehradun },
+                    { to: 'Delhi to Haldwani', distance: 280, img: routeHaldwani },
+                    { to: 'Delhi to Rishikesh', distance: 250, img: routeRishikesh },
+                    { to: 'Delhi to Shimla', distance: 350, img: routeShimla },
+                  ].map((route, idx) => {
+                    const sedanRate = VEHICLE_RATES['Sedan']?.oneWayRate || 14;
+                    const sedanMin = VEHICLE_RATES['Sedan']?.minOneWayFare || 4000;
+                    const startingFare = route.distance ? Math.max(route.distance * sedanRate, sedanMin) : null;
+                    
+                    return (
+                    <div key={idx} className="bg-white rounded-[16px] shadow-sm border border-gray-100 overflow-hidden hover:shadow-lg transition-all duration-300 flex flex-col h-[225px]">
+                      <img src={route.img} alt={route.to} className="w-full h-[105px] object-cover" />
+                      <div className="p-3.5 flex-1 flex flex-col justify-between">
+                        <div>
+                          <h3 className="font-bold text-[14px] text-gray-900 mb-1">{route.to}</h3>
+                          <p className="text-[10px] font-bold text-gray-400 mb-2">Toll & state tax extra</p>
+                        </div>
+                        
+                        <div className="flex justify-between items-end pt-2.5 border-t border-gray-50 mt-auto">
+                          <span className="flex items-center text-[10px] font-bold text-[#00a859]">
+                            <div className="w-[5px] h-[5px] bg-[#00a859] rounded-full mr-1.5"></div>
+                            One Way
+                          </span>
+                          <div className="text-right">
+                            <div className="font-black text-[18px] text-gray-900 leading-none mb-1">
+                              {startingFare ? `₹${startingFare.toLocaleString('en-IN')}` : 'Check Fare'}
+                            </div>
+                            <div className="text-[9px] font-bold text-gray-500 uppercase">Starting from</div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </section>
 
       {/* 8. Testimonials (About) */}
       <section id="about" className="py-8 bg-white relative">
@@ -1069,6 +1070,8 @@ function Home() {
           </div>
         </div>
       </section>
+      </>
+      )}
 
       {/* 7.5 SEO Route Content (Moved to bottom) */}
       <RouteSEOContent data={routesData[location.pathname]} onOpenLeadForm={() => setIsLeadFormOpen(true)} />
