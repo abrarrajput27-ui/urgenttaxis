@@ -501,7 +501,7 @@ function Home() {
       )}
 
       {/* 3. Hero Section */}
-      <section className="relative w-full pt-8 pb-[100px] lg:pb-[140px] bg-[#f5f8ff] overflow-visible z-10">
+      <section className="relative w-full pt-8 pb-[100px] lg:pb-[140px] bg-[#f5f8ff] overflow-visible z-40">
         
         {/* Background Overlay */}
         <div className="absolute inset-0 z-0 overflow-hidden">
@@ -1185,7 +1185,7 @@ function Home() {
       </footer>
       
       {/* Floating Action Buttons */}
-      <div className="hidden md:flex fixed bottom-6 right-6 flex-col space-y-3 z-50">
+      <div className="hidden md:flex fixed bottom-6 lg:bottom-[120px] right-6 lg:right-[40px] flex-col space-y-3 z-[30]">
         <a 
           href={`tel:${CALL_NUMBER}`} onClick={handlePhoneClick}
           className="bg-[#1e3a8a] hover:bg-[#152e73] text-white p-3 rounded-full shadow-2xl transition-transform transform hover:scale-110 flex items-center justify-center border-[3px] border-blue-100/50"
