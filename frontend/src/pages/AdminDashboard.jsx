@@ -30,6 +30,7 @@ export default function AdminDashboard() {
   const [leads, setLeads] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedLead, setSelectedLead] = useState(null);
+  const [fetchError, setFetchError] = useState(null);
 
   // Authentication check
   useEffect(() => {
@@ -60,6 +61,7 @@ export default function AdminDashboard() {
 
   const fetchLeads = async () => {
     setLoading(true);
+    setFetchError(null);
     try {
       console.log('Supabase URL:', import.meta.env.VITE_SUPABASE_URL);
       console.log('Supabase Anon Key exists?', !!import.meta.env.VITE_SUPABASE_ANON_KEY);
@@ -75,10 +77,11 @@ export default function AdminDashboard() {
       }
       
       console.log('Supabase returned data:', data);
+      console.log('Row count:', data ? data.length : 0);
       setLeads(data || []);
     } catch (err) {
       console.error('Error fetching leads:', err);
-      alert('Failed to load leads. Did you run the Supabase migration? Check console for details.');
+      setFetchError(err.message || 'Failed to fetch leads from Supabase. Check RLS policies.');
     } finally {
       setLoading(false);
     }
@@ -224,8 +227,21 @@ export default function AdminDashboard() {
               <tbody className="bg-white divide-y divide-gray-200">
                 {loading ? (
                   <tr><td colSpan="5" className="px-6 py-10 text-center text-gray-500">Loading leads...</td></tr>
+                ) : fetchError ? (
+                  <tr>
+                    <td colSpan="5" className="px-6 py-10 text-center">
+                      <div className="bg-red-50 p-4 rounded-md border border-red-200 max-w-2xl mx-auto">
+                        <h4 className="text-red-800 font-bold mb-2">Supabase Error:</h4>
+                        <p className="text-red-600 font-mono text-sm">{fetchError}</p>
+                        <p className="text-sm text-red-700 mt-4 font-medium">Please ensure the Supabase migration script was run and the RLS SELECT policy exists:</p>
+                        <code className="block bg-white p-3 mt-2 text-xs text-left overflow-x-auto border border-red-100 rounded text-gray-800">
+                          CREATE POLICY "Allow public lead select" ON public.leads FOR SELECT TO anon USING (true);
+                        </code>
+                      </div>
+                    </td>
+                  </tr>
                 ) : leads.length === 0 ? (
-                  <tr><td colSpan="5" className="px-6 py-10 text-center text-gray-500">No leads found.</td></tr>
+                  <tr><td colSpan="5" className="px-6 py-10 text-center text-gray-500">No leads found in database.</td></tr>
                 ) : (
                   leads.map((lead) => (
                     <tr key={lead.id} className="hover:bg-gray-50">
