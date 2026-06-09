@@ -318,43 +318,101 @@ export default function AdminDashboard() {
 
       {/* Modal for Lead Details */}
       {selectedLead && (
-        <div className="fixed inset-0 z-50 overflow-y-auto">
-          <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-            <div className="fixed inset-0 transition-opacity" aria-hidden="true">
-              <div className="absolute inset-0 bg-gray-500 opacity-75" onClick={() => setSelectedLead(null)}></div>
+        <div className="fixed inset-0 z-[1000] flex items-center justify-center p-4 sm:p-6 bg-gray-900/30 backdrop-blur-sm transition-opacity" onClick={() => setSelectedLead(null)}>
+          <div 
+            className="bg-white rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all w-full max-w-[900px] flex flex-col max-h-[90vh] animate-in fade-in zoom-in-95 duration-200"
+            onClick={e => e.stopPropagation()}
+          >
+            {/* Header */}
+            <div className="bg-white px-6 py-5 border-b border-gray-100 flex justify-between items-center shrink-0">
+              <h3 className="text-xl font-black text-gray-900">
+                Lead Details
+              </h3>
+              <button onClick={() => setSelectedLead(null)} className="text-gray-400 hover:text-gray-800 bg-gray-100 hover:bg-gray-200 p-2 rounded-full transition-colors">
+                <XCircle className="w-5 h-5" />
+              </button>
             </div>
-            <span className="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-            <div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
-              <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-                <div className="sm:flex sm:items-start">
-                  <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
-                    <h3 className="text-lg leading-6 font-bold text-gray-900 mb-4 border-b pb-2">
-                      Lead Details
-                    </h3>
-                    
-                    <div className="space-y-3 text-sm">
-                      <div className="grid grid-cols-2 gap-y-2 gap-x-4">
-                        <p><strong>Name:</strong> {selectedLead.name || selectedLead.customer_name || 'Unknown'}</p>
-                        <p><strong>Mobile:</strong> {selectedLead.mobile || selectedLead.phone || selectedLead.customer_mobile || 'Not provided'}</p>
-                        <p><strong>Pickup:</strong> {selectedLead.pickup || selectedLead.pickup_location || selectedLead.from || 'Pickup not provided'}</p>
-                        <p><strong>Drop:</strong> {selectedLead.drop_location || selectedLead.drop || selectedLead.destination || selectedLead.to || 'Drop not provided'}</p>
-                        <p><strong>Travel Date:</strong> {selectedLead.travel_date || selectedLead.trip_date || selectedLead.date_of_travel || 'N/A'}</p>
-                        <p><strong>Travel Time:</strong> {selectedLead.travel_time || selectedLead.trip_time || 'N/A'}</p>
-                        <p><strong>Trip Type:</strong> {selectedLead.trip_type || selectedLead.tripType || 'Not specified'}</p>
-                        <p><strong>Vehicle:</strong> {selectedLead.vehicle_category || selectedLead.vehicle_type || selectedLead.vehicle || 'N/A'}</p>
-                        <p><strong>Est. Fare:</strong> {(selectedLead.estimated_fare || selectedLead.fare) ? `₹${selectedLead.estimated_fare || selectedLead.fare}` : 'N/A'}</p>
-                        <p><strong>Lead Source:</strong> {selectedLead.lead_source || 'Website'}</p>
-                        <p><strong>Created Date:</strong> {new Date(selectedLead.created_at).toLocaleString()}</p>
-                        <p className="col-span-2"><strong>Route:</strong> {selectedLead.route_source || 'General'}</p>
+
+            {/* Scrollable Content */}
+            <div className="px-6 py-6 overflow-y-auto flex-1 custom-scrollbar">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                {/* Left Column */}
+                <div className="space-y-5">
+                  <div>
+                    <h4 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Customer Info</h4>
+                    <div className="bg-gray-50 rounded-xl p-4 border border-gray-100 space-y-3">
+                      <div>
+                        <span className="text-xs font-medium text-gray-500 block mb-0.5">Name</span>
+                        <div className="font-semibold text-gray-900">{selectedLead.name || selectedLead.customer_name || 'Unknown'}</div>
                       </div>
-                      
-                      <div className="mt-4 pt-4 border-t grid grid-cols-2 gap-4">
+                      <div>
+                        <span className="text-xs font-medium text-gray-500 block mb-0.5">Mobile</span>
+                        <div className="font-semibold text-gray-900">{selectedLead.mobile || selectedLead.phone || selectedLead.customer_mobile || 'Not provided'}</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <h4 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Route Details</h4>
+                    <div className="bg-gray-50 rounded-xl p-4 border border-gray-100 space-y-3">
+                      <div>
+                        <span className="text-xs font-medium text-gray-500 block mb-0.5">Pickup Location</span>
+                        <div className="font-semibold text-gray-900">{selectedLead.pickup || selectedLead.pickup_location || selectedLead.from || 'Pickup not provided'}</div>
+                      </div>
+                      <div>
+                        <span className="text-xs font-medium text-gray-500 block mb-0.5">Drop Location</span>
+                        <div className="font-semibold text-gray-900">{selectedLead.drop_location || selectedLead.drop || selectedLead.destination || selectedLead.to || 'Drop not provided'}</div>
+                      </div>
+                      <div>
+                        <span className="text-xs font-medium text-gray-500 block mb-0.5">Trip Type</span>
+                        <div className="font-semibold text-gray-900">{selectedLead.trip_type || selectedLead.tripType || 'Not specified'}</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Right Column */}
+                <div className="space-y-5">
+                  <div>
+                    <h4 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Trip Info</h4>
+                    <div className="bg-gray-50 rounded-xl p-4 border border-gray-100 space-y-4">
+                      <div className="grid grid-cols-2 gap-4">
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
+                          <span className="text-xs font-medium text-gray-500 block mb-0.5">Vehicle</span>
+                          <div className="font-bold text-blue-600">{selectedLead.vehicle_category || selectedLead.vehicle_type || selectedLead.vehicle || 'N/A'}</div>
+                        </div>
+                        <div>
+                          <span className="text-xs font-medium text-gray-500 block mb-0.5">Estimated Fare</span>
+                          <div className="font-bold text-green-600">{(selectedLead.estimated_fare || selectedLead.fare) ? `₹${selectedLead.estimated_fare || selectedLead.fare}` : 'TBD'}</div>
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <span className="text-xs font-medium text-gray-500 block mb-0.5">Travel Date</span>
+                          <div className="font-semibold text-gray-900">{selectedLead.travel_date || selectedLead.trip_date || selectedLead.date_of_travel || 'N/A'}</div>
+                        </div>
+                        <div>
+                          <span className="text-xs font-medium text-gray-500 block mb-0.5">Travel Time</span>
+                          <div className="font-semibold text-gray-900">{selectedLead.travel_time || selectedLead.trip_time || 'N/A'}</div>
+                        </div>
+                      </div>
+                      <div>
+                        <span className="text-xs font-medium text-gray-500 block mb-0.5">Lead Source</span>
+                        <div className="text-sm font-medium text-gray-600">{selectedLead.lead_source || 'Website'} • {selectedLead.route_source || 'General'}</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <h4 className="text-xs font-bold text-blue-400 uppercase tracking-wider mb-2">CRM Action Center</h4>
+                    <div className="bg-blue-50/50 rounded-xl p-4 border border-blue-100 space-y-4">
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-xs font-bold text-blue-900 mb-1">Status</label>
                           <select
                             value={selectedLead.status || 'New'}
                             onChange={(e) => updateLeadField(selectedLead.id, 'status', e.target.value)}
-                            className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
+                            className="mt-1 block w-full px-3 py-2 text-sm border border-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-lg bg-white shadow-sm font-medium"
                           >
                             {LEAD_STATUSES.map(status => (
                               <option key={status} value={status}>{status}</option>
@@ -362,62 +420,57 @@ export default function AdminDashboard() {
                           </select>
                         </div>
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">Follow-up Date</label>
+                          <label className="block text-xs font-bold text-blue-900 mb-1">Follow-up Date</label>
                           <input
                             type="date"
                             value={selectedLead.follow_up_date || ''}
                             onChange={(e) => updateLeadField(selectedLead.id, 'follow_up_date', e.target.value)}
-                            className="mt-1 block w-full pl-3 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
+                            className="mt-1 block w-full px-3 py-2 text-sm border border-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-lg bg-white shadow-sm font-medium"
                           />
                         </div>
                       </div>
-
-                      <div className="mt-4">
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Notes</label>
+                      <div>
+                        <label className="block text-xs font-bold text-blue-900 mb-1">Notes</label>
                         <textarea
                           value={selectedLead.notes || ''}
                           onChange={(e) => updateLeadField(selectedLead.id, 'notes', e.target.value)}
-                          rows="3"
+                          rows="2"
                           placeholder="Add details discussed with the customer..."
-                          className="mt-1 block w-full pl-3 py-2 text-base border border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
+                          className="mt-1 block w-full px-3 py-2 text-sm border border-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-lg bg-white shadow-sm resize-none"
                         ></textarea>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
-              <div className="bg-gray-50 px-4 py-3 sm:px-6 flex flex-wrap gap-2 justify-end">
-                <button
-                  type="button"
-                  className="inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-gray-200 text-base font-medium text-gray-800 hover:bg-gray-300 focus:outline-none sm:text-sm"
-                  onClick={() => setSelectedLead(null)}
-                >
-                  Close
-                </button>
-                <button
-                  onClick={() => {
-                    const cName = selectedLead.name || selectedLead.customer_name || 'Unknown';
-                    const cPhone = selectedLead.mobile || selectedLead.phone || selectedLead.customer_mobile || 'Not provided';
-                    const cPickup = selectedLead.pickup || selectedLead.pickup_location || selectedLead.from || 'Pickup not provided';
-                    const cDrop = selectedLead.drop_location || selectedLead.drop || selectedLead.destination || selectedLead.to || 'Drop not provided';
-                    const cDate = selectedLead.travel_date || selectedLead.trip_date || selectedLead.date_of_travel || 'N/A';
-                    
-                    const text = `Name: ${cName}\nMobile: ${cPhone}\nPickup: ${cPickup}\nDrop: ${cDrop}\nDate: ${cDate}`;
-                    navigator.clipboard.writeText(text);
-                    alert('Lead copied to clipboard');
-                  }}
-                  className="inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none sm:text-sm"
-                >
-                  Copy Lead
-                </button>
-                <a
-                  href={`tel:${selectedLead.mobile || selectedLead.phone || selectedLead.customer_mobile || ''}`}
-                  className="inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none sm:text-sm"
-                >
-                  Call Customer
-                </a>
-                <a
-                  href={`https://wa.me/91${selectedLead.mobile || selectedLead.phone || selectedLead.customer_mobile || ''}?text=${encodeURIComponent(`Hi ${selectedLead.name || selectedLead.customer_name || 'Unknown'}, this is regarding your taxi inquiry.
+            </div>
+
+            {/* Sticky Action Footer */}
+            <div className="bg-gray-50 px-6 py-4 border-t border-gray-200 shrink-0 flex flex-wrap gap-3 justify-end items-center z-10">
+              <button
+                onClick={() => {
+                  const cName = selectedLead.name || selectedLead.customer_name || 'Unknown';
+                  const cPhone = selectedLead.mobile || selectedLead.phone || selectedLead.customer_mobile || 'Not provided';
+                  const cPickup = selectedLead.pickup || selectedLead.pickup_location || selectedLead.from || 'Pickup not provided';
+                  const cDrop = selectedLead.drop_location || selectedLead.drop || selectedLead.destination || selectedLead.to || 'Drop not provided';
+                  const cDate = selectedLead.travel_date || selectedLead.trip_date || selectedLead.date_of_travel || 'N/A';
+                  
+                  const text = `Name: ${cName}\nMobile: ${cPhone}\nPickup: ${cPickup}\nDrop: ${cDrop}\nDate: ${cDate}`;
+                  navigator.clipboard.writeText(text);
+                  alert('Lead copied to clipboard');
+                }}
+                className="inline-flex justify-center rounded-xl border border-gray-300 shadow-sm px-5 py-2.5 bg-white text-sm font-bold text-gray-700 hover:bg-gray-50 focus:outline-none transition-colors"
+              >
+                Copy Lead
+              </button>
+              <a
+                href={`tel:${selectedLead.mobile || selectedLead.phone || selectedLead.customer_mobile || ''}`}
+                className="inline-flex justify-center rounded-xl border border-transparent shadow-sm px-5 py-2.5 bg-gray-900 text-sm font-bold text-white hover:bg-black focus:outline-none transition-colors"
+              >
+                Call Customer
+              </a>
+              <a
+                href={`https://wa.me/91${selectedLead.mobile || selectedLead.phone || selectedLead.customer_mobile || ''}?text=${encodeURIComponent(`Hi ${selectedLead.name || selectedLead.customer_name || 'Unknown'}, this is regarding your taxi inquiry.
 
 *Pickup:* ${selectedLead.pickup || selectedLead.pickup_location || selectedLead.from || 'Pickup not provided'}
 *Drop:* ${selectedLead.drop_location || selectedLead.drop || selectedLead.destination || selectedLead.to || 'Drop not provided'}
@@ -425,13 +478,12 @@ export default function AdminDashboard() {
 *Date:* ${selectedLead.travel_date || selectedLead.trip_date || selectedLead.date_of_travel || ''} ${selectedLead.travel_time || selectedLead.trip_time || ''}
 *Vehicle:* ${selectedLead.vehicle_category || selectedLead.vehicle_type || selectedLead.vehicle || ''}
 *Estimated Fare:* ${(selectedLead.estimated_fare || selectedLead.fare) ? `₹${selectedLead.estimated_fare || selectedLead.fare}` : 'TBD'}`)}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-[#25D366] text-base font-medium text-white hover:bg-[#1ebd5a] focus:outline-none sm:text-sm"
-                >
-                  WhatsApp Customer
-                </a>
-              </div>
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex justify-center rounded-xl border border-transparent shadow-sm px-5 py-2.5 bg-[#25D366] text-sm font-bold text-white hover:bg-[#1ebd5a] focus:outline-none transition-colors"
+              >
+                WhatsApp Customer
+              </a>
             </div>
           </div>
         </div>
