@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense, lazy } from 'react';
 import { BrowserRouter, Routes, Route, useLocation, Link } from 'react-router-dom';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
 import ReactGA from 'react-ga4';
@@ -15,7 +15,7 @@ import { TRIP_TYPES, VEHICLE_RATES } from './lib/pricingRules';
 import FareBreakup from './components/FareBreakup';
 
 // Import images statically
-import heroBg from './assets/images/hero-bg.png';
+import heroBg from './assets/images/hero-bg.webp';
 import logoImg from './assets/images/logo.jpg';
 import heroCar from './assets/images/car-innova.png';
 import ctaCarPremium from './assets/images/cta-car-premium.png';
@@ -26,11 +26,11 @@ import carInnova from './assets/images/car-innova.png';
 import carCrysta from './assets/images/car-crysta.png';
 import carTraveller from './assets/images/car-traveller.png';
 
-import routeHaridwar from './assets/images/route-haridwar.png';
-import routeDehradun from './assets/images/route-dehradun.png';
-import routeHaldwani from './assets/images/route-haldwani.png';
-import routeRishikesh from './assets/images/route-rishikesh.png';
-import routeShimla from './assets/images/route-shimla.png';
+import routeHaridwar from './assets/images/route-haridwar.webp';
+import routeDehradun from './assets/images/route-dehradun.webp';
+import routeHaldwani from './assets/images/route-haldwani.webp';
+import routeRishikesh from './assets/images/route-rishikesh.webp';
+import routeShimla from './assets/images/route-shimla.webp';
 
 import user1 from './assets/images/user1.jpg';
 import user2 from './assets/images/user2.jpg';
@@ -38,11 +38,12 @@ import user3 from './assets/images/user3.jpg';
 
 import { googleReviews } from './data/googleReviews';
 import { routesData } from './data/routesData';
-import RouteSEOContent from './components/RouteSEOContent';
+const RouteSEOContent = lazy(() => import('./components/RouteSEOContent'));
 import StickyMobileBar from './components/StickyMobileBar';
 import FloatingQuoteWidget from './components/FloatingQuoteWidget';
 import LeadCapturePopup from './components/LeadCapturePopup';
 import LocationInput from './components/LocationInput';
+import AdminDashboard from './pages/AdminDashboard';
 
 import serviceOneWay from './assets/images/service-oneway.png';
 import serviceRoundTrip from './assets/images/service-roundtrip.png';
@@ -1091,7 +1092,9 @@ function Home() {
       )}
 
       {/* 7.5 SEO Route Content (Moved to bottom) */}
-      <RouteSEOContent data={routesData[location.pathname]} onOpenLeadForm={() => setIsLeadFormOpen(true)} />
+      <Suspense fallback={<div className="p-12 text-center text-gray-500 font-medium">Loading route data...</div>}>
+        <RouteSEOContent data={routesData[location.pathname]} onOpenLeadForm={() => setIsLeadFormOpen(true)} />
+      </Suspense>
 
       {/* 10. Footer */}
       <footer id="contact" className="bg-[#0B132B] text-gray-400 pt-16 pb-8">
@@ -1212,6 +1215,7 @@ export default function App() {
     <HelmetProvider>
       <BrowserRouter>
         <Routes>
+          <Route path="/admin/leads" element={<AdminDashboard />} />
           <Route path="*" element={<Home />} />
         </Routes>
       </BrowserRouter>

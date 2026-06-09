@@ -1,5 +1,7 @@
 import { getStaticRouteData } from './fareData';
 
+const routeCache = new Map();
+
 /**
  * Attempts to get distance using Google Maps Distance Matrix API.
  * If API key is missing or request fails, falls back to static route database.
@@ -9,6 +11,11 @@ import { getStaticRouteData } from './fareData';
  * @returns {Promise<{distanceKm: number, tollsAndTaxes: number, source: string}>}
  */
 export const getRouteDistance = async (pickup, drop) => {
+  const cacheKey = `${pickup.toLowerCase().trim()}|${drop.toLowerCase().trim()}`;
+  if (routeCache.has(cacheKey)) {
+    console.log("Using cached route data for:", cacheKey);
+    return routeCache.get(cacheKey);
+  }
   const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
   const staticData = getStaticRouteData(pickup, drop);
   
@@ -47,7 +54,7 @@ export const getRouteDistance = async (pickup, drop) => {
             const travelTime = response.rows[0].elements[0].duration.text;
             
             console.log("Resolved Distance KM (JS SDK):", distanceKm);
-            resolve({
+            const result = {
               distanceKm,
               travelTime,
               estimatedToll: staticData ? fallback.estimatedToll : "To be confirmed",
@@ -56,7 +63,9 @@ export const getRouteDistance = async (pickup, drop) => {
               source: 'google_maps',
               distanceSource: 'Google Maps',
               isUnknownRoute: false
-            });
+            };
+            routeCache.set(cacheKey, result);
+            resolve(result);
           } else if (status === 'OK' && response.rows[0].elements[0].status === 'ZERO_RESULTS') {
             console.error("No route found on Google Maps.");
             reject(new Error("No route found between these locations on Google Maps."));
@@ -89,7 +98,7 @@ export const getRouteDistance = async (pickup, drop) => {
       console.log("Route Source:", 'google_maps');
       console.log("Is Unknown Route:", false);
 
-      return {
+      const result = {
         distanceKm,
         travelTime,
         estimatedToll: staticData ? fallback.estimatedToll : "To be confirmed",
@@ -99,6 +108,8 @@ export const getRouteDistance = async (pickup, drop) => {
         distanceSource: 'Google Maps',
         isUnknownRoute: false
       };
+      routeCache.set(cacheKey, result);
+      return result;
     } else if (data.status === 'OK' && data.rows[0].elements[0].status === 'ZERO_RESULTS') {
       throw new Error("No route found between these locations on Google Maps.");
     }
