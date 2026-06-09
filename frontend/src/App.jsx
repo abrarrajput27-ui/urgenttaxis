@@ -129,37 +129,37 @@ function Home() {
 
         switch(path) {
       case '/delhi-to-haldwani-taxi':
-        data.h1 = <>Delhi to Haldwani <br/><span className="text-[#1e3b8a]">Taxi Fare & Booking</span></>;
+        data.h1 = <>Delhi to Haldwani <br/><span className="text-[#1e3b8a]">Taxi</span></>;
         data.subtitle = "Check latest Delhi to Haldwani taxi fare. Book one-way or round-trip outstation cab instantly on WhatsApp.";
         data.title = "Delhi to Haldwani Taxi Fare & Booking | Urgent Taxis";
         data.desc = "Looking for Delhi to Haldwani taxi fare? Book reliable one-way and round-trip cabs. Distance 280km, Time 6-7 hrs. Check latest prices and book via WhatsApp.";
         break;
       case '/delhi-to-nainital-taxi':
-        data.h1 = <>Delhi to Nainital <br/><span className="text-[#1e3b8a]">Taxi Fare & Service</span></>;
+        data.h1 = <>Delhi to Nainital <br/><span className="text-[#1e3b8a]">Taxi</span></>;
         data.subtitle = "Affordable Delhi to Nainital taxi fare. Comfortable outstation cab booking with verified hill-trained drivers.";
         data.title = "Delhi to Nainital Taxi Fare & Booking | Urgent Taxis";
         data.desc = "Find the best Delhi to Nainital taxi fare. Book comfortable outstation one-way or round-trip cabs. Distance 310km. Instant WhatsApp booking.";
         break;
       case '/ghaziabad-taxi-service':
-        data.h1 = <>Taxi Fare & Service in <br/><span className="text-[#1e3b8a]">Ghaziabad</span></>;
+        data.h1 = <>Taxi Service in <br/><span className="text-[#1e3b8a]">Ghaziabad</span></>;
         data.subtitle = "Check competitive taxi fare for local, airport, outstation and one-way cabs in Ghaziabad.";
         data.title = "Ghaziabad Taxi Service & Fare | Urgent Taxis";
         data.desc = "Looking for affordable taxi fare in Ghaziabad? Book local hourly rentals, airport drops, and outstation trips. 24/7 service with WhatsApp booking.";
         break;
       case '/delhi-to-ramnagar-taxi':
-        data.h1 = <>Delhi to Ramnagar <br/><span className="text-[#1e3b8a]">Taxi Fare & Booking</span></>;
+        data.h1 = <>Delhi to Ramnagar <br/><span className="text-[#1e3b8a]">Taxi</span></>;
         data.subtitle = "Check outstation taxi fare from Delhi to Ramnagar. Safe, comfortable rides to Jim Corbett.";
         data.title = "Delhi to Ramnagar Taxi Fare & Booking | Urgent Taxis";
         data.desc = "Best Delhi to Ramnagar taxi fare for your Jim Corbett trip. Book one-way or round-trip outstation cabs. Distance 260km, Time 6 hrs. WhatsApp booking.";
         break;
       case '/delhi-airport-to-haldwani-taxi':
-        data.h1 = <>Delhi Airport to <br/><span className="text-[#1e3b8a]">Haldwani Taxi Fare</span></>;
+        data.h1 = <>Delhi Airport to <br/><span className="text-[#1e3b8a]">Haldwani Taxi</span></>;
         data.subtitle = "Check direct airport transfer fare from Delhi IGI Airport to Haldwani.";
         data.title = "Delhi Airport to Haldwani Taxi Fare | Urgent Taxis";
         data.desc = "Find direct Delhi Airport to Haldwani taxi fare. Affordable one-way airport transfer. Distance 300km. No extra waiting charges. Book instantly via WhatsApp.";
         break;
       case '/noida-taxi-service':
-        data.h1 = <>Taxi Fare & Service in <br/><span className="text-[#1e3b8a]">Noida</span></>;
+        data.h1 = <>Taxi Service in <br/><span className="text-[#1e3b8a]">Noida</span></>;
         data.subtitle = "Check competitive taxi fare for local, outstation, and airport cab service in Noida.";
         data.title = "Noida Taxi Service & Fare | Urgent Taxis";
         data.desc = "Check local and outstation taxi fare in Noida. Reliable corporate cabs, airport drops, and hourly rentals. 24/7 availability. Book on WhatsApp.";
@@ -738,7 +738,7 @@ function Home() {
       </section>
 
       {/* 4. Stats Section (Floating Pill overlapping Hero) */}
-      <section className="relative z-30 max-w-[1150px] mx-auto px-4 lg:px-0 -mt-[100px] lg:-mt-[110px] mb-24">
+      <section className="relative z-30 max-w-[1150px] mx-auto px-4 lg:px-0 -mt-[100px] lg:-mt-[110px] mb-36">
         <div className="bg-white rounded-[24px] shadow-[0_15px_40px_rgba(0,0,0,0.06)] py-6 px-4 md:px-10 grid grid-cols-2 gap-y-8 lg:flex lg:flex-nowrap justify-between items-center border border-gray-50">
           
           <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start text-center sm:text-left">

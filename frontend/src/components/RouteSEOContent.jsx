@@ -87,9 +87,10 @@ const RouteSEOContent = ({ data, onOpenLeadForm }) => {
                 <thead>
                   <tr className="bg-gray-50 text-gray-700 text-sm uppercase tracking-wider">
                     <th className="px-6 py-4 border-b border-gray-200 font-bold">Vehicle Type</th>
-                    <th className="px-6 py-4 border-b border-gray-200 font-bold">Capacity</th>
-                    <th className="px-6 py-4 border-b border-gray-200 font-bold text-right hidden sm:table-cell">Market Rate</th>
+                    <th className="px-6 py-4 border-b border-gray-200 font-bold hidden sm:table-cell">Capacity</th>
+                    <th className="px-6 py-4 border-b border-gray-200 font-bold text-center">Distance</th>
                     <th className="px-6 py-4 border-b border-gray-200 font-bold text-right text-[#00a859]">Our Offer Fare</th>
+                    <th className="px-6 py-4 border-b border-gray-200 font-bold text-center">Action</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100">
@@ -97,12 +98,26 @@ const RouteSEOContent = ({ data, onOpenLeadForm }) => {
                     const calcInfo = calculateFare(location.pathname, type);
                     if(!calcInfo) return null;
 
+                    const distanceStr = currentFareData ? currentFareData.distance : data.distance;
+                    const routeName = currentFareData ? currentFareData.route : data.title;
+                    const waMessage = `Hi, I am looking for a ${type} taxi for ${routeName}. What's the best discounted fare?`;
+
                     return (
                       <tr key={type} className="hover:bg-gray-50 transition-colors">
                         <td className="px-6 py-4 text-gray-900 font-bold">{type}</td>
-                        <td className="px-6 py-4 text-gray-600 font-medium">{calcInfo.seats} Pax</td>
-                        <td className="px-6 py-4 text-gray-400 font-medium text-right line-through hidden sm:table-cell">₹{calcInfo.mmtReference}</td>
+                        <td className="px-6 py-4 text-gray-600 font-medium hidden sm:table-cell">{calcInfo.seats} Pax</td>
+                        <td className="px-6 py-4 text-gray-600 font-medium text-center">{distanceStr}</td>
                         <td className="px-6 py-4 text-[#00a859] font-black text-right text-lg">₹{calcInfo.fare}</td>
+                        <td className="px-6 py-4 text-center">
+                          <a 
+                            href={`https://wa.me/918595066033?text=${encodeURIComponent(waMessage)}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-block bg-[#25D366] hover:bg-[#128C7E] text-white text-xs font-bold py-2 px-3 rounded-md transition-colors shadow-sm"
+                          >
+                            Get Discount
+                          </a>
+                        </td>
                       </tr>
                     )
                   })}
