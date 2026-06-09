@@ -437,7 +437,9 @@ function Home() {
           
           {/* Logo */}
           <div className="flex items-center flex-shrink-0 cursor-pointer">
-            <img src={logoImg} alt="Urgent Taxis" className="h-[55px] md:h-[65px] w-auto mix-blend-multiply" />
+            <a href="/">
+              <img src={logoImg} alt="Urgent Taxis" className="h-[55px] md:h-[65px] w-auto mix-blend-multiply" />
+            </a>
           </div>
 
           {/* Desktop Nav */}
@@ -851,7 +853,7 @@ function Home() {
                     { name: 'Innova Crysta', seats: 6, ac: 'AC', bags: '3 Bag', price: VEHICLE_RATES['Innova Crysta']?.oneWayRate || 25, img: fleetAssets.crysta },
                     { name: 'Tempo Traveller', seats: 12, ac: 'AC', bags: '5 Bag', price: VEHICLE_RATES['Traveller 12']?.oneWayRate || 26, img: fleetAssets.traveller },
                   ].map((car, idx) => (
-                    <div key={idx} className="bg-white rounded-[16px] border border-gray-100 p-4 shadow-sm hover:shadow-lg transition-all duration-300 text-center flex flex-col h-[240px]">
+                    <div key={idx} className="bg-white rounded-[16px] border border-gray-100 p-4 shadow-sm hover:shadow-lg transition-all duration-300 text-center flex flex-col h-[280px]">
                       <div className="h-[95px] flex items-end justify-center mb-3">
                         <img src={car.img} alt={car.name} className="w-full h-full object-contain drop-shadow-sm" />
                       </div>
@@ -868,6 +870,14 @@ function Home() {
                           <span className="text-[20px] font-black text-[#00a859]">₹{car.price}</span> 
                           <span className="text-[11px] font-bold text-gray-600"> /km</span> 
                           <span className="text-[10px] text-gray-400 font-medium ml-1">Outstation</span>
+                        </div>
+                        <div className="mt-3">
+                          <button 
+                            onClick={() => handleSimpleWhatsApp(`Hi, I want to rent a ${car.name}. Can I get a discount?`)}
+                            className="block w-full bg-[#25D366] hover:bg-[#128C7E] text-white text-[11px] font-bold py-2 rounded-md transition-colors shadow-sm"
+                          >
+                            Get Discount
+                          </button>
                         </div>
                       </div>
                     </div>
@@ -905,16 +915,17 @@ function Home() {
                     const startingFare = route.distance ? Math.max(route.distance * sedanRate, sedanMin) : null;
                     
                     return (
-                    <div key={idx} className="bg-white rounded-[16px] shadow-sm border border-gray-100 overflow-hidden hover:shadow-lg transition-all duration-300 flex flex-col h-[225px]">
+                    <div key={idx} className="bg-white rounded-[16px] shadow-sm border border-gray-100 overflow-hidden hover:shadow-lg transition-all duration-300 flex flex-col h-[280px]">
                       <img src={route.img} alt={route.to} className="w-full h-[105px] object-cover" />
                       <div className="p-3.5 flex-1 flex flex-col justify-between">
                         <div>
                           <h3 className="font-bold text-[14px] text-gray-900 mb-1">{route.to}</h3>
+                          <p className="text-[11px] font-bold text-gray-600 mb-1">{route.distance} km Approx</p>
                           <p className="text-[10px] font-bold text-gray-400 mb-2">Toll & state tax extra</p>
                         </div>
                         
-                        <div className="flex justify-between items-end pt-2.5 border-t border-gray-50 mt-auto">
-                          <span className="flex items-center text-[10px] font-bold text-[#00a859]">
+                        <div className="flex justify-between items-end pt-2.5 border-t border-gray-50 mt-auto mb-2">
+                          <span className="flex items-center text-[10px] font-bold text-[#00a859] pb-1">
                             <div className="w-[5px] h-[5px] bg-[#00a859] rounded-full mr-1.5"></div>
                             One Way
                           </span>
@@ -925,6 +936,12 @@ function Home() {
                             <div className="text-[9px] font-bold text-gray-500 uppercase">Starting from</div>
                           </div>
                         </div>
+                        <button 
+                          onClick={() => handleSimpleWhatsApp(`Hi, I am looking for a taxi for ${route.to}. What's the best discounted fare?`)}
+                          className="block w-full text-center bg-[#25D366] hover:bg-[#128C7E] text-white text-[11px] font-bold py-1.5 rounded transition-colors"
+                        >
+                          Get Discount
+                        </button>
                       </div>
                     </div>
                     );
@@ -1084,7 +1101,9 @@ function Home() {
             {/* Col 1: Brand */}
             <div className="pr-0 lg:pr-4 h-full">
               <div className="mb-6">
-                <img src={logoImg} alt="Urgent Taxis" className="h-[45px] w-auto rounded-md mix-blend-lighten" />
+                <a href="/">
+                  <img src={logoImg} alt="Urgent Taxis" className="h-[45px] w-auto rounded-md mix-blend-lighten" />
+                </a>
               </div>
               <p className="text-[14px] text-gray-400 mb-8 font-medium leading-[1.8]">
                 Your reliable travel partner for outstation trips, local rentals and airport transfers across India.

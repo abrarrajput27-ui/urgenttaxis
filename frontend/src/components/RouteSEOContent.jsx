@@ -83,14 +83,14 @@ const RouteSEOContent = ({ data, onOpenLeadForm }) => {
             </div>
             
             <div className="overflow-x-auto rounded-xl border border-gray-200 shadow-sm mb-4">
-              <table className="w-full text-left border-collapse">
+              <table className="w-full text-left border-collapse min-w-[600px] sm:min-w-full">
                 <thead>
-                  <tr className="bg-gray-50 text-gray-700 text-sm uppercase tracking-wider">
-                    <th className="px-6 py-4 border-b border-gray-200 font-bold">Vehicle Type</th>
-                    <th className="px-6 py-4 border-b border-gray-200 font-bold hidden sm:table-cell">Capacity</th>
-                    <th className="px-6 py-4 border-b border-gray-200 font-bold text-center">Distance</th>
-                    <th className="px-6 py-4 border-b border-gray-200 font-bold text-right text-[#00a859]">Our Offer Fare</th>
-                    <th className="px-6 py-4 border-b border-gray-200 font-bold text-center">Action</th>
+                  <tr className="bg-gray-50 text-gray-700 text-xs sm:text-sm uppercase tracking-wider">
+                    <th className="px-3 sm:px-6 py-4 border-b border-gray-200 font-bold">Vehicle Type</th>
+                    <th className="px-3 sm:px-6 py-4 border-b border-gray-200 font-bold hidden sm:table-cell">Capacity</th>
+                    <th className="px-3 sm:px-6 py-4 border-b border-gray-200 font-bold text-center">Distance</th>
+                    <th className="px-3 sm:px-6 py-4 border-b border-gray-200 font-bold text-right text-[#00a859]">Our Offer Fare</th>
+                    <th className="px-3 sm:px-6 py-4 border-b border-gray-200 font-bold text-center">Action</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100">
@@ -104,16 +104,16 @@ const RouteSEOContent = ({ data, onOpenLeadForm }) => {
 
                     return (
                       <tr key={type} className="hover:bg-gray-50 transition-colors">
-                        <td className="px-6 py-4 text-gray-900 font-bold">{type}</td>
-                        <td className="px-6 py-4 text-gray-600 font-medium hidden sm:table-cell">{calcInfo.seats} Pax</td>
-                        <td className="px-6 py-4 text-gray-600 font-medium text-center">{distanceStr}</td>
-                        <td className="px-6 py-4 text-[#00a859] font-black text-right text-lg">₹{calcInfo.fare}</td>
-                        <td className="px-6 py-4 text-center">
+                        <td className="px-3 sm:px-6 py-4 text-gray-900 font-bold text-sm sm:text-base">{type}</td>
+                        <td className="px-3 sm:px-6 py-4 text-gray-600 font-medium hidden sm:table-cell">{calcInfo.seats} Pax</td>
+                        <td className="px-3 sm:px-6 py-4 text-gray-600 font-medium text-center text-sm sm:text-base">{distanceStr}</td>
+                        <td className="px-3 sm:px-6 py-4 text-[#00a859] font-black text-right text-base sm:text-lg">₹{calcInfo.fare}</td>
+                        <td className="px-3 sm:px-6 py-4 text-center">
                           <a 
                             href={`https://wa.me/918595066033?text=${encodeURIComponent(waMessage)}`}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-block bg-[#25D366] hover:bg-[#128C7E] text-white text-xs font-bold py-2 px-3 rounded-md transition-colors shadow-sm"
+                            className="inline-block bg-[#25D366] hover:bg-[#128C7E] text-white text-[10px] sm:text-xs font-bold py-1.5 sm:py-2 px-2 sm:px-3 rounded-md transition-colors shadow-sm"
                           >
                             Get Discount
                           </a>
