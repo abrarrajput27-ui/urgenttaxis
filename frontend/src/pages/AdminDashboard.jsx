@@ -219,7 +219,8 @@ export default function AdminDashboard() {
                 <tr>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Customer</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Route / Vehicle</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Route / Trip</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Vehicle / Fare</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                 </tr>
@@ -243,22 +244,48 @@ export default function AdminDashboard() {
                 ) : leads.length === 0 ? (
                   <tr><td colSpan="5" className="px-6 py-10 text-center text-gray-500">No leads found in database.</td></tr>
                 ) : (
-                  leads.map((lead) => (
+                  leads.map((lead) => {
+                    const customerName = lead.name || lead.customer_name || "Unknown";
+                    const mobile = lead.mobile || lead.phone || lead.customer_mobile || "Not provided";
+                    const pickup = lead.pickup || lead.pickup_location || lead.from || "Pickup not provided";
+                    const drop = lead.drop_location || lead.drop || lead.destination || lead.to || "Drop not provided";
+                    const tripType = lead.trip_type || lead.tripType || "Not specified";
+                    const travelDate = lead.travel_date || lead.trip_date || lead.date_of_travel || "";
+                    const travelTime = lead.travel_time || lead.trip_time || "";
+                    const vehicle = lead.vehicle_category || lead.vehicle_type || lead.vehicle || "";
+                    const estimatedFare = lead.estimated_fare || lead.fare || "";
+
+                    return (
                     <tr key={lead.id} className="hover:bg-gray-50">
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         {new Date(lead.created_at).toLocaleDateString()}<br/>
                         <span className="text-xs">{new Date(lead.created_at).toLocaleTimeString()}</span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm font-medium text-gray-900">{lead.name}</div>
-                        <div className="text-sm text-gray-500">{lead.phone}</div>
+                        <div className="text-sm font-bold text-gray-900">{customerName}</div>
+                        <div className="text-sm text-gray-500 mt-1 flex items-center">
+                          {mobile !== "Not provided" ? (
+                            <a href={`tel:${mobile}`} className="flex items-center text-blue-600 hover:text-blue-800">
+                              <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>
+                              {mobile}
+                            </a>
+                          ) : (
+                            mobile
+                          )}
+                        </div>
                       </td>
                       <td className="px-6 py-4">
-                        <div className="text-sm text-gray-900 font-medium">{lead.trip_type}</div>
-                        <div className="text-xs text-gray-500 max-w-[200px] truncate" title={`${lead.pickup_location} → ${lead.drop_location}`}>
-                          {lead.pickup_location} → {lead.drop_location || 'N/A'}
+                        <div className="text-sm text-gray-900 font-medium whitespace-nowrap">
+                          {pickup} <span className="text-gray-400 mx-1">→</span> {drop}
                         </div>
-                        <div className="text-xs font-semibold text-blue-600 mt-1">{lead.vehicle_category}</div>
+                        <div className="text-xs text-gray-600 mt-1">{tripType}</div>
+                        <div className="text-xs text-gray-500 mt-1">
+                          {travelDate} {travelTime && `• ${travelTime}`}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm font-semibold text-blue-600">{vehicle}</div>
+                        {estimatedFare && <div className="text-xs text-gray-500 mt-1">Est: ₹{estimatedFare}</div>}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <select
@@ -280,7 +307,8 @@ export default function AdminDashboard() {
                         </button>
                       </td>
                     </tr>
-                  ))
+                    );
+                  })
                 )}
               </tbody>
             </table>
@@ -306,15 +334,15 @@ export default function AdminDashboard() {
                     
                     <div className="space-y-3 text-sm">
                       <div className="grid grid-cols-2 gap-y-2 gap-x-4">
-                        <p><strong>Name:</strong> {selectedLead.name || 'N/A'}</p>
-                        <p><strong>Mobile:</strong> {selectedLead.phone || 'N/A'}</p>
-                        <p><strong>Pickup:</strong> {selectedLead.pickup_location || 'N/A'}</p>
-                        <p><strong>Drop:</strong> {selectedLead.drop_location || 'N/A'}</p>
-                        <p><strong>Travel Date:</strong> {selectedLead.travel_date || 'N/A'}</p>
-                        <p><strong>Travel Time:</strong> {selectedLead.travel_time || 'N/A'}</p>
-                        <p><strong>Trip Type:</strong> {selectedLead.trip_type || 'N/A'}</p>
-                        <p><strong>Vehicle:</strong> {selectedLead.vehicle_category || 'N/A'}</p>
-                        <p><strong>Est. Fare:</strong> {selectedLead.estimated_fare ? `₹${selectedLead.estimated_fare}` : 'N/A'}</p>
+                        <p><strong>Name:</strong> {selectedLead.name || selectedLead.customer_name || 'Unknown'}</p>
+                        <p><strong>Mobile:</strong> {selectedLead.mobile || selectedLead.phone || selectedLead.customer_mobile || 'Not provided'}</p>
+                        <p><strong>Pickup:</strong> {selectedLead.pickup || selectedLead.pickup_location || selectedLead.from || 'Pickup not provided'}</p>
+                        <p><strong>Drop:</strong> {selectedLead.drop_location || selectedLead.drop || selectedLead.destination || selectedLead.to || 'Drop not provided'}</p>
+                        <p><strong>Travel Date:</strong> {selectedLead.travel_date || selectedLead.trip_date || selectedLead.date_of_travel || 'N/A'}</p>
+                        <p><strong>Travel Time:</strong> {selectedLead.travel_time || selectedLead.trip_time || 'N/A'}</p>
+                        <p><strong>Trip Type:</strong> {selectedLead.trip_type || selectedLead.tripType || 'Not specified'}</p>
+                        <p><strong>Vehicle:</strong> {selectedLead.vehicle_category || selectedLead.vehicle_type || selectedLead.vehicle || 'N/A'}</p>
+                        <p><strong>Est. Fare:</strong> {(selectedLead.estimated_fare || selectedLead.fare) ? `₹${selectedLead.estimated_fare || selectedLead.fare}` : 'N/A'}</p>
                         <p><strong>Lead Source:</strong> {selectedLead.lead_source || 'Website'}</p>
                         <p><strong>Created Date:</strong> {new Date(selectedLead.created_at).toLocaleString()}</p>
                         <p className="col-span-2"><strong>Route:</strong> {selectedLead.route_source || 'General'}</p>
@@ -368,7 +396,13 @@ export default function AdminDashboard() {
                 </button>
                 <button
                   onClick={() => {
-                    const text = `Name: ${selectedLead.name}\nMobile: ${selectedLead.phone}\nPickup: ${selectedLead.pickup_location}\nDrop: ${selectedLead.drop_location}\nDate: ${selectedLead.travel_date}`;
+                    const cName = selectedLead.name || selectedLead.customer_name || 'Unknown';
+                    const cPhone = selectedLead.mobile || selectedLead.phone || selectedLead.customer_mobile || 'Not provided';
+                    const cPickup = selectedLead.pickup || selectedLead.pickup_location || selectedLead.from || 'Pickup not provided';
+                    const cDrop = selectedLead.drop_location || selectedLead.drop || selectedLead.destination || selectedLead.to || 'Drop not provided';
+                    const cDate = selectedLead.travel_date || selectedLead.trip_date || selectedLead.date_of_travel || 'N/A';
+                    
+                    const text = `Name: ${cName}\nMobile: ${cPhone}\nPickup: ${cPickup}\nDrop: ${cDrop}\nDate: ${cDate}`;
                     navigator.clipboard.writeText(text);
                     alert('Lead copied to clipboard');
                   }}
@@ -377,13 +411,20 @@ export default function AdminDashboard() {
                   Copy Lead
                 </button>
                 <a
-                  href={`tel:${selectedLead.phone}`}
+                  href={`tel:${selectedLead.mobile || selectedLead.phone || selectedLead.customer_mobile || ''}`}
                   className="inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none sm:text-sm"
                 >
                   Call Customer
                 </a>
                 <a
-                  href={`https://wa.me/91${selectedLead.phone}?text=Hi ${selectedLead.name}, this is regarding your taxi inquiry for ${selectedLead.pickup_location}...`}
+                  href={`https://wa.me/91${selectedLead.mobile || selectedLead.phone || selectedLead.customer_mobile || ''}?text=${encodeURIComponent(`Hi ${selectedLead.name || selectedLead.customer_name || 'Unknown'}, this is regarding your taxi inquiry.
+
+*Pickup:* ${selectedLead.pickup || selectedLead.pickup_location || selectedLead.from || 'Pickup not provided'}
+*Drop:* ${selectedLead.drop_location || selectedLead.drop || selectedLead.destination || selectedLead.to || 'Drop not provided'}
+*Trip Type:* ${selectedLead.trip_type || selectedLead.tripType || 'Not specified'}
+*Date:* ${selectedLead.travel_date || selectedLead.trip_date || selectedLead.date_of_travel || ''} ${selectedLead.travel_time || selectedLead.trip_time || ''}
+*Vehicle:* ${selectedLead.vehicle_category || selectedLead.vehicle_type || selectedLead.vehicle || ''}
+*Estimated Fare:* ${(selectedLead.estimated_fare || selectedLead.fare) ? `₹${selectedLead.estimated_fare || selectedLead.fare}` : 'TBD'}`)}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-[#25D366] text-base font-medium text-white hover:bg-[#1ebd5a] focus:outline-none sm:text-sm"
