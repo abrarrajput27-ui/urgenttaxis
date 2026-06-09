@@ -1,5 +1,5 @@
 import React, { useState, useEffect, Suspense, lazy } from 'react';
-import { BrowserRouter, Routes, Route, useLocation, Link } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, useLocation, Link, Navigate } from 'react-router-dom';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
 import ReactGA from 'react-ga4';
 import { useJsApiLoader } from '@react-google-maps/api';
@@ -43,7 +43,6 @@ import StickyMobileBar from './components/StickyMobileBar';
 import FloatingQuoteWidget from './components/FloatingQuoteWidget';
 import LeadCapturePopup from './components/LeadCapturePopup';
 import LocationInput from './components/LocationInput';
-import AdminDashboard from './pages/AdminDashboard';
 
 import serviceOneWay from './assets/images/service-oneway.png';
 import serviceRoundTrip from './assets/images/service-roundtrip.png';
@@ -1215,7 +1214,7 @@ export default function App() {
     <HelmetProvider>
       <BrowserRouter>
         <Routes>
-          <Route path="/admin/leads" element={<AdminDashboard />} />
+          <Route path="/admin/leads" element={<Navigate to="/" replace />} />
           <Route path="*" element={<Home />} />
         </Routes>
       </BrowserRouter>
