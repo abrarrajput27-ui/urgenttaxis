@@ -437,9 +437,9 @@ function Home() {
           
           {/* Logo */}
           <div className="flex items-center flex-shrink-0 cursor-pointer">
-            <a href="/">
+            <Link to="/">
               <img src={logoImg} alt="Urgent Taxis" className="h-[55px] md:h-[65px] w-auto mix-blend-multiply" />
-            </a>
+            </Link>
           </div>
 
           {/* Desktop Nav */}
@@ -1101,9 +1101,9 @@ function Home() {
             {/* Col 1: Brand */}
             <div className="pr-0 lg:pr-4 h-full">
               <div className="mb-6">
-                <a href="/">
+                <Link to="/">
                   <img src={logoImg} alt="Urgent Taxis" className="h-[45px] w-auto rounded-md mix-blend-lighten" />
-                </a>
+                </Link>
               </div>
               <p className="text-[14px] text-gray-400 mb-8 font-medium leading-[1.8]">
                 Your reliable travel partner for outstation trips, local rentals and airport transfers across India.
