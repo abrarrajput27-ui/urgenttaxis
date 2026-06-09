@@ -739,8 +739,8 @@ function Home() {
         </div>
       </section>
 
-      {/* 4. Stats Section (Floating Pill overlapping Hero) */}
-      <section className="relative z-30 max-w-[1150px] mx-auto px-4 lg:px-0 -mt-[100px] lg:-mt-[110px] mb-36">
+      {/* 4. Stats Section (Trust Benefits Strip) */}
+      <section className="relative z-30 max-w-[1150px] mx-auto px-4 lg:px-0 mt-8 mb-24">
         <div className="bg-white rounded-[24px] shadow-[0_15px_40px_rgba(0,0,0,0.06)] py-6 px-4 md:px-10 grid grid-cols-2 gap-y-8 lg:flex lg:flex-nowrap justify-between items-center border border-gray-50">
           
           <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start text-center sm:text-left">
