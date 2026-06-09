@@ -8,9 +8,9 @@ const LEAD_STATUSES = ['New', 'Contacted', 'Quote Sent', 'Follow Up', 'Converted
 const StatusBadge = ({ status }) => {
   const colors = {
     'New': 'bg-blue-100 text-blue-800',
-    'Contacted': 'bg-yellow-100 text-yellow-800',
+    'Contacted': 'bg-orange-100 text-orange-800',
     'Quote Sent': 'bg-purple-100 text-purple-800',
-    'Follow Up': 'bg-orange-100 text-orange-800',
+    'Follow Up': 'bg-yellow-100 text-yellow-800',
     'Converted': 'bg-green-100 text-green-800',
     'Lost': 'bg-red-100 text-red-800'
   };
@@ -87,23 +87,23 @@ export default function AdminDashboard() {
     }
   };
 
-  const updateLeadStatus = async (id, newStatus) => {
+  const updateLeadField = async (id, field, value) => {
     try {
       const { error } = await supabase
         .from('leads')
-        .update({ status: newStatus, updated_at: new Date() })
+        .update({ [field]: value, updated_at: new Date() })
         .eq('id', id);
         
       if (error) throw error;
       
       // Update local state
-      setLeads(leads.map(lead => lead.id === id ? { ...lead, status: newStatus } : lead));
+      setLeads(leads.map(lead => lead.id === id ? { ...lead, [field]: value } : lead));
       if (selectedLead && selectedLead.id === id) {
-        setSelectedLead({ ...selectedLead, status: newStatus });
+        setSelectedLead({ ...selectedLead, [field]: value });
       }
     } catch (err) {
-      console.error('Error updating status:', err);
-      alert('Failed to update status');
+      console.error(`Error updating ${field}:`, err);
+      alert(`Failed to update ${field}`);
     }
   };
 
@@ -263,7 +263,7 @@ export default function AdminDashboard() {
                       <td className="px-6 py-4 whitespace-nowrap">
                         <select
                           value={lead.status || 'New'}
-                          onChange={(e) => updateLeadStatus(lead.id, e.target.value)}
+                          onChange={(e) => updateLeadField(lead.id, 'status', e.target.value)}
                           className="text-sm border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
                         >
                           {LEAD_STATUSES.map(status => (
@@ -305,47 +305,90 @@ export default function AdminDashboard() {
                     </h3>
                     
                     <div className="space-y-3 text-sm">
-                      <p><strong>Name:</strong> {selectedLead.name}</p>
-                      <p><strong>Phone:</strong> {selectedLead.phone}</p>
-                      <p><strong>Date of Travel:</strong> {selectedLead.travel_date}</p>
-                      <p><strong>Trip Type:</strong> {selectedLead.trip_type}</p>
-                      <p><strong>Vehicle:</strong> {selectedLead.vehicle_category}</p>
-                      <p><strong>Pickup:</strong> {selectedLead.pickup_location}</p>
-                      <p><strong>Drop:</strong> {selectedLead.drop_location || 'N/A'}</p>
-                      <p><strong>Route Source:</strong> {selectedLead.route_source || 'Website Home'}</p>
-                      <p><strong>Created At:</strong> {new Date(selectedLead.created_at).toLocaleString()}</p>
+                      <div className="grid grid-cols-2 gap-y-2 gap-x-4">
+                        <p><strong>Name:</strong> {selectedLead.name || 'N/A'}</p>
+                        <p><strong>Mobile:</strong> {selectedLead.phone || 'N/A'}</p>
+                        <p><strong>Pickup:</strong> {selectedLead.pickup_location || 'N/A'}</p>
+                        <p><strong>Drop:</strong> {selectedLead.drop_location || 'N/A'}</p>
+                        <p><strong>Travel Date:</strong> {selectedLead.travel_date || 'N/A'}</p>
+                        <p><strong>Travel Time:</strong> {selectedLead.travel_time || 'N/A'}</p>
+                        <p><strong>Trip Type:</strong> {selectedLead.trip_type || 'N/A'}</p>
+                        <p><strong>Vehicle:</strong> {selectedLead.vehicle_category || 'N/A'}</p>
+                        <p><strong>Est. Fare:</strong> {selectedLead.estimated_fare ? `₹${selectedLead.estimated_fare}` : 'N/A'}</p>
+                        <p><strong>Lead Source:</strong> {selectedLead.lead_source || 'Website'}</p>
+                        <p><strong>Created Date:</strong> {new Date(selectedLead.created_at).toLocaleString()}</p>
+                        <p className="col-span-2"><strong>Route:</strong> {selectedLead.route_source || 'General'}</p>
+                      </div>
                       
-                      <div className="mt-4 pt-4 border-t">
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
-                        <select
-                          value={selectedLead.status || 'New'}
-                          onChange={(e) => updateLeadStatus(selectedLead.id, e.target.value)}
-                          className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
-                        >
-                          {LEAD_STATUSES.map(status => (
-                            <option key={status} value={status}>{status}</option>
-                          ))}
-                        </select>
+                      <div className="mt-4 pt-4 border-t grid grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
+                          <select
+                            value={selectedLead.status || 'New'}
+                            onChange={(e) => updateLeadField(selectedLead.id, 'status', e.target.value)}
+                            className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
+                          >
+                            {LEAD_STATUSES.map(status => (
+                              <option key={status} value={status}>{status}</option>
+                            ))}
+                          </select>
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">Follow-up Date</label>
+                          <input
+                            type="date"
+                            value={selectedLead.follow_up_date || ''}
+                            onChange={(e) => updateLeadField(selectedLead.id, 'follow_up_date', e.target.value)}
+                            className="mt-1 block w-full pl-3 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="mt-4">
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Notes</label>
+                        <textarea
+                          value={selectedLead.notes || ''}
+                          onChange={(e) => updateLeadField(selectedLead.id, 'notes', e.target.value)}
+                          rows="3"
+                          placeholder="Add details discussed with the customer..."
+                          className="mt-1 block w-full pl-3 py-2 text-base border border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
+                        ></textarea>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
-              <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+              <div className="bg-gray-50 px-4 py-3 sm:px-6 flex flex-wrap gap-2 justify-end">
                 <button
                   type="button"
-                  className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-gray-900 text-base font-medium text-white hover:bg-black focus:outline-none sm:ml-3 sm:w-auto sm:text-sm"
+                  className="inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-gray-200 text-base font-medium text-gray-800 hover:bg-gray-300 focus:outline-none sm:text-sm"
                   onClick={() => setSelectedLead(null)}
                 >
                   Close
                 </button>
+                <button
+                  onClick={() => {
+                    const text = `Name: ${selectedLead.name}\nMobile: ${selectedLead.phone}\nPickup: ${selectedLead.pickup_location}\nDrop: ${selectedLead.drop_location}\nDate: ${selectedLead.travel_date}`;
+                    navigator.clipboard.writeText(text);
+                    alert('Lead copied to clipboard');
+                  }}
+                  className="inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none sm:text-sm"
+                >
+                  Copy Lead
+                </button>
+                <a
+                  href={`tel:${selectedLead.phone}`}
+                  className="inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none sm:text-sm"
+                >
+                  Call Customer
+                </a>
                 <a
                   href={`https://wa.me/91${selectedLead.phone}?text=Hi ${selectedLead.name}, this is regarding your taxi inquiry for ${selectedLead.pickup_location}...`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm items-center"
+                  className="inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-[#25D366] text-base font-medium text-white hover:bg-[#1ebd5a] focus:outline-none sm:text-sm"
                 >
-                  Chat on WhatsApp
+                  WhatsApp Customer
                 </a>
               </div>
             </div>

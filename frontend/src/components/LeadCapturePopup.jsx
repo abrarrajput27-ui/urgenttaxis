@@ -64,11 +64,18 @@ const LeadCapturePopup = ({ isOpen, onClose, routeName = "General Booking" }) =>
         value: 1
       });
 
-      // 2. Prepare Payload
+      // 2. Prepare Payload mapping to expected DB columns
       const payload = {
-        ...formData,
+        name: formData.name,
+        phone: formData.mobile,
+        pickup_location: formData.pickup,
+        drop_location: formData.drop_location,
+        travel_date: formData.trip_date,
+        vehicle_category: formData.vehicle_type,
+        trip_type: "Not Specified",
+        message: formData.message,
         source_page: location.pathname,
-        route_name: routeName,
+        route_source: routeName,
         lead_source: "Popup Form"
       };
 
