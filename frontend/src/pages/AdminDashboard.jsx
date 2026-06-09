@@ -61,16 +61,24 @@ export default function AdminDashboard() {
   const fetchLeads = async () => {
     setLoading(true);
     try {
+      console.log('Supabase URL:', import.meta.env.VITE_SUPABASE_URL);
+      console.log('Supabase Anon Key exists?', !!import.meta.env.VITE_SUPABASE_ANON_KEY);
+      
       const { data, error } = await supabase
         .from('leads')
         .select('*')
         .order('created_at', { ascending: false });
         
-      if (error) throw error;
+      if (error) {
+        console.error('Supabase query error:', error);
+        throw error;
+      }
+      
+      console.log('Supabase returned data:', data);
       setLeads(data || []);
     } catch (err) {
       console.error('Error fetching leads:', err);
-      alert('Failed to load leads. Did you run the Supabase migration?');
+      alert('Failed to load leads. Did you run the Supabase migration? Check console for details.');
     } finally {
       setLoading(false);
     }
