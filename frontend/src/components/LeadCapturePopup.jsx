@@ -16,6 +16,8 @@ const LeadCapturePopup = ({ isOpen, onClose, routeName = "General Booking" }) =>
     pickup: '',
     drop_location: '',
     trip_date: '',
+    trip_time: '',
+    trip_type: 'One Way',
     vehicle_type: 'Sedan',
     message: ''
   });
@@ -71,8 +73,9 @@ const LeadCapturePopup = ({ isOpen, onClose, routeName = "General Booking" }) =>
         pickup_location: formData.pickup,
         drop_location: formData.drop_location,
         travel_date: formData.trip_date,
+        travel_time: formData.trip_time,
         vehicle_category: formData.vehicle_type,
-        trip_type: "Not Specified",
+        trip_type: formData.trip_type,
         message: formData.message,
         source_page: location.pathname,
         route_source: routeName,
@@ -88,7 +91,7 @@ const LeadCapturePopup = ({ isOpen, onClose, routeName = "General Booking" }) =>
 
       // 4. WhatsApp Integration
       const BUSINESS_WHATSAPP_NUMBER = "918595066033";
-      const messageText = `🚖 New Quote Request - Urgent Taxis\n\n👤 Name: ${formData.name}\n📞 Mobile: ${formData.mobile}\n📍 Pickup: ${formData.pickup}\n📍 Drop: ${formData.drop_location}\n📅 Trip Date: ${formData.trip_date}\n🚘 Vehicle: ${formData.vehicle_type}\n💬 Message: ${formData.message || 'N/A'}\n\n🌐 Source Page: ${location.pathname}\n🛣️ Route Name: ${routeName}\n📌 Lead Source: Website Get Quote Form\n\nPlease call customer as soon as possible.`;
+      const messageText = `🚖 New Quote Request - Urgent Taxis\n\n👤 Name: ${formData.name}\n📞 Mobile: ${formData.mobile}\n📍 Pickup: ${formData.pickup}\n📍 Drop: ${formData.drop_location}\n📅 Date: ${formData.trip_date}\n⏰ Time: ${formData.trip_time || 'N/A'}\n🛣️ Trip Type: ${formData.trip_type}\n🚘 Vehicle: ${formData.vehicle_type}\n💬 Message: ${formData.message || 'N/A'}\n\n🌐 Source Page: ${location.pathname}\n🛣️ Route: ${routeName}\n📌 Lead Source: Website Get Quote Form\n\nPlease call customer as soon as possible.`;
 
       const whatsappUrl = `https://wa.me/${BUSINESS_WHATSAPP_NUMBER}?text=${encodeURIComponent(messageText)}`;
       
@@ -109,7 +112,7 @@ const LeadCapturePopup = ({ isOpen, onClose, routeName = "General Booking" }) =>
       // Reset form
       setFormData({
         name: '', mobile: '', pickup: '', drop_location: '',
-        trip_date: '', vehicle_type: 'Sedan', message: ''
+        trip_date: '', trip_time: '', trip_type: 'One Way', vehicle_type: 'Sedan', message: ''
       });
 
       // Auto close after 3 seconds only if not blocked
@@ -195,8 +198,12 @@ const LeadCapturePopup = ({ isOpen, onClose, routeName = "General Booking" }) =>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Trip Date *</label>
-                  <input required type="date" name="trip_date" value={formData.trip_date} onChange={handleChange} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none" />
+                  <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Trip Type *</label>
+                  <select name="trip_type" value={formData.trip_type} onChange={handleChange} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none bg-white">
+                    <option value="One Way">One Way</option>
+                    <option value="Round Trip">Round Trip</option>
+                    <option value="Local Rental">Local Rental</option>
+                  </select>
                 </div>
                 <div>
                   <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Vehicle Preference</label>
@@ -207,6 +214,17 @@ const LeadCapturePopup = ({ isOpen, onClose, routeName = "General Booking" }) =>
                     <option value="Innova Crysta">Innova Crysta (6/7 Pax)</option>
                     <option value="Tempo Traveller">Tempo Traveller (12 Pax)</option>
                   </select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Trip Date *</label>
+                  <input required type="date" name="trip_date" value={formData.trip_date} onChange={handleChange} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none" />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Pickup Time</label>
+                  <input type="time" name="trip_time" value={formData.trip_time} onChange={handleChange} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none" />
                 </div>
               </div>
 
