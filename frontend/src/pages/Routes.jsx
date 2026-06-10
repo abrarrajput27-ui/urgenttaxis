@@ -13,12 +13,30 @@ import routeRishikesh from '../assets/images/route-rishikesh.webp';
 import routeShimla from '../assets/images/route-shimla.webp';
 import defaultRouteImg from '../assets/images/hero-bg.webp';
 
+// New travel route images
+import routeDelhi from '../assets/images/route-delhi.png';
+import routeNainital from '../assets/images/route-nainital.png';
+import routeCorbett from '../assets/images/route-corbett.png';
+import routeKedarnath from '../assets/images/route-kedarnath.png';
+import routeAyodhya from '../assets/images/route-ayodhya.png';
+import routeKanpur from '../assets/images/route-kanpur.png';
+import routeJaipur from '../assets/images/route-jaipur.png';
+import routeAgra from '../assets/images/route-agra.png';
+
 const routeImages = {
   dehradun: routeDehradun,
   haldwani: routeHaldwani,
   haridwar: routeHaridwar,
   rishikesh: routeRishikesh,
-  shimla: routeShimla,
+  mussoorie: routeShimla,
+  delhi: routeDelhi,
+  nainital: routeNainital,
+  corbett: routeCorbett,
+  kedarnath: routeKedarnath,
+  ayodhya: routeAyodhya,
+  kanpur: routeKanpur,
+  jaipur: routeJaipur,
+  agra: routeAgra,
   default: defaultRouteImg
 };
 

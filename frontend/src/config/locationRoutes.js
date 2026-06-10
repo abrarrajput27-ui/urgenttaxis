@@ -20,7 +20,7 @@ const locationRoutes = {
       {
         title: 'Ghaziabad to Delhi Airport Taxi',
         destination: 'Delhi Airport',
-        image: 'default',
+        image: 'delhi',
         description: 'Fast, on-time airport transfer. Safe and clean cabs with flight tracking support.',
         pricing: 'Sedan: ₹1499 | SUV: ₹2499',
         distance: '45 km',
@@ -38,7 +38,7 @@ const locationRoutes = {
       {
         title: 'Ghaziabad to Nainital Taxi',
         destination: 'Nainital',
-        image: 'shimla',
+        image: 'nainital',
         description: 'Comfortable hill station travel with experienced drivers trained in mountain terrains.',
         pricing: 'Sedan: ₹4499 | SUV: ₹5999',
         distance: '280 km',
@@ -96,7 +96,7 @@ const locationRoutes = {
       {
         title: 'Ghaziabad to Delhi Airport Taxi',
         destination: 'Delhi Airport',
-        image: 'default',
+        image: 'delhi',
         description: 'Fast, on-time airport transfer. Safe and clean cabs with flight tracking support.',
         pricing: 'Sedan: ₹1499 | SUV: ₹2499',
         distance: '45 km',
@@ -114,7 +114,7 @@ const locationRoutes = {
       {
         title: 'Ghaziabad to Nainital Taxi',
         destination: 'Nainital',
-        image: 'shimla',
+        image: 'nainital',
         description: 'Comfortable hill station travel with experienced drivers trained in mountain terrains.',
         pricing: 'Sedan: ₹4499 | SUV: ₹5999',
         distance: '280 km',
@@ -174,7 +174,7 @@ const locationRoutes = {
       {
         title: 'Haldwani to Delhi Taxi',
         destination: 'Delhi',
-        image: 'default',
+        image: 'delhi',
         description: 'Reliable outstation cab from Haldwani to Delhi NCR. High quality cars and professional drivers.',
         pricing: 'Sedan: ₹2999 | SUV: ₹4499',
         distance: '280 km',
@@ -252,7 +252,7 @@ const locationRoutes = {
       {
         title: 'Ramnagar to Delhi Taxi',
         destination: 'Delhi',
-        image: 'default',
+        image: 'delhi',
         description: 'Direct resort-to-home transfer. Convenient, hygienic, and timely pickups.',
         pricing: 'Sedan: ₹2899 | SUV: ₹4199',
         distance: '260 km',
@@ -270,7 +270,7 @@ const locationRoutes = {
       {
         title: 'Ramnagar to Nainital Taxi',
         destination: 'Nainital',
-        image: 'shimla',
+        image: 'nainital',
         description: 'Beautiful hill station transit. Hill-trained drivers with high-safety standards.',
         pricing: 'Sedan: ₹2199 | SUV: ₹3499',
         distance: '65 km',
@@ -279,7 +279,7 @@ const locationRoutes = {
       {
         title: 'Ramnagar to Jim Corbett Taxi',
         destination: 'Jim Corbett',
-        image: 'shimla',
+        image: 'corbett',
         description: 'Local safari gate drops and resort transfers. Always on time for safari bookings.',
         pricing: 'Sedan: ₹999 | SUV: ₹1499',
         distance: '15 km',
@@ -324,7 +324,7 @@ const locationRoutes = {
       {
         title: 'Haridwar to Delhi Taxi',
         destination: 'Delhi',
-        image: 'default',
+        image: 'delhi',
         description: 'Express highway taxi from Haridwar to Delhi NCR. Fully customizable pick-ups.',
         pricing: 'Sedan: ₹2399 | SUV: ₹3799',
         distance: '210 km',
@@ -351,7 +351,7 @@ const locationRoutes = {
       {
         title: 'Haridwar to Kedarnath Taxi',
         destination: 'Kedarnath',
-        image: 'shimla',
+        image: 'kedarnath',
         description: 'Chardham Yatra pickup to Phata/Sonprayag helipads. Safe and powerful SUVs.',
         pricing: 'Sedan: ₹5999 | SUV: ₹8499',
         distance: '180 km',
@@ -396,7 +396,7 @@ const locationRoutes = {
       {
         title: 'Dehradun to Delhi Taxi',
         destination: 'Delhi',
-        image: 'default',
+        image: 'delhi',
         description: 'Express travel via Dehradun-Delhi Highway. Punctual airport and home drops.',
         pricing: 'Sedan: ₹2499 | SUV: ₹3899',
         distance: '245 km',
@@ -405,7 +405,7 @@ const locationRoutes = {
       {
         title: 'Dehradun to Mussoorie Taxi',
         destination: 'Mussoorie',
-        image: 'shimla',
+        image: 'mussoorie',
         description: 'Queen of Hills drop. Scenic mountain driving by experienced hill operators.',
         pricing: 'Sedan: ₹1499 | SUV: ₹2299',
         distance: '35 km',
@@ -470,7 +470,7 @@ const locationRoutes = {
       {
         title: 'Meerut to Delhi Airport Taxi',
         destination: 'Delhi Airport',
-        image: 'default',
+        image: 'delhi',
         description: 'On-time transfer to IGI Airport via Delhi-Meerut Expressway. Fast and convenient.',
         pricing: 'Sedan: ₹1699 | SUV: ₹2699',
         distance: '75 km',
@@ -479,7 +479,7 @@ const locationRoutes = {
       {
         title: 'Meerut to Delhi Taxi',
         destination: 'Delhi',
-        image: 'default',
+        image: 'delhi',
         description: 'Commutes to Central or South Delhi made easy and quick via the express corridor.',
         pricing: 'Sedan: ₹1499 | SUV: ₹2399',
         distance: '65 km',
@@ -497,7 +497,7 @@ const locationRoutes = {
       {
         title: 'Meerut to Nainital Taxi',
         destination: 'Nainital',
-        image: 'shimla',
+        image: 'nainital',
         description: 'Enjoy a relaxing road trip from Meerut to the beautiful Lake City of Nainital.',
         pricing: 'Sedan: ₹4499 | SUV: ₹5999',
         distance: '235 km',
@@ -540,7 +540,7 @@ const locationRoutes = {
       {
         title: 'Lucknow to Ayodhya Taxi',
         destination: 'Ayodhya',
-        image: 'default',
+        image: 'ayodhya',
         description: 'Spiritual transit to Ram Mandir. On-time pickups and comfortable outstation sedans.',
         pricing: 'Sedan: ₹1999 | SUV: ₹2999',
         distance: '135 km',
@@ -549,7 +549,7 @@ const locationRoutes = {
       {
         title: 'Lucknow to Kanpur Taxi',
         destination: 'Kanpur',
-        image: 'default',
+        image: 'kanpur',
         description: 'Frequent business and personal travel options. Well-maintained cars and polite drivers.',
         pricing: 'Sedan: ₹1499 | SUV: ₹2199',
         distance: '90 km',
@@ -567,7 +567,7 @@ const locationRoutes = {
       {
         title: 'Lucknow to Delhi Taxi',
         destination: 'Delhi',
-        image: 'default',
+        image: 'delhi',
         description: 'Premium highway travel connecting Lucknow to Delhi via Purvanchal & Yamuna Expressways.',
         pricing: 'Sedan: ₹6999 | SUV: ₹9499',
         distance: '550 km',
@@ -622,7 +622,7 @@ const locationRoutes = {
       {
         title: 'Delhi to Nainital Taxi',
         destination: 'Nainital',
-        image: 'shimla',
+        image: 'nainital',
         description: 'Premium tourist transit. Safe driving on mountain roads by hill-certified drivers.',
         pricing: 'Sedan: ₹3499 | SUV: ₹4999',
         distance: '310 km',

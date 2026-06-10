@@ -28,14 +28,70 @@ import routeRishikesh from '../assets/images/route-rishikesh.webp';
 import routeShimla from '../assets/images/route-shimla.webp';
 import defaultRouteImg from '../assets/images/hero-bg.webp';
 
+// New travel route images
+import routeDelhi from '../assets/images/route-delhi.png';
+import routeNainital from '../assets/images/route-nainital.png';
+import routeCorbett from '../assets/images/route-corbett.png';
+import routeKedarnath from '../assets/images/route-kedarnath.png';
+import routeAyodhya from '../assets/images/route-ayodhya.png';
+import routeKanpur from '../assets/images/route-kanpur.png';
+import routeJaipur from '../assets/images/route-jaipur.png';
+import routeAgra from '../assets/images/route-agra.png';
+
+// Fleet images
+import carDzire from '../assets/images/car-dzire.png';
+import carErtiga from '../assets/images/car-ertiga.png';
+import carInnova from '../assets/images/car-innova.png';
+import carCrysta from '../assets/images/car-crysta.png';
+import carTraveller from '../assets/images/car-traveller.png';
+
 const routeImages = {
   dehradun: routeDehradun,
   haldwani: routeHaldwani,
   haridwar: routeHaridwar,
   rishikesh: routeRishikesh,
   shimla: routeShimla,
+  mussoorie: routeShimla,
+  delhi: routeDelhi,
+  nainital: routeNainital,
+  corbett: routeCorbett,
+  kedarnath: routeKedarnath,
+  ayodhya: routeAyodhya,
+  kanpur: routeKanpur,
+  jaipur: routeJaipur,
+  agra: routeAgra,
   default: defaultRouteImg
 };
+
+const fleetCards = [
+  {
+    title: "Toyota Dzire",
+    image: carDzire,
+    description: "Comfortable compact sedan, ideal for city rides."
+  },
+  {
+    title: "Maruti Ertiga",
+    image: carErtiga,
+    description: "Spacious MPV, perfect for family trips."
+  },
+  {
+    title: "Toyota Innova",
+    image: carInnova,
+    description: "Premium sedan with ample legroom."
+  },
+  {
+    title: "Toyota Crysta",
+    image: carCrysta,
+    description: "Luxury SUV for a smooth journey."
+  },
+  {
+    title: "Toyota Traveller",
+    image: carTraveller,
+    description: "Large capacity vehicle for group travel."
+  },
+];
+
+
 
 const RouteSEOContent = lazy(() => import('../components/RouteSEOContent'));
 
@@ -272,6 +328,17 @@ export default function Home() {
         "publisher": {
           "@id": "https://urgenttaxis.com/#organization"
         }
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": cityRouteConfig.faqs.map(faq => ({
+          "@type": "Question",
+          "name": faq.q,
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": faq.a.replace('+91 7310651940', displayPhone)
+          }
+        }))
       }
     ]
   };
@@ -451,9 +518,11 @@ export default function Home() {
                             value={localPackage} onChange={(e) => setLocalPackage(e.target.value)}
                             className="w-full pl-10 pr-10 py-3 border border-gray-200 rounded-lg text-[14px] text-gray-700 outline-none focus:border-blue-500 appearance-none bg-white"
                           >
-                            <option value="4hr/40km">4 Hrs / 40 Kms</option>
-                            <option value="8hr/80km">8 Hrs / 80 Kms</option>
-                            <option value="12hr/120km">12 Hrs / 120 Kms</option>
+<option value="4hr/40km">4 Hrs / 40 Kms</option>
+<option value="6hr/60km">6 Hrs / 60 Kms</option>
+<option value="8hr/80km">8 Hrs / 80 Kms</option>
+<option value="10hr/100km">10 Hrs / 100 Kms</option>
+<option value="12hr/120km">12 Hrs / 120 Kms</option>
                           </select>
                         </div>
                       </div>
@@ -613,8 +682,7 @@ export default function Home() {
 📍 Pickup: ${cityRouteConfig.city}
 📍 Drop: ${card.destination}
 
-Please share the pricing and availability.
-(From ${window.location.hostname} / ${cityRouteConfig.city})`;
+Please share the pricing and availability.`;
                   
                   return (
                     <div key={idx} className="bg-white rounded-3xl overflow-hidden border border-gray-100 hover:shadow-xl transition-all duration-300 flex flex-col h-full group">
@@ -689,7 +757,31 @@ Please share the pricing and availability.
             </div>
           </section>
 
-          {/* Frequently Asked Questions */}
+          {/* Our Fleet Section */}
+<section className="py-16 bg-white border-t border-gray-100">
+  <div className="max-w-[1200px] mx-auto px-4">
+    <h2 className="text-3xl md:text-4xl font-black text-gray-900 mb-4 text-center">Our Fleet</h2>
+    <div className="w-24 h-1 bg-[#1877F2] mx-auto rounded-full mb-6"></div>
+    <p className="text-gray-600 text-center mb-8">Choose the perfect vehicle for your journey.</p>
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      {fleetCards.map((car, idx) => (
+        <div key={idx} className="bg-white rounded-3xl overflow-hidden border border-gray-100 hover:shadow-xl transition-all duration-300 flex flex-col h-full group">
+          <img src={car.image} alt={car.title} className="w-full h-48 object-cover" />
+          <div className="p-6 flex-grow flex flex-col justify-between">
+            <h3 className="text-xl font-bold text-gray-900 mb-2.5">{car.title}</h3>
+            <p className="text-gray-500 mb-4">{car.description}</p>
+            <div className="mt-auto flex space-x-2">
+              <a href={`tel:${currentLocation.phone}`} className="bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold py-2 px-3 rounded-xl transition-colors text-xs flex items-center justify-center shadow-sm">Call Now</a>
+              <a href={`https://wa.me/${currentLocation.whatsapp}?text=${encodeURIComponent(`Hi, I want to know more about ${car.title}`)}`} target="_blank" rel="noopener noreferrer" className="bg-[#00a859] hover:bg-[#00904d] text-white font-bold py-2 px-3 rounded-xl transition-colors text-xs flex items-center justify-center shadow-sm">WhatsApp</a>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+{/* Frequently Asked Questions */}
           <section className="py-16 bg-white border-t border-gray-100">
             <div className="max-w-[800px] mx-auto px-4">
               <h3 className="text-2xl md:text-3xl font-black text-gray-900 mb-8 flex items-center justify-center">
@@ -697,12 +789,14 @@ Please share the pricing and availability.
               </h3>
               <div className="space-y-4">
                 {cityRouteConfig.faqs.map((faq, idx) => (
-                  <div key={idx} className="bg-white border border-gray-200 rounded-xl p-6 hover:border-blue-300 transition-colors shadow-sm">
-                    <h4 className="font-bold text-gray-900 text-lg mb-3 pr-8">{faq.q}</h4>
-                    <p className="text-gray-600 leading-relaxed">
+                  <details key={idx} className="bg-white border border-gray-200 rounded-xl p-4 hover:border-blue-300 transition-colors shadow-sm" open={false}>
+                    <summary className="font-bold text-gray-900 text-lg cursor-pointer list-none mb-2">
+                      {faq.q}
+                    </summary>
+                    <p className="text-gray-600 leading-relaxed ml-4">
                       {faq.a.replace('+91 7310651940', displayPhone)}
                     </p>
-                  </div>
+                  </details>
                 ))}
               </div>
             </div>

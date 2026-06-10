@@ -27,6 +27,12 @@ const LocationInput = ({ label, placeholder, value, onChange, iconColor = "text-
       placeholder={placeholder} 
       value={value} 
       onChange={onChange}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter') {
+          // If Enter pressed, use current input as address
+          onChange({ target: { value: e.target.value } });
+        }
+      }}
       className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg text-[13px] outline-none focus:border-blue-500 transition-colors bg-white text-gray-800"
       required={required}
     />

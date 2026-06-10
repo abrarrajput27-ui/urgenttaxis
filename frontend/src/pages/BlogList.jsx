@@ -46,9 +46,7 @@ export default function BlogList() {
       <div className="max-w-[1200px] mx-auto px-4 py-16">
         {loading ? (
           <div className="text-center text-gray-500 py-20">Loading blogs...</div>
-        ) : blogs.length === 0 ? (
-          <div className="text-center text-gray-500 py-20">No articles published yet. Check back soon!</div>
-        ) : (
+        ) : blogs.length === 0 ? (null) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {blogs.map(blog => (
               <div key={blog.slug} className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-xl transition-shadow group flex flex-col">
