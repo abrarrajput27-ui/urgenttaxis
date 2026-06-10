@@ -5,8 +5,9 @@ import ReactGA from 'react-ga4';
 import { useJsApiLoader } from '@react-google-maps/api';
 import { 
   Calendar, Clock, Zap, Headphones, Users, Check, ArrowRight, ArrowLeftRight, Loader2, Phone, HelpCircle, MessageCircle, MapPin, Link as LinkIcon,
-  ShieldCheck, Star, Car, ChevronDown
+  ShieldCheck, Star, Car, ChevronDown, ChevronLeft, ChevronRight
 } from 'lucide-react';
+
 
 import { supabase } from '../lib/supabase';
 import { getRouteDistance } from '../lib/mapsApi';
@@ -425,8 +426,8 @@ export default function Home() {
 
         <div className="max-w-[1200px] mx-auto px-4 relative z-20">
           
-          {/* Car Image - Mathematically positioned to sit perfectly in the gap without overlapping */}
-          <div className="hidden lg:block absolute left-[52%] -translate-x-1/2 ml-[-80px] bottom-[-90px] w-[420px] xl:w-[490px] z-10 pointer-events-none opacity-90 xl:opacity-100">
+          {/* Car Image - Positioned above the curve and stats row for full visibility */}
+          <div className="hidden lg:block absolute left-[50%] -translate-x-1/2 ml-[-50px] bottom-[15px] w-[480px] xl:w-[560px] z-30 pointer-events-none opacity-95 xl:opacity-100 transition-all">
              <img src={heroCar} alt="Toyota Innova" className="w-full h-auto object-contain" />
           </div>
 
@@ -504,16 +505,16 @@ export default function Home() {
                   <form className="p-4 sm:p-6 space-y-4" onSubmit={handleCalculateFare}>
                     
                     {/* Trip Type Toggles */}
-                    <div className="flex bg-blue-50/50 p-1 rounded-xl mb-4 overflow-x-auto scrollbar-hide">
+                    <div className="flex bg-gray-100 p-1 rounded-xl mb-4 overflow-x-auto scrollbar-hide">
                       {Object.values(TRIP_TYPES).map(type => (
                         <button
                           key={type}
                           type="button"
                           onClick={() => setTripType(type)}
-                          className={`flex-1 min-w-[85px] py-2 text-[11px] sm:text-[12px] font-bold rounded-lg transition-all whitespace-nowrap px-2 ${
+                          className={`flex-1 min-w-[85px] py-2 text-[11px] sm:text-[12px] font-extrabold rounded-lg transition-all whitespace-nowrap px-2 ${
                             tripType === type 
-                              ? 'bg-white text-[#1e3b8a] shadow-sm' 
-                              : 'text-gray-500 hover:text-gray-700'
+                              ? 'bg-white text-gray-950 shadow-sm' 
+                              : 'text-gray-500 hover:text-gray-800'
                           }`}
                         >
                           {type}
@@ -532,7 +533,7 @@ export default function Home() {
                         isLoaded={isLoaded}
                       />
                     ) : (
-                      <div className="relative flex flex-col">
+                      <div className="relative space-y-3">
                         <LocationInput
                           label={tripType === TRIP_TYPES.AIRPORT ? "Airport / Pickup" : "Pickup City"}
                           placeholder={tripType === TRIP_TYPES.AIRPORT ? "Enter airport or city" : "Enter pickup city"}
@@ -542,16 +543,6 @@ export default function Home() {
                           isLoaded={isLoaded}
                         />
                         
-                        <div className="flex justify-center -my-2 relative z-10 pointer-events-none">
-                          <button 
-                            type="button" 
-                            onClick={swapLocations}
-                            className="bg-white border border-gray-200 shadow-sm rounded-full p-1.5 hover:bg-gray-50 transition-colors pointer-events-auto"
-                          >
-                            <ArrowLeftRight className="w-[16px] h-[16px] text-[#1e3b8a] rotate-90" />
-                          </button>
-                        </div>
-                        
                         <LocationInput
                           label={tripType === TRIP_TYPES.AIRPORT ? "Drop Location" : "Drop City"}
                           placeholder={tripType === TRIP_TYPES.AIRPORT ? "Enter drop city or hotel" : "Enter drop city"}
@@ -560,6 +551,17 @@ export default function Home() {
                           iconColor="text-red-500"
                           isLoaded={isLoaded}
                         />
+                        
+                        {/* Swap Button on the Right */}
+                        <div className="absolute right-3.5 top-[86px] -translate-y-1/2 z-20 pointer-events-auto">
+                          <button 
+                            type="button" 
+                            onClick={swapLocations}
+                            className="bg-white border-2 border-blue-100 hover:border-blue-600 shadow-md rounded-full p-1.5 hover:bg-gray-50 transition-all flex items-center justify-center cursor-pointer active:scale-95"
+                          >
+                            <ArrowLeftRight className="w-[14px] h-[14px] text-[#1e3b8a] rotate-90" />
+                          </button>
+                        </div>
                       </div>
                     )}
 
@@ -754,13 +756,25 @@ export default function Home() {
                 <span className="text-xs font-black uppercase tracking-widest text-[#00a859]">What We Offer</span>
                 <h2 className="text-3xl md:text-4xl font-black text-gray-900 mt-2 mb-3">Our Taxi Services</h2>
                 <p className="text-gray-500 font-medium text-sm max-w-xl mx-auto">Choose from a wide range of taxi services made just for you</p>
-                <div className="w-16 h-1 bg-blue-600 mx-auto rounded-full mt-4"></div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
+              <div className="relative group/carousel px-4">
+                {/* Left Carousel Arrow */}
+                <button 
+                  type="button"
+                  onClick={() => {
+                    const el = document.getElementById('services-grid-container');
+                    if (el) el.scrollBy({ left: -240, behavior: 'smooth' });
+                  }}
+                  className="hidden md:flex absolute -left-4 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-white shadow-md border border-gray-200 items-center justify-center text-gray-500 hover:text-gray-900 hover:border-gray-400 transition-all z-10 active:scale-95 cursor-pointer"
+                >
+                  <ChevronLeft className="w-5 h-5" />
+                </button>
+
+                <div id="services-grid-container" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 overflow-x-auto lg:overflow-x-visible scrollbar-hide">
                 {/* Card 1: One Way */}
                 <div className="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between items-center text-center group">
-                  <div className="w-24 h-24 mb-4 flex items-center justify-center bg-blue-50/50 rounded-full p-2">
+                  <div className="w-24 h-24 mb-4 flex items-center justify-center">
                     <img src={serviceOneway} alt="One Way Taxi" className="w-full h-full object-contain" />
                   </div>
                   <h3 className="text-lg font-extrabold text-gray-900 mb-2">One Way Taxi</h3>
@@ -772,13 +786,13 @@ export default function Home() {
                     }}
                     className="text-blue-600 hover:text-blue-800 text-xs font-bold flex items-center transition-colors mt-auto group-hover:translate-x-1 duration-200"
                   >
-                    Book Now <ArrowRight className="w-3.5 h-3.5 ml-1" />
+                    Book Now →
                   </button>
                 </div>
 
                 {/* Card 2: Round Trip */}
                 <div className="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between items-center text-center group">
-                  <div className="w-24 h-24 mb-4 flex items-center justify-center bg-blue-50/50 rounded-full p-2">
+                  <div className="w-24 h-24 mb-4 flex items-center justify-center">
                     <img src={serviceRoundtrip} alt="Round Trip Taxi" className="w-full h-full object-contain" />
                   </div>
                   <h3 className="text-lg font-extrabold text-gray-900 mb-2">Round Trip Taxi</h3>
@@ -790,13 +804,13 @@ export default function Home() {
                     }}
                     className="text-blue-600 hover:text-blue-800 text-xs font-bold flex items-center transition-colors mt-auto group-hover:translate-x-1 duration-200"
                   >
-                    Book Now <ArrowRight className="w-3.5 h-3.5 ml-1" />
+                    Book Now →
                   </button>
                 </div>
 
                 {/* Card 3: Airport Transfer */}
                 <div className="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between items-center text-center group">
-                  <div className="w-24 h-24 mb-4 flex items-center justify-center bg-blue-50/50 rounded-full p-2">
+                  <div className="w-24 h-24 mb-4 flex items-center justify-center">
                     <img src={serviceAirport} alt="Airport Transfer" className="w-full h-full object-contain" />
                   </div>
                   <h3 className="text-lg font-extrabold text-gray-900 mb-2">Airport Transfer</h3>
@@ -808,13 +822,13 @@ export default function Home() {
                     }}
                     className="text-blue-600 hover:text-blue-800 text-xs font-bold flex items-center transition-colors mt-auto group-hover:translate-x-1 duration-200"
                   >
-                    Book Now <ArrowRight className="w-3.5 h-3.5 ml-1" />
+                    Book Now →
                   </button>
                 </div>
 
                 {/* Card 4: Local Rental */}
                 <div className="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between items-center text-center group">
-                  <div className="w-24 h-24 mb-4 flex items-center justify-center bg-blue-50/50 rounded-full p-2">
+                  <div className="w-24 h-24 mb-4 flex items-center justify-center">
                     <img src={serviceLocal} alt="Local Rental" className="w-full h-full object-contain" />
                   </div>
                   <h3 className="text-lg font-extrabold text-gray-900 mb-2">Local Rental</h3>
@@ -826,13 +840,13 @@ export default function Home() {
                     }}
                     className="text-blue-600 hover:text-blue-800 text-xs font-bold flex items-center transition-colors mt-auto group-hover:translate-x-1 duration-200"
                   >
-                    Book Now <ArrowRight className="w-3.5 h-3.5 ml-1" />
+                    Book Now →
                   </button>
                 </div>
 
                 {/* Card 5: Tour Packages */}
                 <div className="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between items-center text-center group">
-                  <div className="w-24 h-24 mb-4 flex items-center justify-center bg-blue-50/50 rounded-full p-2">
+                  <div className="w-24 h-24 mb-4 flex items-center justify-center">
                     <img src={serviceTour} alt="Tour Packages" className="w-full h-full object-contain" />
                   </div>
                   <h3 className="text-lg font-extrabold text-gray-900 mb-2">Tour Packages</h3>
@@ -844,73 +858,72 @@ export default function Home() {
                     }}
                     className="text-blue-600 hover:text-blue-800 text-xs font-bold flex items-center transition-colors mt-auto group-hover:translate-x-1 duration-200"
                   >
-                    Book Now <ArrowRight className="w-3.5 h-3.5 ml-1" />
+                    Book Now →
                   </button>
                 </div>
               </div>
+
+              {/* Right Carousel Arrow */}
+              <button 
+                type="button"
+                onClick={() => {
+                  const el = document.getElementById('services-grid-container');
+                  if (el) el.scrollBy({ left: 240, behavior: 'smooth' });
+                }}
+                className="hidden md:flex absolute -right-4 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-white shadow-md border border-gray-200 items-center justify-center text-gray-500 hover:text-gray-900 hover:border-gray-400 transition-all z-10 active:scale-95 cursor-pointer"
+              >
+                <ChevronRight className="w-5 h-5" />
+              </button>
             </div>
-          </section>
+          </div>
+        </section>
 
-          {/* 2. Fleet Section */}
-          <section className="py-16 bg-[#f8f9fa] border-t border-gray-100">
-            <div className="max-w-[1200px] mx-auto px-4">
-              <div className="text-center mb-12">
-                <span className="text-xs font-black uppercase tracking-widest text-[#00a859]">Our Fleet</span>
-                <h2 className="text-3xl md:text-4xl font-black text-gray-900 mt-2 mb-3">Wide Range of Clean & Comfortable Cars</h2>
-                <p className="text-gray-500 font-medium text-sm">Choose your perfect ride</p>
-                <div className="w-16 h-1 bg-blue-600 mx-auto rounded-full mt-4"></div>
-              </div>
+        {/* 2. Fleet Section */}
+        <section className="py-16 bg-[#f8f9fa] border-t border-gray-100">
+          <div className="max-w-[1200px] mx-auto px-4">
+            <div className="text-center mb-12">
+              <span className="text-xs font-black uppercase tracking-widest text-[#00a859]">Our Fleet</span>
+              <h2 className="text-3xl md:text-4xl font-black text-gray-900 mt-2 mb-3">Wide Range of Clean & Comfortable Cars</h2>
+              <p className="text-gray-500 font-medium text-sm">Choose your perfect ride</p>
+            </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-10">
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 xl:gap-6 mb-10">
                 {fleetCards.map((car, idx) => (
-                  <div key={idx} className="bg-white rounded-3xl overflow-hidden border border-gray-100 hover:shadow-xl transition-all duration-300 flex flex-col h-full group">
-                    <div className="h-[200px] w-full bg-gray-50/50 flex items-center justify-center p-6 relative">
+                  <div 
+                    key={idx} 
+                    onClick={() => {
+                      setSelectedVehicle(car.title === "Maruti Swift" ? "Maruti Swift" : (car.title === "Maruti Dzire" ? "Swift Dzire" : car.title));
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }}
+                    className="bg-white rounded-3xl overflow-hidden border border-gray-100 hover:shadow-xl transition-all duration-300 flex flex-col h-full group cursor-pointer"
+                  >
+                    <div className="h-[120px] w-full bg-slate-50 flex items-center justify-center p-4 relative">
                       <img src={car.image} alt={car.title} className="max-w-full max-h-full object-contain group-hover:scale-105 transition-transform duration-500" />
                     </div>
-                    <div className="p-6 flex-grow flex flex-col justify-between">
+                    <div className="p-4 flex-grow flex flex-col justify-between">
                       <div>
-                        <h3 className="text-xl font-bold text-gray-900 mb-1">{car.title}</h3>
-                        <p className="text-blue-600 text-xs font-semibold mb-4">{car.subtitle}</p>
+                        <h3 className="text-sm md:text-base font-black text-gray-950 mb-0.5 leading-tight">{car.title}</h3>
+                        <p className="text-[10px] text-blue-600 font-semibold mb-2 leading-tight">{car.subtitle.split('(')[0]}</p>
                         
                         {/* Specs */}
-                        <div className="flex flex-wrap gap-2 mb-5">
-                          <span className="bg-gray-100 text-gray-600 text-[11px] font-bold px-2.5 py-1 rounded-full">{car.seating}</span>
-                          <span className="bg-gray-100 text-gray-600 text-[11px] font-bold px-2.5 py-1 rounded-full">{car.ac}</span>
-                          <span className="bg-gray-100 text-gray-600 text-[11px] font-bold px-2.5 py-1 rounded-full">{car.luggage}</span>
+                        <div className="flex flex-wrap gap-1 mb-3">
+                          <span className="bg-gray-100 text-gray-500 text-[9px] font-extrabold px-2 py-0.5 rounded">{car.seating}</span>
+                          <span className="bg-gray-100 text-gray-500 text-[9px] font-extrabold px-2 py-0.5 rounded">{car.ac}</span>
+                          <span className="bg-gray-100 text-gray-500 text-[9px] font-extrabold px-2 py-0.5 rounded">{car.luggage}</span>
                         </div>
-                        
-                        <p className="text-gray-500 text-sm mb-6 leading-relaxed">{car.description}</p>
                       </div>
 
-                      <div>
-                        {/* Pricing display */}
-                        <div className="grid grid-cols-2 gap-2 mb-6 text-center text-xs font-bold">
-                          <div className="bg-blue-50/50 border border-blue-100 rounded-xl p-2.5 text-blue-900">
-                            <span className="block text-[10px] text-gray-400 uppercase font-semibold mb-0.5">Plain Rate</span>
-                            {car.plainRate}
+                      <div className="border-t border-gray-50 pt-2.5 mt-2">
+                        {/* Plain & Hill Rate Inline */}
+                        <div className="flex flex-col space-y-1">
+                          <div className="flex justify-between items-center text-[11px]">
+                            <span className="text-gray-400 font-bold uppercase tracking-wider text-[9px]">Plain</span>
+                            <span className="text-[#00a859] font-black">{car.plainRate}</span>
                           </div>
-                          <div className="bg-green-50/50 border border-green-100 rounded-xl p-2.5 text-green-900">
-                            <span className="block text-[10px] text-gray-400 uppercase font-semibold mb-0.5">Hill Rate</span>
-                            {car.hillRate}
+                          <div className="flex justify-between items-center text-[11px]">
+                            <span className="text-gray-400 font-bold uppercase tracking-wider text-[9px]">Hill</span>
+                            <span className="text-blue-600 font-black">{car.hillRate}</span>
                           </div>
-                        </div>
-
-                        {/* Actions */}
-                        <div className="grid grid-cols-2 gap-2">
-                          <a 
-                            href={`tel:${currentLocation.phone}`}
-                            className="bg-gray-150 hover:bg-gray-200 text-gray-800 font-bold py-2.5 rounded-xl transition-colors text-center text-xs flex items-center justify-center shadow-sm"
-                          >
-                            <Phone className="w-3.5 h-3.5 mr-1" /> Call Now
-                          </a>
-                          <a 
-                            href={`https://wa.me/${currentLocation.whatsapp}?text=` + encodeURIComponent("Hi Urgent Taxis, I am interested in booking the " + car.title + ". Please provide more details.")}
-                            target="_blank" 
-                            rel="noopener noreferrer"
-                            className="bg-[#00a859] hover:bg-[#00904d] text-white font-bold py-2.5 rounded-xl transition-colors text-center text-xs flex items-center justify-center shadow-sm"
-                          >
-                            <MessageCircle className="w-4 h-4 mr-1" /> WhatsApp
-                          </a>
                         </div>
                       </div>
                     </div>
@@ -940,18 +953,23 @@ export default function Home() {
                 </Link>
               </div>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              <div className={`grid grid-cols-1 sm:grid-cols-2 ${cityRouteConfig.routeCards.length >= 5 ? 'lg:grid-cols-5' : (cityRouteConfig.routeCards.length === 4 ? 'lg:grid-cols-4' : 'lg:grid-cols-3')} gap-6`}>
                 {cityRouteConfig.routeCards.map((card, idx) => {
                   const imgFile = routeImages[card.image] || routeImages.default;
-                  const waMessage = `Hi Urgent Taxis, I want to book a taxi for:
-🛣️ Route: ${card.title}
-📍 Pickup: ${cityRouteConfig.city}
-📍 Drop: ${card.destination}
-
-Please share the pricing and availability.`;
                   
                   return (
-                    <div key={idx} className="bg-white rounded-3xl overflow-hidden border border-gray-100 hover:shadow-xl transition-all duration-300 flex flex-col h-full group">
+                    <div 
+                      key={idx} 
+                      onClick={() => {
+                        setPopupPreFill({
+                          pickup: cityRouteConfig.city,
+                          drop: card.destination,
+                          routeName: card.title
+                        });
+                        setIsLeadFormOpen(true);
+                      }}
+                      className="bg-white rounded-3xl overflow-hidden border border-gray-100 hover:shadow-xl transition-all duration-300 flex flex-col h-full group cursor-pointer"
+                    >
                       {/* Image & Badges */}
                       <div className="h-[200px] w-full overflow-hidden relative bg-gray-100">
                         <img 
@@ -971,53 +989,13 @@ Please share the pricing and availability.`;
 
                       {/* Content */}
                       <div className="p-6 flex-grow flex flex-col justify-between">
-                        <div>
-                          <h3 className="text-xl font-bold text-gray-900 mb-1">{card.title}</h3>
-                          <p className="text-blue-600 text-xs font-semibold mb-3">One Way</p>
-                          <p className="text-gray-500 text-sm mb-4 leading-relaxed">{card.description}</p>
-                        </div>
+                        <h3 className="text-lg font-black text-gray-900 mb-4 leading-tight">{card.title}</h3>
 
-                        <div>
-                          {/* Pricing Display */}
-                          <div className="flex justify-between items-center border-t border-gray-50 pt-4 mb-5">
-                            <span className="text-xs text-gray-400 font-semibold uppercase">One Way Fare</span>
-                            <div className="text-right">
-                              <span className="text-[#1e3b8a] font-black text-xl">{card.pricing.split('|')[0].replace('Sedan: ', '')}</span>
-                              <span className="block text-[9px] text-gray-400 font-medium">Starting Price</span>
-                            </div>
-                          </div>
-
-                          {/* CTAs */}
-                          <div className="grid grid-cols-1 gap-2">
-                            <button 
-                              onClick={() => {
-                                setPopupPreFill({
-                                  pickup: cityRouteConfig.city,
-                                  drop: card.destination,
-                                  routeName: card.title
-                                });
-                                setIsLeadFormOpen(true);
-                              }}
-                              className="w-full bg-[#1e3b8a] hover:bg-[#152e73] text-white font-bold py-2.5 rounded-xl transition-colors text-center text-sm shadow-md"
-                            >
-                              Get Quote
-                            </button>
-                            <div className="grid grid-cols-2 gap-2">
-                              <a 
-                                href={`https://wa.me/${currentLocation.whatsapp}?text=${encodeURIComponent(waMessage)}`}
-                                target="_blank" 
-                                rel="noopener noreferrer"
-                                className="bg-[#00a859] hover:bg-[#00904d] text-white font-bold py-2 px-3 rounded-xl transition-colors text-center text-xs flex items-center justify-center shadow-sm"
-                              >
-                                <MessageCircle className="w-4 h-4 mr-1" /> WhatsApp
-                              </a>
-                              <a 
-                                href={`tel:${currentLocation.phone}`}
-                                className="bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold py-2 px-3 rounded-xl transition-colors text-center text-xs flex items-center justify-center shadow-sm"
-                              >
-                                <Phone className="w-3.5 h-3.5 mr-1" /> Call Now
-                              </a>
-                            </div>
+                        <div className="flex justify-between items-center border-t border-gray-100 pt-4 mt-auto">
+                          <span className="bg-blue-50 text-blue-600 text-xs font-black px-2.5 py-1 rounded-full">One Way</span>
+                          <div className="text-right">
+                            <span className="text-[#00a859] font-black text-xl">{card.pricing.split('|')[0].replace('Sedan: ', '').trim()}</span>
+                            <span className="block text-[9px] text-gray-400 font-bold uppercase tracking-wider">Starting Price</span>
                           </div>
                         </div>
                       </div>
@@ -1035,10 +1013,22 @@ Please share the pricing and availability.`;
                 <span className="text-xs font-black uppercase tracking-widest text-[#00a859]">What Our Customers Say</span>
                 <h2 className="text-3xl md:text-4xl font-black text-gray-900 mt-2 mb-3">Happy Customers, Happy Us</h2>
                 <p className="text-gray-500 font-medium text-sm">Real feedback from our regular travelers</p>
-                <div className="w-16 h-1 bg-blue-600 mx-auto rounded-full mt-4"></div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              <div className="relative group/carousel px-4">
+                {/* Left Testimonial Arrow */}
+                <button 
+                  type="button"
+                  onClick={() => {
+                    const el = document.getElementById('reviews-grid-container');
+                    if (el) el.scrollBy({ left: -280, behavior: 'smooth' });
+                  }}
+                  className="hidden md:flex absolute -left-4 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-white shadow-md border border-gray-200 items-center justify-center text-gray-500 hover:text-gray-900 hover:border-gray-400 transition-all z-10 active:scale-95 cursor-pointer"
+                >
+                  <ChevronLeft className="w-5 h-5" />
+                </button>
+
+                <div id="reviews-grid-container" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 overflow-x-auto lg:overflow-x-visible scrollbar-hide">
                 {/* Review 1 */}
                 <div className="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm flex flex-col justify-between h-full hover:shadow-md transition-shadow">
                   <div>
@@ -1127,8 +1117,21 @@ Please share the pricing and availability.`;
                   </div>
                 </div>
               </div>
+
+              {/* Right Testimonial Arrow */}
+              <button 
+                type="button"
+                onClick={() => {
+                  const el = document.getElementById('reviews-grid-container');
+                  if (el) el.scrollBy({ left: 280, behavior: 'smooth' });
+                }}
+                className="hidden md:flex absolute -right-4 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-white shadow-md border border-gray-200 items-center justify-center text-gray-500 hover:text-gray-900 hover:border-gray-400 transition-all z-10 active:scale-95 cursor-pointer"
+              >
+                <ChevronRight className="w-5 h-5" />
+              </button>
             </div>
-          </section>
+          </div>
+        </section>
 
           {/* 5. Bottom booking CTA strip */}
           <section className="py-12 bg-white">
