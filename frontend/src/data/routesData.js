@@ -248,7 +248,7 @@ export const routesData = {
     ]
   },
   "/ghaziabad-taxi-service": {
-    heading: "Reliable Taxi Service in Ghaziabad",
+    heading: "Ghaziabad Taxi | Taxi Service",
     distance: "Local & Outstation",
     travelTime: "24x7 Availability",
     pickupPoints: ["Indirapuram", "Vaishali", "Vasundhara", "Rajnagar Extension", "Crossings Republik"],
@@ -310,7 +310,7 @@ export const routesData = {
     ]
   },
   "/noida-taxi-service": {
-    heading: "Premium Taxi Service in Noida",
+    heading: "Noida Taxi | Taxi Service",
     distance: "Local & Outstation",
     travelTime: "24x7 Availability",
     pickupPoints: ["Sector 15 to 150", "Noida Extension", "Greater Noida", "Film City", "Corporate IT Parks"],

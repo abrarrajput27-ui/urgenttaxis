@@ -256,11 +256,32 @@ export default function Home() {
     };
 
     if (resolvedRouteData) {
-      data.title = `${resolvedRouteData.heading} | Urgent Taxis`;
+      let cleanRoute;
+      if (path.match(/^\/([a-z0-9-]+)-to-([a-z0-9-]+)-taxi$/i)) {
+        cleanRoute = path.match(/^\/([a-z0-9-]+)-to-([a-z0-9-]+)-taxi$/i)[0]
+          .replace(/^\//, '')
+          .replace(/-taxi$/, '')
+          .split('-to-')
+          .map(w => w.split('-').map(token => token.charAt(0).toUpperCase() + token.slice(1)).join(' '))
+          .join(' to ');
+      } else if (path.match(/^\/([a-z0-9-]+)-taxi-service$/i)) {
+        cleanRoute = path.match(/^\/([a-z0-9-]+)-taxi-service$/i)[1]
+          .split('-')
+          .map(token => token.charAt(0).toUpperCase() + token.slice(1))
+          .join(' ');
+      } else {
+        cleanRoute = resolvedRouteData.heading
+          .replace(/\b(Taxi Service|Taxi Booking|Taxi|Service|Reliable|Premium|in)\b/gi, '')
+          .replace(/[|]/g, '')
+          .replace(/\s+/g, ' ')
+          .trim();
+      }
+
+      data.title = `${cleanRoute} Taxi | Taxi Service | Urgent Taxis`;
       data.desc = resolvedRouteData.faqs?.[0]?.a || data.desc;
-      data.h1 = <>{resolvedRouteData.heading.replace('Taxi', '')} <br/><span className="text-[#1e3b8a]">Taxi</span></>;
-      data.subtitle = `Check latest ${resolvedRouteData.heading} fare. Book instantly.`;
-      data.heading = resolvedRouteData.heading;
+      data.h1 = <>{cleanRoute} Taxi <br/><span className="text-[#1e3b8a]">Service</span></>;
+      data.subtitle = `Check latest ${cleanRoute} Taxi Service fare. Book instantly.`;
+      data.heading = `${cleanRoute} Taxi Service`;
     }
     return data;
   };
@@ -1174,7 +1195,7 @@ export default function Home() {
           {/* 6. Welcome Section (SEO Content) */}
           <section className="py-16 bg-white text-center border-t border-gray-50">
             <div className="max-w-[800px] mx-auto px-4">
-              <h2 className="text-3xl md:text-4xl font-black text-gray-900 mb-6">Welcome to Urgent Taxis - {cityRouteConfig.city} Taxi Service</h2>
+              <h2 className="text-3xl md:text-4xl font-black text-gray-900 mb-6">Welcome to Urgent Taxis - {cityRouteConfig.city} Taxi | Taxi Service</h2>
               <div className="w-24 h-1 bg-[#1877F2] mx-auto rounded-full mb-6"></div>
               <p className="text-gray-600 text-lg leading-relaxed mb-8">
                 Your premier choice for outstation cabs, local rentals, and airport transfers. We provide transparent pricing, verified drivers, and comfortable rides in {cityRouteConfig.city} and surrounding areas.
