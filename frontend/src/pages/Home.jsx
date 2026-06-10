@@ -65,47 +65,30 @@ const routeImages = {
 
 const fleetCards = [
   {
-    title: 'Sedan – Maruti Dzire / Toyota Etios (or similar: Aura, Amaze)',
+    title: "Toyota Dzire",
     image: carDzire,
-    description: 'Compact and fuel‑efficient sedan for city rides and short inter‑city trips.',
-    plainRate: '₹ 1,200',
-    hillRate: '₹ 1,500'
+    description: "Comfortable compact sedan, ideal for city rides."
   },
   {
-    title: 'MPV – Maruti Ertiga',
+    title: "Maruti Ertiga",
     image: carErtiga,
-    description: 'Spacious seven‑seater ideal for family outings and group travel.',
-    plainRate: '₹ 2,000',
-    hillRate: '₹ 2,400'
+    description: "Spacious MPV, perfect for family trips."
   },
   {
-    title: 'MUV – Toyota Innova',
+    title: "Toyota Innova",
     image: carInnova,
-    description: 'Robust multi‑utility vehicle suitable for varied terrains and larger groups.',
-    plainRate: '₹ 2,500',
-    hillRate: '₹ 3,000'
+    description: "Premium sedan with ample legroom."
   },
   {
-    title: 'SUV – Toyota Crysta',
+    title: "Toyota Crysta",
     image: carCrysta,
-    description: 'Luxury SUV offering comfort and power for long journeys and hill routes.',
-    plainRate: '₹ 3,200',
-    hillRate: '₹ 3,800'
+    description: "Luxury SUV for a smooth journey."
   },
   {
-    title: 'Hatchback – Maruti Swift (or similar)',
-    image: carDzire,
-    description: 'Compact hatchback perfect for quick city trips and easy parking.',
-    plainRate: '₹ 1,000',
-    hillRate: '₹ 1,300'
-  },
-  {
-    title: 'Other – Toyota Traveller',
+    title: "Toyota Traveller",
     image: carTraveller,
-    description: 'Large capacity vehicle for group travel, weddings, and corporate outings.',
-    plainRate: '₹ 4,000',
-    hillRate: '₹ 4,500'
-  }
+    description: "Large capacity vehicle for group travel."
+  },
 ];
 
 
@@ -787,8 +770,6 @@ Please share the pricing and availability.`;
           <div className="p-6 flex-grow flex flex-col justify-between">
             <h3 className="text-xl font-bold text-gray-900 mb-2.5">{car.title}</h3>
             <p className="text-gray-500 mb-4">{car.description}</p>
-            <p className="text-gray-800">Plain Rate: <span className="font-medium text-[#006400]">{car.plainRate}</span></p>
-            <p className="text-gray-800 mb-4">Hill Rate: <span className="font-medium text-[#b00020]">{car.hillRate}</span></p>
             <div className="mt-auto flex space-x-2">
               <a href={`tel:${currentLocation.phone}`} className="bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold py-2 px-3 rounded-xl transition-colors text-xs flex items-center justify-center shadow-sm">Call Now</a>
               <a href={`https://wa.me/${currentLocation.whatsapp}?text=${encodeURIComponent(`Hi, I want to know more about ${car.title}`)}`} target="_blank" rel="noopener noreferrer" className="bg-[#00a859] hover:bg-[#00904d] text-white font-bold py-2 px-3 rounded-xl transition-colors text-xs flex items-center justify-center shadow-sm">WhatsApp</a>
