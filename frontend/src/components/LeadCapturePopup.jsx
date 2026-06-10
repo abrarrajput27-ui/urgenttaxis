@@ -71,19 +71,69 @@ const LeadCapturePopup = ({ isOpen, onClose, routeName = "General Booking", init
         value: 1
       });
 
+      // Prepare message with tracking details explicitly as a safe fallback
+      const trackingDetails = `
+--- Tracking Details ---
+Domain: ${window.location.hostname}
+City: ${locationData.city}
+Route: ${routeName}
+Pickup: ${formData.pickup}
+Drop: ${formData.drop_location}
+Travel Date: ${formData.trip_date}
+Vehicle: ${formData.vehicle_type}
+Customer Name: ${formData.name}
+Mobile: ${formData.mobile}
+Branch Phone: ${locationData.phone}
+`;
+      const finalMessage = `${formData.message || ''}\n${trackingDetails}`;
+
       // 2. Prepare Payload
-      const payload = {
-        ...formData,
+      const basePayload = {
+        name: formData.name,
+        mobile: formData.mobile,
+        pickup: formData.pickup,
+        drop_location: formData.drop_location,
+        trip_date: formData.trip_date,
+        vehicle_type: formData.vehicle_type,
+        message: finalMessage,
         source_page: location.pathname,
         route_name: routeName,
         lead_source: "Popup Form"
       };
 
-      // 3. Insert into Supabase
-      const { error } = await supabase.from('leads').insert([payload]);
+      const fullPayload = {
+        ...basePayload,
+        source_domain: window.location.hostname,
+        source_city: locationData.city,
+        selected_route: routeName,
+        contact_number: locationData.phone,
+        drop: formData.drop_location,
+        travel_date: formData.trip_date,
+        vehicle: formData.vehicle_type,
+        customer_name: formData.name
+      };
 
-      if (error) {
-        throw error;
+      // 3. Insert into Supabase
+      let insertError = null;
+      try {
+        const { error } = await supabase.from('leads').insert([fullPayload]);
+        if (error) {
+          console.warn("First insert attempt failed (likely missing columns), retrying with base payload:", error);
+          const { error: retryError } = await supabase.from('leads').insert([basePayload]);
+          if (retryError) {
+            insertError = retryError;
+          }
+        }
+      } catch (err) {
+        console.warn("Exception during first insert attempt, retrying with base payload:", err);
+        const { error: retryError } = await supabase.from('leads').insert([basePayload]);
+        if (retryError) {
+          insertError = retryError;
+        }
+      }
+
+      if (insertError) {
+        throw insertError;
       }
 
       // 4. WhatsApp Integration

@@ -11,6 +11,7 @@ import StickyMobileBar from './StickyMobileBar';
 import FloatingQuoteWidget from './FloatingQuoteWidget';
 import { routesData } from '../data/routesData';
 import LeadCapturePopup from './LeadCapturePopup';
+import { getCityRouteConfig } from '../config/locationRoutes';
 
 const locationData = getCurrentLocationConfig();
 
@@ -25,6 +26,7 @@ export default function Layout({ children }) {
   const [isLeadFormOpen, setIsLeadFormOpen] = useState(false);
   const location = useLocation();
   const currentLocation = getCurrentLocationConfig();
+  const cityRouteConfig = getCityRouteConfig();
   const phone = currentLocation.phone;
   const whatsapp = currentLocation.whatsapp;
   const address = currentLocation.address;
@@ -259,11 +261,13 @@ export default function Layout({ children }) {
             <div>
               <h4 className="text-white font-bold text-[18px] mb-6 tracking-wide">Top Routes</h4>
               <ul className="space-y-3.5 text-[14px] font-medium mb-8">
-                <li><Link to="/delhi-to-haldwani-taxi" className="hover:text-white transition-colors flex items-center"><ChevronRight className="w-4 h-4 mr-2 opacity-50" /> Delhi to Haldwani</Link></li>
-                <li><Link to="/delhi-to-nainital-taxi" className="hover:text-white transition-colors flex items-center"><ChevronRight className="w-4 h-4 mr-2 opacity-50" /> Delhi to Nainital</Link></li>
-                <li><Link to="/delhi-to-ramnagar-taxi" className="hover:text-white transition-colors flex items-center"><ChevronRight className="w-4 h-4 mr-2 opacity-50" /> Delhi to Ramnagar</Link></li>
-                <li><Link to="/ghaziabad-taxi-service" className="hover:text-white transition-colors flex items-center"><ChevronRight className="w-4 h-4 mr-2 opacity-50" /> Ghaziabad Taxi</Link></li>
-                <li><Link to="/noida-taxi-service" className="hover:text-white transition-colors flex items-center"><ChevronRight className="w-4 h-4 mr-2 opacity-50" /> Noida Taxi</Link></li>
+                {(cityRouteConfig.routePageLinks || []).slice(0, 5).map((route, idx) => (
+                  <li key={idx}>
+                    <Link to={route.path} className="hover:text-white transition-colors flex items-center">
+                      <ChevronRight className="w-4 h-4 mr-2 opacity-50" /> {route.name}
+                    </Link>
+                  </li>
+                ))}
               </ul>
             </div>
               

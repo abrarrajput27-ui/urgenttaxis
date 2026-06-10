@@ -37,7 +37,23 @@ const FareBreakup = ({
         value: selectedFare.totalFare
       });
 
-      const payload = {
+      // Prepare message with tracking details explicitly as a safe fallback
+      const trackingDetails = `
+--- Tracking Details ---
+Domain: ${window.location.hostname}
+City: ${locationData.city}
+Route: ${pickup} to ${drop || localPackage}
+Pickup: ${pickup}
+Drop: ${drop || localPackage}
+Travel Date: ${date}
+Vehicle: ${selectedFare.category}
+Customer Name: ${name}
+Mobile: ${mobile}
+Branch Phone: ${locationData.phone}
+`;
+      const finalMessage = `Type: ${tripType} | Fare: ₹${selectedFare.isUnknownRoute ? 'TBD' : selectedFare.totalFare} | Dist: ${selectedFare.isUnknownRoute ? 'TBD' : selectedFare.originalDistanceKm}km\n${trackingDetails}`;
+
+      const basePayload = {
         name,
         mobile,
         pickup,
@@ -62,14 +78,40 @@ const FareBreakup = ({
         driver_id: null,
         vendor_id: null,
         fare_breakup: selectedFare,
-        message: `Type: ${tripType} | Fare: ₹${selectedFare.isUnknownRoute ? 'TBD' : selectedFare.totalFare} | Dist: ${selectedFare.isUnknownRoute ? 'TBD' : selectedFare.originalDistanceKm}km`,
+        message: finalMessage,
         source_page: window.location.pathname,
         route_name: `${pickup} to ${drop || localPackage}`,
         lead_source: "Fare Breakup Engine"
       };
 
-      const { error } = await supabase.from('leads').insert([payload]);
-      if (error) console.error("Supabase insert failed, continuing to WhatsApp:", error);
+      const fullPayload = {
+        ...basePayload,
+        source_domain: window.location.hostname,
+        source_city: locationData.city,
+        selected_route: `${pickup} to ${drop || localPackage}`,
+        contact_number: locationData.phone,
+        drop: drop || localPackage,
+        travel_date: date,
+        vehicle: selectedFare.category,
+        customer_name: name
+      };
+
+      try {
+        const { error } = await supabase.from('leads').insert([fullPayload]);
+        if (error) {
+          console.warn("First insert attempt failed in FareBreakup (likely missing columns), retrying with base payload:", error);
+          const { error: retryError } = await supabase.from('leads').insert([basePayload]);
+          if (retryError) {
+            console.error("Retry insert failed in FareBreakup:", retryError);
+          }
+        }
+      } catch (err) {
+        console.warn("Exception during first insert attempt in FareBreakup, retrying with base payload:", err);
+        const { error: retryError } = await supabase.from('leads').insert([basePayload]);
+        if (retryError) {
+          console.error("Retry insert failed in FareBreakup:", retryError);
+        }
+      }
 
       let messageText = `🚖 New Confirmed Booking - Urgent Taxis (${locationData.city})\n\n👤 Name: ${name}\n📞 Mobile: ${mobile}\n🚕 Trip Type: ${tripType}\n📍 Pickup: ${pickup}\n📍 Drop/Package: ${drop || localPackage}\n📅 Date: ${date} at ${time}`;
       

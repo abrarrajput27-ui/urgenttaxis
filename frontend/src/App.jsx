@@ -14,6 +14,7 @@ import Fleet from './pages/Fleet';
 import BlogList from './pages/BlogList';
 import BlogPost from './pages/BlogPost';
 import AdminDashboard from './pages/AdminDashboard';
+import RoutesPage from './pages/Routes';
 
 export default function App() {
   return (
@@ -30,6 +31,7 @@ export default function App() {
                 <Route index element={<Home />} />
                 <Route path="/about" element={<AboutUs />} />
                 <Route path="/contact" element={<ContactUs />} />
+                <Route path="/routes" element={<RoutesPage />} />
                 <Route path="/services" element={<Services />} />
                 <Route path="/fleet" element={<Fleet />} />
                 <Route path="/blog" element={<BlogList />} />

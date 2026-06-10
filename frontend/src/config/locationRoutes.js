@@ -20,26 +20,38 @@ const locationRoutes = {
       {
         title: 'Ghaziabad to Delhi Airport Taxi',
         destination: 'Delhi Airport',
+        image: 'default',
         description: 'Fast, on-time airport transfer. Safe and clean cabs with flight tracking support.',
-        pricing: 'Sedan: ₹1499 | SUV: ₹2499'
+        pricing: 'Sedan: ₹1499 | SUV: ₹2499',
+        distance: '45 km',
+        travelTime: '1.5 hours'
       },
       {
         title: 'Ghaziabad to Haldwani Taxi',
         destination: 'Haldwani',
+        image: 'haldwani',
         description: 'Reliable outstation cab for Kumaon gateway. Direct door-to-door drops.',
-        pricing: 'Sedan: ₹3999 | SUV: ₹5499'
+        pricing: 'Sedan: ₹3999 | SUV: ₹5499',
+        distance: '250 km',
+        travelTime: '5.5 hours'
       },
       {
         title: 'Ghaziabad to Nainital Taxi',
         destination: 'Nainital',
+        image: 'shimla',
         description: 'Comfortable hill station travel with experienced drivers trained in mountain terrains.',
-        pricing: 'Sedan: ₹4499 | SUV: ₹5999'
+        pricing: 'Sedan: ₹4499 | SUV: ₹5999',
+        distance: '280 km',
+        travelTime: '6.5 hours'
       },
       {
         title: 'Ghaziabad to Haridwar Taxi',
         destination: 'Haridwar',
+        image: 'haridwar',
         description: 'Smooth and spiritual travel to Ganga Ghats. Direct drop to your hotel or ashram.',
-        pricing: 'Sedan: ₹2499 | SUV: ₹3999'
+        pricing: 'Sedan: ₹2499 | SUV: ₹3999',
+        distance: '190 km',
+        travelTime: '3.5 hours'
       }
     ],
     faqs: [
@@ -57,9 +69,87 @@ const locationRoutes = {
       }
     ],
     routePageLinks: [
-      { path: '/delhi-to-haldwani-taxi', name: 'Delhi to Haldwani Taxi' },
-      { path: '/delhi-to-nainital-taxi', name: 'Delhi to Nainital Taxi' },
-      { path: '/ghaziabad-taxi-service', name: 'Ghaziabad Taxi Service' }
+      { path: '/ghaziabad-to-delhi-taxi', name: 'Ghaziabad to Delhi' },
+      { path: '/ghaziabad-to-noida-taxi', name: 'Ghaziabad to Noida' },
+      { path: '/ghaziabad-to-delhi-airport-taxi', name: 'Ghaziabad to Delhi Airport' },
+      { path: '/ghaziabad-to-haridwar-taxi', name: 'Ghaziabad to Haridwar' },
+      { path: '/ghaziabad-to-meerut-taxi', name: 'Ghaziabad to Meerut' }
+    ]
+  },
+  'www.urgenttaxis.com': {
+    city: 'Ghaziabad',
+    seoTitle: 'Best Taxi Service in Ghaziabad | Ghaziabad Outstation Taxi',
+    seoDescription: 'Reliable taxi service in Ghaziabad. Book one-way cabs, round trips, and local rentals at affordable rates with Urgent Taxis.',
+    popularRoutes: [
+      'Ghaziabad to Delhi Airport Taxi',
+      'Ghaziabad to Haldwani Taxi',
+      'Ghaziabad to Nainital Taxi',
+      'Ghaziabad to Haridwar Taxi',
+      'Ghaziabad to Dehradun Taxi',
+      'Ghaziabad to Rishikesh Taxi',
+      'Ghaziabad to Jaipur Taxi',
+      'Ghaziabad to Agra Taxi',
+      'Ghaziabad to Mathura Vrindavan Taxi',
+      'Ghaziabad to Meerut Taxi'
+    ],
+    routeCards: [
+      {
+        title: 'Ghaziabad to Delhi Airport Taxi',
+        destination: 'Delhi Airport',
+        image: 'default',
+        description: 'Fast, on-time airport transfer. Safe and clean cabs with flight tracking support.',
+        pricing: 'Sedan: ₹1499 | SUV: ₹2499',
+        distance: '45 km',
+        travelTime: '1.5 hours'
+      },
+      {
+        title: 'Ghaziabad to Haldwani Taxi',
+        destination: 'Haldwani',
+        image: 'haldwani',
+        description: 'Reliable outstation cab for Kumaon gateway. Direct door-to-door drops.',
+        pricing: 'Sedan: ₹3999 | SUV: ₹5499',
+        distance: '250 km',
+        travelTime: '5.5 hours'
+      },
+      {
+        title: 'Ghaziabad to Nainital Taxi',
+        destination: 'Nainital',
+        image: 'shimla',
+        description: 'Comfortable hill station travel with experienced drivers trained in mountain terrains.',
+        pricing: 'Sedan: ₹4499 | SUV: ₹5999',
+        distance: '280 km',
+        travelTime: '6.5 hours'
+      },
+      {
+        title: 'Ghaziabad to Haridwar Taxi',
+        destination: 'Haridwar',
+        image: 'haridwar',
+        description: 'Smooth and spiritual travel to Ganga Ghats. Direct drop to your hotel or ashram.',
+        pricing: 'Sedan: ₹2499 | SUV: ₹3999',
+        distance: '190 km',
+        travelTime: '3.5 hours'
+      }
+    ],
+    faqs: [
+      {
+        q: 'How can I book a cab from Ghaziabad?',
+        a: 'You can book instantly online using our booking form, via WhatsApp, or by calling our 24/7 dispatch helpline directly.'
+      },
+      {
+        q: 'Are tolls and state taxes included in the Ghaziabad outstation fares?',
+        a: 'Our fares are transparent. Standard state taxes and tolls are either included in the final quote or clearly itemized so there are zero surprises.'
+      },
+      {
+        q: 'Can I book a local rental in Ghaziabad?',
+        a: 'Yes, we offer flexible local packages including 4 hours/40 km and 8 hours/80 km rentals for traveling within Ghaziabad and NCR.'
+      }
+    ],
+    routePageLinks: [
+      { path: '/ghaziabad-to-delhi-taxi', name: 'Ghaziabad to Delhi' },
+      { path: '/ghaziabad-to-noida-taxi', name: 'Ghaziabad to Noida' },
+      { path: '/ghaziabad-to-delhi-airport-taxi', name: 'Ghaziabad to Delhi Airport' },
+      { path: '/ghaziabad-to-haridwar-taxi', name: 'Ghaziabad to Haridwar' },
+      { path: '/ghaziabad-to-meerut-taxi', name: 'Ghaziabad to Meerut' }
     ]
   },
   'haldwani.urgenttaxis.com': {
@@ -84,26 +174,38 @@ const locationRoutes = {
       {
         title: 'Haldwani to Delhi Taxi',
         destination: 'Delhi',
+        image: 'default',
         description: 'Reliable outstation cab from Haldwani to Delhi NCR. High quality cars and professional drivers.',
-        pricing: 'Sedan: ₹2999 | SUV: ₹4499'
+        pricing: 'Sedan: ₹2999 | SUV: ₹4499',
+        distance: '280 km',
+        travelTime: '6.5 hours'
       },
       {
         title: 'Haldwani to Noida Taxi',
         destination: 'Noida',
+        image: 'default',
         description: 'Direct drops from Kumaon to Noida sectors and IT Parks. Smooth highway travel.',
-        pricing: 'Sedan: ₹3199 | SUV: ₹4699'
+        pricing: 'Sedan: ₹3199 | SUV: ₹4699',
+        distance: '260 km',
+        travelTime: '6 hours'
       },
       {
         title: 'Haldwani to Dehradun Taxi',
         destination: 'Dehradun',
+        image: 'dehradun',
         description: 'Connecting Haldwani and Dehradun. Comfortable rides via beautiful routes.',
-        pricing: 'Sedan: ₹4999 | SUV: ₹6999'
+        pricing: 'Sedan: ₹4999 | SUV: ₹6999',
+        distance: '290 km',
+        travelTime: '7.5 hours'
       },
       {
         title: 'Haldwani to Ramnagar Taxi',
         destination: 'Ramnagar',
+        image: 'default',
         description: 'Easy transfers to Jim Corbett Safari base and local resorts in Ramnagar.',
-        pricing: 'Sedan: ₹1499 | SUV: ₹2499'
+        pricing: 'Sedan: ₹1499 | SUV: ₹2499',
+        distance: '55 km',
+        travelTime: '1.5 hours'
       }
     ],
     faqs: [
@@ -121,9 +223,11 @@ const locationRoutes = {
       }
     ],
     routePageLinks: [
-      { path: '/delhi-to-haldwani-taxi', name: 'Delhi to Haldwani Taxi' },
-      { path: '/delhi-to-nainital-taxi', name: 'Delhi to Nainital Taxi' },
-      { path: '/delhi-to-ramnagar-taxi', name: 'Delhi to Ramnagar Taxi' }
+      { path: '/haldwani-to-delhi-taxi', name: 'Haldwani to Delhi' },
+      { path: '/haldwani-to-noida-taxi', name: 'Haldwani to Noida' },
+      { path: '/haldwani-to-greater-noida-taxi', name: 'Haldwani to Greater Noida' },
+      { path: '/haldwani-to-moradabad-taxi', name: 'Haldwani to Moradabad' },
+      { path: '/haldwani-to-dehradun-taxi', name: 'Haldwani to Dehradun' }
     ]
   },
   'ramnagar.urgenttaxis.com': {
@@ -148,26 +252,38 @@ const locationRoutes = {
       {
         title: 'Ramnagar to Delhi Taxi',
         destination: 'Delhi',
+        image: 'default',
         description: 'Direct resort-to-home transfer. Convenient, hygienic, and timely pickups.',
-        pricing: 'Sedan: ₹2899 | SUV: ₹4199'
+        pricing: 'Sedan: ₹2899 | SUV: ₹4199',
+        distance: '260 km',
+        travelTime: '6 hours'
       },
       {
         title: 'Ramnagar to Haldwani Taxi',
         destination: 'Haldwani',
+        image: 'haldwani',
         description: 'Quick inter-city commute between Ramnagar and Haldwani Kumaon base.',
-        pricing: 'Sedan: ₹1499 | SUV: ₹2499'
+        pricing: 'Sedan: ₹1499 | SUV: ₹2499',
+        distance: '55 km',
+        travelTime: '1.5 hours'
       },
       {
         title: 'Ramnagar to Nainital Taxi',
         destination: 'Nainital',
+        image: 'shimla',
         description: 'Beautiful hill station transit. Hill-trained drivers with high-safety standards.',
-        pricing: 'Sedan: ₹2199 | SUV: ₹3499'
+        pricing: 'Sedan: ₹2199 | SUV: ₹3499',
+        distance: '65 km',
+        travelTime: '2.5 hours'
       },
       {
         title: 'Ramnagar to Jim Corbett Taxi',
         destination: 'Jim Corbett',
+        image: 'shimla',
         description: 'Local safari gate drops and resort transfers. Always on time for safari bookings.',
-        pricing: 'Sedan: ₹999 | SUV: ₹1499'
+        pricing: 'Sedan: ₹999 | SUV: ₹1499',
+        distance: '15 km',
+        travelTime: '0.5 hours'
       }
     ],
     faqs: [
@@ -181,9 +297,11 @@ const locationRoutes = {
       }
     ],
     routePageLinks: [
-      { path: '/delhi-to-ramnagar-taxi', name: 'Delhi to Ramnagar Taxi' },
-      { path: '/delhi-to-nainital-taxi', name: 'Delhi to Nainital Taxi' },
-      { path: '/delhi-to-haldwani-taxi', name: 'Delhi to Haldwani Taxi' }
+      { path: '/ramnagar-to-delhi-taxi', name: 'Ramnagar to Delhi' },
+      { path: '/ramnagar-to-haldwani-taxi', name: 'Ramnagar to Haldwani' },
+      { path: '/ramnagar-to-nainital-taxi', name: 'Ramnagar to Nainital' },
+      { path: '/ramnagar-to-jim-corbett-taxi', name: 'Ramnagar to Jim Corbett' },
+      { path: '/ramnagar-to-dehradun-taxi', name: 'Ramnagar to Dehradun' }
     ]
   },
   'haridwar.urgenttaxis.com': {
@@ -206,26 +324,38 @@ const locationRoutes = {
       {
         title: 'Haridwar to Delhi Taxi',
         destination: 'Delhi',
+        image: 'default',
         description: 'Express highway taxi from Haridwar to Delhi NCR. Fully customizable pick-ups.',
-        pricing: 'Sedan: ₹2399 | SUV: ₹3799'
+        pricing: 'Sedan: ₹2399 | SUV: ₹3799',
+        distance: '210 km',
+        travelTime: '4.5 hours'
       },
       {
         title: 'Haridwar to Rishikesh Taxi',
         destination: 'Rishikesh',
+        image: 'rishikesh',
         description: 'Quick local transit between twin holy cities. Perfect for rafting and Ganga Aarti.',
-        pricing: 'Sedan: ₹999 | SUV: ₹1499'
+        pricing: 'Sedan: ₹999 | SUV: ₹1499',
+        distance: '25 km',
+        travelTime: '0.7 hours'
       },
       {
         title: 'Haridwar to Dehradun Taxi',
         destination: 'Dehradun',
+        image: 'dehradun',
         description: 'Reliable travel for business or personal commutes between Haridwar and Dehradun.',
-        pricing: 'Sedan: ₹1499 | SUV: ₹2499'
+        pricing: 'Sedan: ₹1499 | SUV: ₹2499',
+        distance: '55 km',
+        travelTime: '1.5 hours'
       },
       {
         title: 'Haridwar to Kedarnath Taxi',
         destination: 'Kedarnath',
+        image: 'shimla',
         description: 'Chardham Yatra pickup to Phata/Sonprayag helipads. Safe and powerful SUVs.',
-        pricing: 'Sedan: ₹5999 | SUV: ₹8499'
+        pricing: 'Sedan: ₹5999 | SUV: ₹8499',
+        distance: '180 km',
+        travelTime: '6.5 hours'
       }
     ],
     faqs: [
@@ -239,9 +369,11 @@ const locationRoutes = {
       }
     ],
     routePageLinks: [
-      { path: '/ghaziabad-taxi-service', name: 'Ghaziabad Taxi' },
-      { path: '/delhi-to-haldwani-taxi', name: 'Delhi to Haldwani' },
-      { path: '/delhi-to-nainital-taxi', name: 'Delhi to Nainital' }
+      { path: '/haridwar-to-delhi-taxi', name: 'Haridwar to Delhi' },
+      { path: '/haridwar-to-rishikesh-taxi', name: 'Haridwar to Rishikesh' },
+      { path: '/haridwar-to-dehradun-taxi', name: 'Haridwar to Dehradun' },
+      { path: '/haridwar-to-mussoorie-taxi', name: 'Haridwar to Mussoorie' },
+      { path: '/haridwar-to-nainital-taxi', name: 'Haridwar to Nainital' }
     ]
   },
   'dehradun.urgenttaxis.com': {
@@ -264,26 +396,38 @@ const locationRoutes = {
       {
         title: 'Dehradun to Delhi Taxi',
         destination: 'Delhi',
+        image: 'default',
         description: 'Express travel via Dehradun-Delhi Highway. Punctual airport and home drops.',
-        pricing: 'Sedan: ₹2499 | SUV: ₹3899'
+        pricing: 'Sedan: ₹2499 | SUV: ₹3899',
+        distance: '245 km',
+        travelTime: '5.5 hours'
       },
       {
         title: 'Dehradun to Mussoorie Taxi',
         destination: 'Mussoorie',
+        image: 'shimla',
         description: 'Queen of Hills drop. Scenic mountain driving by experienced hill operators.',
-        pricing: 'Sedan: ₹1499 | SUV: ₹2299'
+        pricing: 'Sedan: ₹1499 | SUV: ₹2299',
+        distance: '35 km',
+        travelTime: '1.2 hours'
       },
       {
         title: 'Dehradun to Rishikesh Taxi',
         destination: 'Rishikesh',
+        image: 'rishikesh',
         description: 'Quick spiritual or adventure drops. Secure and well-ventilated vehicles.',
-        pricing: 'Sedan: ₹1499 | SUV: ₹2499'
+        pricing: 'Sedan: ₹1499 | SUV: ₹2499',
+        distance: '45 km',
+        travelTime: '1.5 hours'
       },
       {
         title: 'Dehradun to Jolly Grant Airport Taxi',
         destination: 'Jolly Grant Airport',
+        image: 'default',
         description: 'Dehradun airport pickups and drops. Strict adherence to airline timelines.',
-        pricing: 'Sedan: ₹999 | SUV: ₹1499'
+        pricing: 'Sedan: ₹999 | SUV: ₹1499',
+        distance: '30 km',
+        travelTime: '0.8 hours'
       }
     ],
     faqs: [
@@ -297,9 +441,11 @@ const locationRoutes = {
       }
     ],
     routePageLinks: [
-      { path: '/delhi-to-nainital-taxi', name: 'Delhi to Nainital Taxi' },
-      { path: '/delhi-to-haldwani-taxi', name: 'Delhi to Haldwani Taxi' },
-      { path: '/noida-taxi-service', name: 'Noida Taxi Service' }
+      { path: '/dehradun-to-delhi-taxi', name: 'Dehradun to Delhi' },
+      { path: '/dehradun-to-noida-taxi', name: 'Dehradun to Noida' },
+      { path: '/dehradun-to-haridwar-taxi', name: 'Dehradun to Haridwar' },
+      { path: '/dehradun-to-rishikesh-taxi', name: 'Dehradun to Rishikesh' },
+      { path: '/dehradun-to-mussoorie-taxi', name: 'Dehradun to Mussoorie' }
     ]
   },
   'meerut.urgenttaxis.com': {
@@ -324,26 +470,38 @@ const locationRoutes = {
       {
         title: 'Meerut to Delhi Airport Taxi',
         destination: 'Delhi Airport',
+        image: 'default',
         description: 'On-time transfer to IGI Airport via Delhi-Meerut Expressway. Fast and convenient.',
-        pricing: 'Sedan: ₹1699 | SUV: ₹2699'
+        pricing: 'Sedan: ₹1699 | SUV: ₹2699',
+        distance: '75 km',
+        travelTime: '1.8 hours'
       },
       {
         title: 'Meerut to Delhi Taxi',
         destination: 'Delhi',
+        image: 'default',
         description: 'Commutes to Central or South Delhi made easy and quick via the express corridor.',
-        pricing: 'Sedan: ₹1499 | SUV: ₹2399'
+        pricing: 'Sedan: ₹1499 | SUV: ₹2399',
+        distance: '65 km',
+        travelTime: '1.5 hours'
       },
       {
         title: 'Meerut to Haridwar Taxi',
         destination: 'Haridwar',
+        image: 'haridwar',
         description: 'Express pilgrimage drops. Experience professional service with local drivers.',
-        pricing: 'Sedan: ₹2299 | SUV: ₹3499'
+        pricing: 'Sedan: ₹2299 | SUV: ₹3499',
+        distance: '135 km',
+        travelTime: '2.8 hours'
       },
       {
         title: 'Meerut to Nainital Taxi',
         destination: 'Nainital',
+        image: 'shimla',
         description: 'Enjoy a relaxing road trip from Meerut to the beautiful Lake City of Nainital.',
-        pricing: 'Sedan: ₹4499 | SUV: ₹5999'
+        pricing: 'Sedan: ₹4499 | SUV: ₹5999',
+        distance: '235 km',
+        travelTime: '5.5 hours'
       }
     ],
     faqs: [
@@ -357,9 +515,11 @@ const locationRoutes = {
       }
     ],
     routePageLinks: [
-      { path: '/noida-taxi-service', name: 'Noida Taxi Service' },
-      { path: '/ghaziabad-taxi-service', name: 'Ghaziabad Taxi Service' },
-      { path: '/delhi-to-haldwani-taxi', name: 'Delhi to Haldwani' }
+      { path: '/meerut-to-delhi-taxi', name: 'Meerut to Delhi' },
+      { path: '/meerut-to-delhi-airport-taxi', name: 'Meerut to Delhi Airport' },
+      { path: '/meerut-to-noida-taxi', name: 'Meerut to Noida' },
+      { path: '/meerut-to-ghaziabad-taxi', name: 'Meerut to Ghaziabad' },
+      { path: '/meerut-to-haridwar-taxi', name: 'Meerut to Haridwar' }
     ]
   },
   'lucknow.urgenttaxis.com': {
@@ -380,26 +540,38 @@ const locationRoutes = {
       {
         title: 'Lucknow to Ayodhya Taxi',
         destination: 'Ayodhya',
+        image: 'default',
         description: 'Spiritual transit to Ram Mandir. On-time pickups and comfortable outstation sedans.',
-        pricing: 'Sedan: ₹1999 | SUV: ₹2999'
+        pricing: 'Sedan: ₹1999 | SUV: ₹2999',
+        distance: '135 km',
+        travelTime: '2.5 hours'
       },
       {
         title: 'Lucknow to Kanpur Taxi',
         destination: 'Kanpur',
+        image: 'default',
         description: 'Frequent business and personal travel options. Well-maintained cars and polite drivers.',
-        pricing: 'Sedan: ₹1499 | SUV: ₹2199'
+        pricing: 'Sedan: ₹1499 | SUV: ₹2199',
+        distance: '90 km',
+        travelTime: '2 hours'
       },
       {
         title: 'Lucknow to Varanasi Taxi',
         destination: 'Varanasi',
+        image: 'default',
         description: 'Long-distance drops to Kashi Vishwanath Dham. Safe and secure highway travel.',
-        pricing: 'Sedan: ₹3999 | SUV: ₹5499'
+        pricing: 'Sedan: ₹3999 | SUV: ₹5499',
+        distance: '310 km',
+        travelTime: '6.5 hours'
       },
       {
         title: 'Lucknow to Delhi Taxi',
         destination: 'Delhi',
+        image: 'default',
         description: 'Premium highway travel connecting Lucknow to Delhi via Purvanchal & Yamuna Expressways.',
-        pricing: 'Sedan: ₹6999 | SUV: ₹9499'
+        pricing: 'Sedan: ₹6999 | SUV: ₹9499',
+        distance: '550 km',
+        travelTime: '8.5 hours'
       }
     ],
     faqs: [
@@ -413,9 +585,11 @@ const locationRoutes = {
       }
     ],
     routePageLinks: [
-      { path: '/ghaziabad-taxi-service', name: 'Ghaziabad Taxi' },
-      { path: '/delhi-to-nainital-taxi', name: 'Delhi to Nainital' },
-      { path: '/delhi-to-haldwani-taxi', name: 'Delhi to Haldwani' }
+      { path: '/lucknow-to-delhi-taxi', name: 'Lucknow to Delhi' },
+      { path: '/lucknow-to-kanpur-taxi', name: 'Lucknow to Kanpur' },
+      { path: '/lucknow-to-ayodhya-taxi', name: 'Lucknow to Ayodhya' },
+      { path: '/lucknow-to-varanasi-taxi', name: 'Lucknow to Varanasi' },
+      { path: '/lucknow-to-prayagraj-taxi', name: 'Lucknow to Prayagraj' }
     ]
   },
   'delhi.urgenttaxis.com': {
@@ -439,26 +613,38 @@ const locationRoutes = {
       {
         title: 'Delhi to Haldwani Taxi',
         destination: 'Haldwani',
+        image: 'haldwani',
         description: 'Connecting Delhi NCR to the gateway of Kumaon. Affordable one-way drops.',
-        pricing: 'Sedan: ₹2899 | SUV: ₹4199'
+        pricing: 'Sedan: ₹2899 | SUV: ₹4199',
+        distance: '280 km',
+        travelTime: '6.5 hours'
       },
       {
         title: 'Delhi to Nainital Taxi',
         destination: 'Nainital',
+        image: 'shimla',
         description: 'Premium tourist transit. Safe driving on mountain roads by hill-certified drivers.',
-        pricing: 'Sedan: ₹3499 | SUV: ₹4999'
+        pricing: 'Sedan: ₹3499 | SUV: ₹4999',
+        distance: '310 km',
+        travelTime: '7.5 hours'
       },
       {
         title: 'Delhi to Haridwar Taxi',
         destination: 'Haridwar',
+        image: 'haridwar',
         description: 'Comfortable outstation cabs for pilgrims. Clean seats and AC standard.',
-        pricing: 'Sedan: ₹2299 | SUV: ₹3499'
+        pricing: 'Sedan: ₹2299 | SUV: ₹3499',
+        distance: '210 km',
+        travelTime: '4.5 hours'
       },
       {
         title: 'Delhi to Dehradun Taxi',
         destination: 'Dehradun',
+        image: 'dehradun',
         description: 'Reliable highway transit between Delhi NCR and Uttarakhand capital.',
-        pricing: 'Sedan: ₹2499 | SUV: ₹3799'
+        pricing: 'Sedan: ₹2499 | SUV: ₹3799',
+        distance: '245 km',
+        travelTime: '5.5 hours'
       }
     ],
     faqs: [
@@ -472,9 +658,11 @@ const locationRoutes = {
       }
     ],
     routePageLinks: [
-      { path: '/delhi-to-haldwani-taxi', name: 'Delhi to Haldwani Taxi' },
-      { path: '/delhi-to-nainital-taxi', name: 'Delhi to Nainital Taxi' },
-      { path: '/delhi-to-ramnagar-taxi', name: 'Delhi to Ramnagar Taxi' }
+      { path: '/delhi-to-haldwani-taxi', name: 'Delhi to Haldwani' },
+      { path: '/delhi-to-nainital-taxi', name: 'Delhi to Nainital' },
+      { path: '/delhi-to-ramnagar-taxi', name: 'Delhi to Ramnagar' },
+      { path: '/delhi-to-haridwar-taxi', name: 'Delhi to Haridwar' },
+      { path: '/delhi-to-rishikesh-taxi', name: 'Delhi to Rishikesh' }
     ]
   }
 };
