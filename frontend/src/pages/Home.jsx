@@ -210,7 +210,8 @@ export default function Home() {
             q: `How do I book a taxi from ${fromCity} to ${toCity}?`,
             a: `Booking is simple. You can use our online booking calculator to get instant fares, contact us directly on WhatsApp, or call our 24/7 hotline at +91 7310651940 to confirm your booking instantly.`
           }
-        ]
+        ],
+        relatedRoutes: cityRouteConfig.routePageLinks || []
       };
     }
     return null;

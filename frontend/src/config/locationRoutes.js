@@ -669,7 +669,17 @@ const locationRoutes = {
 
 // Handle fallback mappings (e.g. www subdomain or default main domain)
 export const getCityRouteConfig = () => {
-  const hostname = typeof window !== 'undefined' ? window.location.hostname : '';
+  let hostname = typeof window !== 'undefined' ? window.location.hostname : '';
+
+  // Allow overriding hostname via query param for testing/preview environments
+  if (typeof window !== 'undefined') {
+    const params = new URLSearchParams(window.location.search);
+    const domainOverride = params.get('domain');
+    if (domainOverride && locationRoutes[domainOverride]) {
+      hostname = domainOverride;
+    }
+  }
+
   const config = locationRoutes[hostname] || locationRoutes['urgenttaxis.com'];
   return config;
 };

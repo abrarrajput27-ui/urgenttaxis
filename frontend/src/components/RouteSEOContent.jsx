@@ -276,20 +276,22 @@ const RouteSEOContent = ({ data, onOpenLeadForm }) => {
         </div>
 
         {/* Related Routes */}
-        <div className="border-t border-gray-100 pt-12">
-          <h3 className="text-xl font-bold text-gray-900 mb-6 text-center">Explore More Taxi Routes</h3>
-          <div className="flex flex-wrap justify-center gap-4">
-            {data.relatedRoutes.map((route, idx) => (
-              <Link 
-                key={idx} 
-                to={route.path}
-                className="bg-gray-50 hover:bg-blue-50 border border-gray-200 hover:border-blue-200 text-gray-700 hover:text-[#1877F2] font-medium py-3 px-6 rounded-full transition-colors flex items-center"
-              >
-                <LinkIcon className="w-4 h-4 mr-2" /> {route.name}
-              </Link>
-            ))}
+        {data.relatedRoutes && data.relatedRoutes.length > 0 && (
+          <div className="border-t border-gray-100 pt-12">
+            <h3 className="text-xl font-bold text-gray-900 mb-6 text-center">Explore More Taxi Routes</h3>
+            <div className="flex flex-wrap justify-center gap-4">
+              {data.relatedRoutes.map((route, idx) => (
+                <Link 
+                  key={idx} 
+                  to={route.path}
+                  className="bg-gray-50 hover:bg-blue-50 border border-gray-200 hover:border-blue-200 text-gray-700 hover:text-[#1877F2] font-medium py-3 px-6 rounded-full transition-colors flex items-center"
+                >
+                  <LinkIcon className="w-4 h-4 mr-2" /> {route.name}
+                </Link>
+              ))}
+            </div>
           </div>
-        </div>
+        )}
 
       </div>
     </section>
