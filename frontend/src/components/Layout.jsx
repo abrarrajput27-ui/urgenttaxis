@@ -65,7 +65,7 @@ export default function Layout({ children }) {
   const isActive = (path) => location.pathname === path;
 
   return (
-    <div className="font-sans text-gray-800 bg-white min-h-screen pb-32 md:pb-24">
+    <div className="font-sans text-gray-800 bg-white min-h-screen flex flex-col">
       
       {/* 1. Top Bar */}
       <div className="bg-[#f8f9fa] border-b border-gray-100 hidden md:block">
@@ -206,7 +206,7 @@ export default function Layout({ children }) {
         {children}
       </main>
 
-      <footer className="bg-[#0B132B] text-gray-400 pt-16 pb-8">
+      <footer className="bg-[#0B132B] text-gray-400 pt-16 pb-24 md:pb-12">
         <div className="max-w-[1200px] mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-x-8 gap-y-12 mb-16 items-start">
             
