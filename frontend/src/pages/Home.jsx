@@ -4,7 +4,8 @@ import { Helmet } from 'react-helmet-async';
 import ReactGA from 'react-ga4';
 import { useJsApiLoader } from '@react-google-maps/api';
 import { 
-  Calendar, Clock, Zap, Headphones, Users, Check, ArrowRight, ArrowLeftRight, Loader2, Phone, HelpCircle, MessageCircle, MapPin, Link as LinkIcon
+  Calendar, Clock, Zap, Headphones, Users, Check, ArrowRight, ArrowLeftRight, Loader2, Phone, HelpCircle, MessageCircle, MapPin, Link as LinkIcon,
+  ShieldCheck, Star, Car, ChevronDown
 } from 'lucide-react';
 
 import { supabase } from '../lib/supabase';
@@ -45,6 +46,17 @@ import carInnova from '../assets/images/car-innova.png';
 import carCrysta from '../assets/images/car-crysta.png';
 import carTraveller from '../assets/images/car-traveller.png';
 
+// Service and user images
+import serviceOneway from '../assets/images/service-oneway.png';
+import serviceRoundtrip from '../assets/images/service-roundtrip.png';
+import serviceAirport from '../assets/images/service-airport.png';
+import serviceLocal from '../assets/images/service-local.png';
+import serviceTour from '../assets/images/service-tour.png';
+import ctaCar from '../assets/images/cta-car-premium.png';
+import user1 from '../assets/images/user1.jpg';
+import user2 from '../assets/images/user2.jpg';
+import user3 from '../assets/images/user3.jpg';
+
 const routeImages = {
   dehradun: routeDehradun,
   haldwani: routeHaldwani,
@@ -65,30 +77,71 @@ const routeImages = {
 
 const fleetCards = [
   {
-    title: "Toyota Dzire",
+    title: "Maruti Swift",
+    subtitle: "Hatchback or Similar",
     image: carDzire,
-    description: "Comfortable compact sedan, ideal for city rides."
+    seating: "4 Seater",
+    ac: "AC",
+    luggage: "1 Bag",
+    plainRate: "₹10/km",
+    hillRate: "₹13/km",
+    description: "Compact hatchback perfect for quick city trips and easy parking."
+  },
+  {
+    title: "Maruti Dzire",
+    subtitle: "Toyota Etios or Similar (Dzire, Aura, Amaze)",
+    image: carDzire,
+    seating: "4 Seater",
+    ac: "AC",
+    luggage: "2 Bags",
+    plainRate: "₹12/km",
+    hillRate: "₹15/km",
+    description: "Comfort sedan ideal for family trips and business commutes."
   },
   {
     title: "Maruti Ertiga",
+    subtitle: "Spacious MPV",
     image: carErtiga,
-    description: "Spacious MPV, perfect for family trips."
+    seating: "6 Seater",
+    ac: "AC",
+    luggage: "3 Bags",
+    plainRate: "₹16/km",
+    hillRate: "₹20/km",
+    description: "Spacious seven-seater family car for outstation tours."
   },
   {
     title: "Toyota Innova",
+    subtitle: "Premium MUV",
     image: carInnova,
-    description: "Premium sedan with ample legroom."
+    seating: "6 Seater",
+    ac: "AC",
+    luggage: "4 Bags",
+    plainRate: "₹24/km",
+    hillRate: "₹28/km",
+    description: "Spacious and reliable multi-utility vehicle for all terrains."
   },
   {
-    title: "Toyota Crysta",
+    title: "Innova Crysta",
+    subtitle: "Luxury SUV",
     image: carCrysta,
-    description: "Luxury SUV for a smooth journey."
+    seating: "6 Seater",
+    ac: "AC",
+    luggage: "4 Bags",
+    plainRate: "₹25/km",
+    hillRate: "₹30/km",
+    description: "Premium class luxury SUV for the ultimate comfort ride."
   },
   {
-    title: "Toyota Traveller",
+    title: "Tempo Traveller",
+    subtitle: "12-26 Seater Van",
     image: carTraveller,
-    description: "Large capacity vehicle for group travel."
-  },
+    seating: "12 Seater",
+    ac: "AC",
+    luggage: "5 Bags",
+    plainRate: "₹26/km",
+    hillRate: "₹32/km",
+    description: "Large capacity premium force traveler for groups and events."
+  }
 ];
 
 
@@ -168,6 +221,7 @@ export default function Home() {
   const displayPhone = currentLocation.phone.replace('+91', '+91 ');
 
   const [isLeadFormOpen, setIsLeadFormOpen] = useState(false);
+  const [selectedVehicle, setSelectedVehicle] = useState('all');
   const [popupPreFill, setPopupPreFill] = useState({ pickup: '', drop: '', routeName: '' });
 
   const { isLoaded } = useJsApiLoader({
@@ -192,7 +246,7 @@ export default function Home() {
 
   const getRouteData = (path) => {
     const data = {
-      h1: <>Book Trusted <br/><span className="text-[#1e3b8a]">Taxi</span> in {cityRouteConfig.city}</>,
+      h1: <>Book Trusted <br/><span className="text-blue-600">Taxi</span> in Seconds</>,
       subtitle: <>One Way <span className="mx-1.5 md:mx-2 font-light">|</span> Round Trip <span className="mx-1.5 md:mx-2 font-light">|</span> Airport Transfers</>,
       title: cityRouteConfig.seoTitle || currentLocation.seoTitle || "Urgent Taxis - Book Trusted Taxi in Seconds",
       desc: cityRouteConfig.seoDescription || currentLocation.seoDescription || "Book affordable outstation taxis, airport transfers, and local rentals. Urgent Taxis - your reliable travel partner.",
@@ -569,20 +623,41 @@ export default function Home() {
                       </div>
                     )}
 
+                    {/* Select Vehicle */}
+                    <div>
+                      <label className="block text-[12px] font-bold text-gray-800 mb-1.5 ml-1">Select Vehicle</label>
+                      <div className="relative">
+                        <Car className="absolute left-3.5 top-[14px] w-[18px] h-[18px] text-gray-400 pointer-events-none" />
+                        <select 
+                          value={selectedVehicle} onChange={(e) => setSelectedVehicle(e.target.value)}
+                          className="w-full pl-10 pr-10 py-3 border border-gray-200 rounded-lg text-[14px] sm:text-[13px] text-gray-700 outline-none focus:border-blue-500 appearance-none bg-white min-h-[46px]"
+                        >
+                          <option value="all">Select cab type</option>
+                          <option value="Swift Dzire">Maruti Dzire or Similar</option>
+                          <option value="Maruti Ertiga">Maruti Ertiga</option>
+                          <option value="Toyota Innova">Toyota Innova</option>
+                          <option value="Innova Crysta">Innova Crysta</option>
+                          <option value="Maruti Swift">Maruti Swift (Hatchback)</option>
+                          <option value="Tempo Traveller">Tempo Traveller</option>
+                        </select>
+                        <ChevronDown className="absolute right-3.5 top-[14px] w-[16px] h-[16px] text-gray-400 pointer-events-none" />
+                      </div>
+                    </div>
+
                     <button 
                       type="submit" 
                       disabled={isCalculating}
                       className="w-full bg-[#0aa63f] hover:bg-[#088c34] text-white font-bold py-3.5 rounded-[10px] flex items-center justify-center transition-colors mt-6 text-[15px] shadow-md shadow-[#0aa63f]/20 disabled:bg-gray-400"
                     >
                       {isCalculating ? (
-                        <><Loader2 className="w-5 h-5 mr-2 animate-spin" /> Calculating Fare...</>
+                        <><Loader2 className="w-5 h-5 mr-2 animate-spin" /> Checking Fare...</>
                       ) : (
-                        <>Calculate Fare <ArrowRight className="w-5 h-5 ml-2" /></>
+                        <>Check Fare <ArrowRight className="w-5 h-5 ml-2" /></>
                       )}
                     </button>
                     <div className="text-center pt-2">
                       <p className="text-[12px] font-bold text-gray-600 flex items-center justify-center">
-                        <Zap className="w-3.5 h-3.5 text-yellow-500 mr-1 fill-yellow-500" /> Transparent Pricing • No Hidden Fees
+                        <Zap className="w-3.5 h-3.5 text-yellow-500 mr-1 fill-yellow-500" /> Instant WhatsApp Confirmation
                       </p>
                     </div>
                   </form>
@@ -594,35 +669,57 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Trust / Stat Cards Section */}
+      <section className="relative z-30 max-w-[1150px] mx-auto px-4 lg:px-0 -mt-[80px] lg:-mt-[90px] mb-20">
+        <div className="bg-white rounded-[24px] shadow-[0_15px_40px_rgba(0,0,0,0.08)] py-8 px-6 md:px-10 border border-gray-100">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            {/* Stat 1 */}
+            <div className="flex items-center space-x-4">
+              <div className="flex items-center justify-center w-12 h-12 rounded-full bg-blue-600 text-white flex-shrink-0 shadow-md">
+                <Users className="w-5 h-5" />
+              </div>
+              <div>
+                <h3 className="font-black text-[18px] text-[#0f172a] leading-tight">10,000+</h3>
+                <p className="text-[13px] font-bold text-gray-800 leading-tight">Happy Customers</p>
+                <p className="text-[11px] text-gray-400 font-medium">and counting</p>
+              </div>
+            </div>
 
+            {/* Stat 2 */}
+            <div className="flex items-center space-x-4">
+              <div className="flex items-center justify-center w-12 h-12 rounded-full bg-[#00a859] text-white flex-shrink-0 shadow-md">
+                <ShieldCheck className="w-5 h-5" />
+              </div>
+              <div>
+                <h3 className="font-black text-[18px] text-[#0f172a] leading-tight">Verified</h3>
+                <p className="text-[13px] font-bold text-gray-800 leading-tight">Drivers</p>
+                <p className="text-[11px] text-gray-400 font-medium">Background verified</p>
+              </div>
+            </div>
 
-      <section className="relative z-30 max-w-[1150px] mx-auto px-4 lg:px-0 -mt-[100px] lg:-mt-[110px] mb-24">
-        <div className="bg-white rounded-[24px] shadow-[0_15px_40px_rgba(0,0,0,0.06)] py-6 px-4 md:px-10 border border-gray-50">
-          <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-y-8 lg:gap-x-6">
-            <StatCard
-              icon={<Users />}
-              value="10,000+"
-              label="Happy Customers"
-              bgColor="#1E40AF"
-            />
-            <StatCard
-              icon={<Check />}
-              value="Verified"
-              label="Drivers"
-              bgColor="#00A859"
-            />
-            <StatCard
-              icon={<span className="text-2xl font-bold">₹</span>}
-              value="No Hidden"
-              label="Charges"
-              bgColor="#1E40AF"
-            />
-            <StatCard
-              icon={<Headphones />}
-              value="24/7 Support"
-              label="We’re here anytime"
-              bgColor="#1E40AF"
-            />
+            {/* Stat 3 */}
+            <div className="flex items-center space-x-4">
+              <div className="flex items-center justify-center w-12 h-12 rounded-full bg-blue-600 text-white flex-shrink-0 shadow-md">
+                <span className="text-xl font-black">₹</span>
+              </div>
+              <div>
+                <h3 className="font-black text-[18px] text-[#0f172a] leading-tight">No Hidden</h3>
+                <p className="text-[13px] font-bold text-gray-800 leading-tight">Charges</p>
+                <p className="text-[11px] text-gray-400 font-medium">100% Transparent</p>
+              </div>
+            </div>
+
+            {/* Stat 4 */}
+            <div className="flex items-center space-x-4">
+              <div className="flex items-center justify-center w-12 h-12 rounded-full bg-[#00a859] text-white flex-shrink-0 shadow-md">
+                <Clock className="w-5 h-5" />
+              </div>
+              <div>
+                <h3 className="font-black text-[18px] text-[#0f172a] leading-tight">24/7</h3>
+                <p className="text-[13px] font-bold text-gray-800 leading-tight">Support</p>
+                <p className="text-[11px] text-gray-400 font-medium">We're here anytime</p>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -647,31 +744,199 @@ export default function Home() {
         </Suspense>
       )}
 
-      {/* Default Content (If NOT Route Page) */}
       {!isRoutePage && (
         <>
-          {/* Welcome Section */}
-          <section className="py-16 bg-white text-center">
-            <div className="max-w-[800px] mx-auto px-4">
-               <h2 className="text-3xl md:text-4xl font-black text-gray-900 mb-6">Welcome to Urgent Taxis - {cityRouteConfig.city} Taxi Service</h2>
-               <div className="w-24 h-1 bg-[#1877F2] mx-auto rounded-full mb-6"></div>
-               <p className="text-gray-600 text-lg leading-relaxed mb-8">
-                 Your premier choice for outstation cabs, local rentals, and airport transfers. We provide transparent pricing, verified drivers, and comfortable rides in {cityRouteConfig.city} and surrounding areas.
-               </p>
-               <div className="flex justify-center space-x-4">
-                 <Link to="/services" className="bg-[#1e3b8a] text-white px-6 py-3 rounded-full font-bold shadow-lg hover:bg-[#152e73] transition">Explore Services</Link>
-                 <Link to="/about" className="bg-gray-100 text-[#1e3b8a] px-6 py-3 rounded-full font-bold shadow-sm hover:bg-gray-200 transition">About Us</Link>
-               </div>
+          {/* 1. Services Section */}
+          <section id="services-section" className="py-16 bg-white border-t border-gray-50">
+            <div className="max-w-[1200px] mx-auto px-4">
+              <div className="text-center mb-12">
+                <span className="text-xs font-black uppercase tracking-widest text-[#00a859]">What We Offer</span>
+                <h2 className="text-3xl md:text-4xl font-black text-gray-900 mt-2 mb-3">Our Taxi Services</h2>
+                <p className="text-gray-500 font-medium text-sm max-w-xl mx-auto">Choose from a wide range of taxi services made just for you</p>
+                <div className="w-16 h-1 bg-blue-600 mx-auto rounded-full mt-4"></div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
+                {/* Card 1: One Way */}
+                <div className="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between items-center text-center group">
+                  <div className="w-24 h-24 mb-4 flex items-center justify-center bg-blue-50/50 rounded-full p-2">
+                    <img src={serviceOneway} alt="One Way Taxi" className="w-full h-full object-contain" />
+                  </div>
+                  <h3 className="text-lg font-extrabold text-gray-900 mb-2">One Way Taxi</h3>
+                  <p className="text-gray-400 text-xs font-medium mb-5 leading-relaxed">Affordable one way drops at best prices</p>
+                  <button 
+                    onClick={() => {
+                      setTripType(TRIP_TYPES.ONE_WAY);
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }}
+                    className="text-blue-600 hover:text-blue-800 text-xs font-bold flex items-center transition-colors mt-auto group-hover:translate-x-1 duration-200"
+                  >
+                    Book Now <ArrowRight className="w-3.5 h-3.5 ml-1" />
+                  </button>
+                </div>
+
+                {/* Card 2: Round Trip */}
+                <div className="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between items-center text-center group">
+                  <div className="w-24 h-24 mb-4 flex items-center justify-center bg-blue-50/50 rounded-full p-2">
+                    <img src={serviceRoundtrip} alt="Round Trip Taxi" className="w-full h-full object-contain" />
+                  </div>
+                  <h3 className="text-lg font-extrabold text-gray-900 mb-2">Round Trip Taxi</h3>
+                  <p className="text-gray-400 text-xs font-medium mb-5 leading-relaxed">Round trips with flexible packages</p>
+                  <button 
+                    onClick={() => {
+                      setTripType(TRIP_TYPES.ROUND_TRIP);
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }}
+                    className="text-blue-600 hover:text-blue-800 text-xs font-bold flex items-center transition-colors mt-auto group-hover:translate-x-1 duration-200"
+                  >
+                    Book Now <ArrowRight className="w-3.5 h-3.5 ml-1" />
+                  </button>
+                </div>
+
+                {/* Card 3: Airport Transfer */}
+                <div className="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between items-center text-center group">
+                  <div className="w-24 h-24 mb-4 flex items-center justify-center bg-blue-50/50 rounded-full p-2">
+                    <img src={serviceAirport} alt="Airport Transfer" className="w-full h-full object-contain" />
+                  </div>
+                  <h3 className="text-lg font-extrabold text-gray-900 mb-2">Airport Transfer</h3>
+                  <p className="text-gray-400 text-xs font-medium mb-5 leading-relaxed">On-time airport pickup & drop</p>
+                  <button 
+                    onClick={() => {
+                      setTripType(TRIP_TYPES.AIRPORT);
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }}
+                    className="text-blue-600 hover:text-blue-800 text-xs font-bold flex items-center transition-colors mt-auto group-hover:translate-x-1 duration-200"
+                  >
+                    Book Now <ArrowRight className="w-3.5 h-3.5 ml-1" />
+                  </button>
+                </div>
+
+                {/* Card 4: Local Rental */}
+                <div className="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between items-center text-center group">
+                  <div className="w-24 h-24 mb-4 flex items-center justify-center bg-blue-50/50 rounded-full p-2">
+                    <img src={serviceLocal} alt="Local Rental" className="w-full h-full object-contain" />
+                  </div>
+                  <h3 className="text-lg font-extrabold text-gray-900 mb-2">Local Rental</h3>
+                  <p className="text-gray-400 text-xs font-medium mb-5 leading-relaxed">Hourly / Daily local taxi rentals</p>
+                  <button 
+                    onClick={() => {
+                      setTripType(TRIP_TYPES.LOCAL);
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }}
+                    className="text-blue-600 hover:text-blue-800 text-xs font-bold flex items-center transition-colors mt-auto group-hover:translate-x-1 duration-200"
+                  >
+                    Book Now <ArrowRight className="w-3.5 h-3.5 ml-1" />
+                  </button>
+                </div>
+
+                {/* Card 5: Tour Packages */}
+                <div className="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between items-center text-center group">
+                  <div className="w-24 h-24 mb-4 flex items-center justify-center bg-blue-50/50 rounded-full p-2">
+                    <img src={serviceTour} alt="Tour Packages" className="w-full h-full object-contain" />
+                  </div>
+                  <h3 className="text-lg font-extrabold text-gray-900 mb-2">Tour Packages</h3>
+                  <p className="text-gray-400 text-xs font-medium mb-5 leading-relaxed">Outstation & Tour packages</p>
+                  <button 
+                    onClick={() => {
+                      setTripType(TRIP_TYPES.ROUND_TRIP);
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }}
+                    className="text-blue-600 hover:text-blue-800 text-xs font-bold flex items-center transition-colors mt-auto group-hover:translate-x-1 duration-200"
+                  >
+                    Book Now <ArrowRight className="w-3.5 h-3.5 ml-1" />
+                  </button>
+                </div>
+              </div>
             </div>
           </section>
 
-          {/* Popular Route Cards */}
+          {/* 2. Fleet Section */}
           <section className="py-16 bg-[#f8f9fa] border-t border-gray-100">
             <div className="max-w-[1200px] mx-auto px-4">
               <div className="text-center mb-12">
-                <h2 className="text-3xl md:text-4xl font-black text-gray-900 mb-4">Popular Outstation Routes from {cityRouteConfig.city}</h2>
-                <div className="w-24 h-1 bg-[#1877F2] mx-auto rounded-full mb-6"></div>
-                <p className="text-gray-600 font-medium">Select your destination and book instantly with our premium outstation taxi services.</p>
+                <span className="text-xs font-black uppercase tracking-widest text-[#00a859]">Our Fleet</span>
+                <h2 className="text-3xl md:text-4xl font-black text-gray-900 mt-2 mb-3">Wide Range of Clean & Comfortable Cars</h2>
+                <p className="text-gray-500 font-medium text-sm">Choose your perfect ride</p>
+                <div className="w-16 h-1 bg-blue-600 mx-auto rounded-full mt-4"></div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-10">
+                {fleetCards.map((car, idx) => (
+                  <div key={idx} className="bg-white rounded-3xl overflow-hidden border border-gray-100 hover:shadow-xl transition-all duration-300 flex flex-col h-full group">
+                    <div className="h-[200px] w-full bg-gray-50/50 flex items-center justify-center p-6 relative">
+                      <img src={car.image} alt={car.title} className="max-w-full max-h-full object-contain group-hover:scale-105 transition-transform duration-500" />
+                    </div>
+                    <div className="p-6 flex-grow flex flex-col justify-between">
+                      <div>
+                        <h3 className="text-xl font-bold text-gray-900 mb-1">{car.title}</h3>
+                        <p className="text-blue-600 text-xs font-semibold mb-4">{car.subtitle}</p>
+                        
+                        {/* Specs */}
+                        <div className="flex flex-wrap gap-2 mb-5">
+                          <span className="bg-gray-100 text-gray-600 text-[11px] font-bold px-2.5 py-1 rounded-full">{car.seating}</span>
+                          <span className="bg-gray-100 text-gray-600 text-[11px] font-bold px-2.5 py-1 rounded-full">{car.ac}</span>
+                          <span className="bg-gray-100 text-gray-600 text-[11px] font-bold px-2.5 py-1 rounded-full">{car.luggage}</span>
+                        </div>
+                        
+                        <p className="text-gray-500 text-sm mb-6 leading-relaxed">{car.description}</p>
+                      </div>
+
+                      <div>
+                        {/* Pricing display */}
+                        <div className="grid grid-cols-2 gap-2 mb-6 text-center text-xs font-bold">
+                          <div className="bg-blue-50/50 border border-blue-100 rounded-xl p-2.5 text-blue-900">
+                            <span className="block text-[10px] text-gray-400 uppercase font-semibold mb-0.5">Plain Rate</span>
+                            {car.plainRate}
+                          </div>
+                          <div className="bg-green-50/50 border border-green-100 rounded-xl p-2.5 text-green-900">
+                            <span className="block text-[10px] text-gray-400 uppercase font-semibold mb-0.5">Hill Rate</span>
+                            {car.hillRate}
+                          </div>
+                        </div>
+
+                        {/* Actions */}
+                        <div className="grid grid-cols-2 gap-2">
+                          <a 
+                            href={`tel:${currentLocation.phone}`}
+                            className="bg-gray-150 hover:bg-gray-200 text-gray-800 font-bold py-2.5 rounded-xl transition-colors text-center text-xs flex items-center justify-center shadow-sm"
+                          >
+                            <Phone className="w-3.5 h-3.5 mr-1" /> Call Now
+                          </a>
+                          <a 
+                            href={`https://wa.me/${currentLocation.whatsapp}?text=` + encodeURIComponent("Hi Urgent Taxis, I am interested in booking the " + car.title + ". Please provide more details.")}
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="bg-[#00a859] hover:bg-[#00904d] text-white font-bold py-2.5 rounded-xl transition-colors text-center text-xs flex items-center justify-center shadow-sm"
+                          >
+                            <MessageCircle className="w-4 h-4 mr-1" /> WhatsApp
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <div className="text-center">
+                <p className="text-xs font-bold text-gray-400 tracking-wider uppercase">Driver Allowance Extra | Toll Tax Extra | State Tax Extra</p>
+              </div>
+            </div>
+          </section>
+
+          {/* 3. Popular Routes Section */}
+          <section className="py-16 bg-white border-t border-gray-100">
+            <div className="max-w-[1200px] mx-auto px-4">
+              <div className="flex flex-col md:flex-row md:items-end justify-between mb-12">
+                <div className="mb-4 md:mb-0 text-center md:text-left">
+                  <span className="text-xs font-black uppercase tracking-widest text-[#00a859]">Popular Routes</span>
+                  <h2 className="text-3xl md:text-4xl font-black text-gray-900 mt-2">Most Booked Routes</h2>
+                  <p className="text-gray-500 font-medium text-sm mt-2">Select your destination and book instantly with our premium taxi services.</p>
+                </div>
+                <Link 
+                  to="/routes" 
+                  className="self-center md:self-auto bg-blue-50 hover:bg-blue-100 text-[#1e3b8a] font-bold px-6 py-3 rounded-full text-xs flex items-center transition-colors shadow-sm"
+                >
+                  View All Routes <ArrowRight className="w-4 h-4 ml-1.5" />
+                </Link>
               </div>
               
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -706,14 +971,19 @@ Please share the pricing and availability.`;
                       {/* Content */}
                       <div className="p-6 flex-grow flex flex-col justify-between">
                         <div>
-                          <h3 className="text-xl font-bold text-gray-900 mb-2.5">{card.title}</h3>
+                          <h3 className="text-xl font-bold text-gray-900 mb-1">{card.title}</h3>
+                          <p className="text-blue-600 text-xs font-semibold mb-3">One Way</p>
                           <p className="text-gray-500 text-sm mb-4 leading-relaxed">{card.description}</p>
                         </div>
 
                         <div>
-                          {/* Pricing Badge */}
-                          <div className="bg-blue-50 border border-blue-100 rounded-xl p-3 mb-5 text-center text-[#1e3b8a] font-bold text-sm">
-                            💰 {card.pricing}
+                          {/* Pricing Display */}
+                          <div className="flex justify-between items-center border-t border-gray-50 pt-4 mb-5">
+                            <span className="text-xs text-gray-400 font-semibold uppercase">One Way Fare</span>
+                            <div className="text-right">
+                              <span className="text-[#1e3b8a] font-black text-xl">{card.pricing.split('|')[0].replace('Sedan: ', '')}</span>
+                              <span className="block text-[9px] text-gray-400 font-medium">Starting Price</span>
+                            </div>
                           </div>
 
                           {/* CTAs */}
@@ -757,31 +1027,162 @@ Please share the pricing and availability.`;
             </div>
           </section>
 
-          {/* Our Fleet Section */}
-<section className="py-16 bg-white border-t border-gray-100">
-  <div className="max-w-[1200px] mx-auto px-4">
-    <h2 className="text-3xl md:text-4xl font-black text-gray-900 mb-4 text-center">Our Fleet</h2>
-    <div className="w-24 h-1 bg-[#1877F2] mx-auto rounded-full mb-6"></div>
-    <p className="text-gray-600 text-center mb-8">Choose the perfect vehicle for your journey.</p>
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-      {fleetCards.map((car, idx) => (
-        <div key={idx} className="bg-white rounded-3xl overflow-hidden border border-gray-100 hover:shadow-xl transition-all duration-300 flex flex-col h-full group">
-          <img src={car.image} alt={car.title} className="w-full h-64 object-contain bg-gray-50 p-2" />
-          <div className="p-6 flex-grow flex flex-col justify-between">
-            <h3 className="text-xl font-bold text-gray-900 mb-2.5">{car.title}</h3>
-            <p className="text-gray-500 mb-4">{car.description}</p>
-            <div className="mt-auto flex space-x-2">
-              <a href={`tel:${currentLocation.phone}`} className="bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold py-2 px-3 rounded-xl transition-colors text-xs flex items-center justify-center shadow-sm">Call Now</a>
-              <a href={`https://wa.me/${currentLocation.whatsapp}?text=${encodeURIComponent(`Hi, I want to know more about ${car.title}`)}`} target="_blank" rel="noopener noreferrer" className="bg-[#00a859] hover:bg-[#00904d] text-white font-bold py-2 px-3 rounded-xl transition-colors text-xs flex items-center justify-center shadow-sm">WhatsApp</a>
-            </div>
-          </div>
-        </div>
-      ))}
-    </div>
-  </div>
-</section>
+          {/* 4. Customer Reviews Section */}
+          <section className="py-16 bg-[#f8f9fa] border-t border-gray-100">
+            <div className="max-w-[1200px] mx-auto px-4">
+              <div className="text-center mb-12">
+                <span className="text-xs font-black uppercase tracking-widest text-[#00a859]">What Our Customers Say</span>
+                <h2 className="text-3xl md:text-4xl font-black text-gray-900 mt-2 mb-3">Happy Customers, Happy Us</h2>
+                <p className="text-gray-500 font-medium text-sm">Real feedback from our regular travelers</p>
+                <div className="w-16 h-1 bg-blue-600 mx-auto rounded-full mt-4"></div>
+              </div>
 
-{/* Frequently Asked Questions */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                {/* Review 1 */}
+                <div className="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm flex flex-col justify-between h-full hover:shadow-md transition-shadow">
+                  <div>
+                    {/* Stars */}
+                    <div className="flex space-x-1 mb-4">
+                      {[...Array(5)].map((_, i) => (
+                        <Star key={i} className="w-4 h-4 text-orange-400 fill-current" />
+                      ))}
+                    </div>
+                    <p className="text-gray-600 text-sm italic leading-relaxed mb-6">
+                      "Excellent service! Driver was on time, polite and the car was well maintained."
+                    </p>
+                  </div>
+                  <div className="flex items-center space-x-3 mt-auto">
+                    <img src={user1} alt="Rahul Sharma" className="w-10 h-10 rounded-full object-cover border border-gray-100 shadow-sm" />
+                    <div>
+                      <h4 className="text-sm font-extrabold text-gray-900">Rahul Sharma</h4>
+                      <p className="text-[11px] text-gray-400 font-medium">New Delhi</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Review 2 */}
+                <div className="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm flex flex-col justify-between h-full hover:shadow-md transition-shadow">
+                  <div>
+                    {/* Stars */}
+                    <div className="flex space-x-1 mb-4">
+                      {[...Array(5)].map((_, i) => (
+                        <Star key={i} className="w-4 h-4 text-orange-400 fill-current" />
+                      ))}
+                    </div>
+                    <p className="text-gray-600 text-sm italic leading-relaxed mb-6">
+                      "Booked for Delhi to Haridwar trip. Very comfortable journey at best price."
+                    </p>
+                  </div>
+                  <div className="flex items-center space-x-3 mt-auto">
+                    <img src={user2} alt="Priya Verma" className="w-10 h-10 rounded-full object-cover border border-gray-100 shadow-sm" />
+                    <div>
+                      <h4 className="text-sm font-extrabold text-gray-900">Priya Verma</h4>
+                      <p className="text-[11px] text-gray-400 font-medium">Gurgaon</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Review 3 */}
+                <div className="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm flex flex-col justify-between h-full hover:shadow-md transition-shadow">
+                  <div>
+                    {/* Stars */}
+                    <div className="flex space-x-1 mb-4">
+                      {[...Array(5)].map((_, i) => (
+                        <Star key={i} className="w-4 h-4 text-orange-400 fill-current" />
+                      ))}
+                    </div>
+                    <p className="text-gray-600 text-sm italic leading-relaxed mb-6">
+                      "Very quick response on WhatsApp and smooth booking experience."
+                    </p>
+                  </div>
+                  <div className="flex items-center space-x-3 mt-auto">
+                    <img src={user3} alt="Amit Singh" className="w-10 h-10 rounded-full object-cover border border-gray-100 shadow-sm" />
+                    <div>
+                      <h4 className="text-sm font-extrabold text-gray-900">Amit Singh</h4>
+                      <p className="text-[11px] text-gray-400 font-medium">Noida</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Review 4 */}
+                <div className="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm flex flex-col justify-between h-full hover:shadow-md transition-shadow">
+                  <div>
+                    {/* Stars */}
+                    <div className="flex space-x-1 mb-4">
+                      {[...Array(5)].map((_, i) => (
+                        <Star key={i} className="w-4 h-4 text-orange-400 fill-current" />
+                      ))}
+                    </div>
+                    <p className="text-gray-600 text-sm italic leading-relaxed mb-6">
+                      "Best taxi service I have ever used. Highly recommended for outstation trips."
+                    </p>
+                  </div>
+                  <div className="flex items-center space-x-3 mt-auto">
+                    <img src={user1} alt="Neha Kapoor" className="w-10 h-10 rounded-full object-cover border border-gray-100 shadow-sm" />
+                    <div>
+                      <h4 className="text-sm font-extrabold text-gray-900">Neha Kapoor</h4>
+                      <p className="text-[11px] text-gray-400 font-medium">Faridabad</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* 5. Bottom booking CTA strip */}
+          <section className="py-12 bg-white">
+            <div className="max-w-[1200px] mx-auto px-4">
+              <div className="bg-gradient-to-r from-blue-900 via-indigo-950 to-[#0B132B] text-white rounded-[32px] p-8 md:p-12 shadow-2xl relative overflow-hidden flex flex-col lg:flex-row items-center justify-between gap-8">
+                
+                {/* Background Pattern */}
+                <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_bottom_left,_var(--tw-gradient-stops))] from-blue-400 via-transparent to-transparent"></div>
+                
+                <div className="flex flex-col md:flex-row items-center gap-6 z-10">
+                  <div className="w-48 h-auto hidden md:block flex-shrink-0">
+                    <img src={ctaCar} alt="Book cab" className="w-full h-auto object-contain" />
+                  </div>
+                  <div className="text-center md:text-left">
+                    <h3 className="text-2xl md:text-3xl font-black mb-2 leading-tight">Book your ride in just 2 clicks</h3>
+                    <p className="text-gray-300 font-semibold text-sm md:text-base">Get instant confirmation via WhatsApp</p>
+                  </div>
+                </div>
+
+                <div className="flex flex-col sm:flex-row items-center gap-4 z-10 w-full sm:w-auto">
+                  <a 
+                    href={`tel:${currentLocation.phone}`}
+                    className="bg-white hover:bg-gray-100 text-[#0B132B] font-bold px-8 py-3.5 rounded-full flex items-center justify-center shadow-lg transition-all text-sm w-full sm:w-auto text-center"
+                  >
+                    <Phone className="w-4 h-4 mr-2 fill-current" /> Call Now
+                  </a>
+                  <a 
+                    href={`https://wa.me/${currentLocation.whatsapp}?text=` + encodeURIComponent("Hi Urgent Taxis, I want to book a taxi from " + currentLocation.city + ". Please confirm availability.")}
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="bg-[#00a859] hover:bg-[#00904d] text-white font-bold px-8 py-3.5 rounded-full flex items-center justify-center shadow-lg transition-all text-sm w-full sm:w-auto text-center"
+                  >
+                    <MessageCircle className="w-4.5 h-4.5 mr-2 fill-current" /> Book on WhatsApp
+                  </a>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* 6. Welcome Section (SEO Content) */}
+          <section className="py-16 bg-white text-center border-t border-gray-50">
+            <div className="max-w-[800px] mx-auto px-4">
+              <h2 className="text-3xl md:text-4xl font-black text-gray-900 mb-6">Welcome to Urgent Taxis - {cityRouteConfig.city} Taxi Service</h2>
+              <div className="w-24 h-1 bg-[#1877F2] mx-auto rounded-full mb-6"></div>
+              <p className="text-gray-600 text-lg leading-relaxed mb-8">
+                Your premier choice for outstation cabs, local rentals, and airport transfers. We provide transparent pricing, verified drivers, and comfortable rides in {cityRouteConfig.city} and surrounding areas.
+              </p>
+              <div className="flex justify-center space-x-4">
+                <Link to="/services" className="bg-[#1e3b8a] text-white px-6 py-3 rounded-full font-bold shadow-lg hover:bg-[#152e73] transition">Explore Services</Link>
+                <Link to="/about" className="bg-gray-100 text-[#1e3b8a] px-6 py-3 rounded-full font-bold shadow-sm hover:bg-gray-200 transition">About Us</Link>
+              </div>
+            </div>
+          </section>
+
+          {/* 7. Frequently Asked Questions */}
           <section className="py-16 bg-white border-t border-gray-100">
             <div className="max-w-[800px] mx-auto px-4">
               <h3 className="text-2xl md:text-3xl font-black text-gray-900 mb-8 flex items-center justify-center">
@@ -802,7 +1203,7 @@ Please share the pricing and availability.`;
             </div>
           </section>
 
-          {/* Related Routes Link Bar */}
+          {/* 8. Related Routes Link Bar */}
           <section className="py-12 bg-[#f8f9fa] border-t border-gray-100">
             <div className="max-w-[800px] mx-auto px-4">
               <h3 className="text-xl font-bold text-gray-900 mb-6 text-center">Explore More Taxi Routes</h3>
