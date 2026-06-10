@@ -1,10 +1,12 @@
 import React from 'react';
 import { PhoneCall, MessageCircle, FileText } from 'lucide-react';
 import ReactGA from 'react-ga4';
+import { getCurrentLocationConfig } from '../lib/location';
 
 const StickyMobileBar = ({ onOpenLeadForm }) => {
-  const WHATSAPP_NUMBER = '918595066033';
-  const CALL_NUMBER = '+917310651940';
+  const locationData = getCurrentLocationConfig();
+  const WHATSAPP_NUMBER = locationData.whatsapp;
+  const CALL_NUMBER = locationData.phone;
 
   const handleCall = () => {
     ReactGA.event("sticky_call_click", { category: "Conversion", label: "Mobile Sticky Bar" });
@@ -18,6 +20,8 @@ const StickyMobileBar = ({ onOpenLeadForm }) => {
     ReactGA.event("get_quote_click", { category: "Conversion", label: "Mobile Sticky Bar" });
     onOpenLeadForm();
   };
+
+  const whatsappMessage = `Hi, I am looking for a taxi.\n\nFrom ${locationData.city} (${window.location.hostname})`;
 
   return (
     <div className="fixed bottom-4 left-3 right-3 bg-white border border-gray-200 shadow-[0_4px_20px_rgba(0,0,0,0.15)] z-[30] flex items-center md:hidden rounded-[18px] overflow-hidden">
@@ -39,7 +43,7 @@ const StickyMobileBar = ({ onOpenLeadForm }) => {
       </button>
 
       <a 
-        href={`https://wa.me/${WHATSAPP_NUMBER}?text=Hi,%20I%20am%20looking%20for%20a%20taxi.`}
+        href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(whatsappMessage)}`}
         target="_blank"
         rel="noopener noreferrer"
         onClick={handleWhatsApp}

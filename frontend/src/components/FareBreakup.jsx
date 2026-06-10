@@ -2,8 +2,7 @@ import React, { useState } from 'react';
 import { CheckCircle2, ArrowRight, ShieldCheck, MapPin, Calendar, Clock, Car, CreditCard, ArrowLeft, Loader2, MessageCircle, Map, Navigation, AlertCircle, ChevronDown, ChevronUp } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import ReactGA from 'react-ga4';
-
-const WHATSAPP_NUMBER = "918595066033";
+import { getCurrentLocationConfig } from '../lib/location';
 
 const FareBreakup = ({ 
   pickup, 
@@ -17,6 +16,8 @@ const FareBreakup = ({
   fares, 
   onBack 
 }) => {
+  const locationData = getCurrentLocationConfig();
+  const WHATSAPP_NUMBER = locationData.whatsapp;
   const [expandedIndex, setExpandedIndex] = useState(null);
   const [name, setName] = useState('');
   const [mobile, setMobile] = useState('');
@@ -70,7 +71,7 @@ const FareBreakup = ({
       const { error } = await supabase.from('leads').insert([payload]);
       if (error) console.error("Supabase insert failed, continuing to WhatsApp:", error);
 
-      let messageText = `🚖 New Confirmed Booking - Urgent Taxis\n\n👤 Name: ${name}\n📞 Mobile: ${mobile}\n🚕 Trip Type: ${tripType}\n📍 Pickup: ${pickup}\n📍 Drop/Package: ${drop || localPackage}\n📅 Date: ${date} at ${time}`;
+      let messageText = `🚖 New Confirmed Booking - Urgent Taxis (${locationData.city})\n\n👤 Name: ${name}\n📞 Mobile: ${mobile}\n🚕 Trip Type: ${tripType}\n📍 Pickup: ${pickup}\n📍 Drop/Package: ${drop || localPackage}\n📅 Date: ${date} at ${time}`;
       
       if (tripType === 'Round Trip' && returnDate) {
         messageText += `\n📅 Return Date: ${returnDate}`;
@@ -78,10 +79,10 @@ const FareBreakup = ({
 
       messageText += `\n\n🚘 Vehicle: ${selectedFare.category}\n`;
       if (selectedFare.isUnknownRoute) {
-        messageText += `💰 Starting Base Fare: ₹${selectedFare.baseFare}\n\n*Exact distance and fare will be confirmed shortly on WhatsApp.*\n\n🌐 Source: Website Auto Fare Engine\n\nPlease call customer immediately.`;
+        messageText += `💰 Starting Base Fare: ₹${selectedFare.baseFare}\n\n*Exact distance and fare will be confirmed shortly on WhatsApp.*\n\n🏢 Location: ${locationData.city}\n🌐 Source: ${window.location.hostname} Auto Fare Engine\n\nPlease call customer immediately.`;
       } else {
         messageText += `📏 Actual Route Distance: ${selectedFare.originalDistanceKm} km\n⏱️ Est. Travel Time: ${selectedFare.travelTime}\n🛣️ Est. Tolls: ${selectedFare.tollCount} (${selectedFare.estimatedToll === "To be confirmed" ? "TBD" : '₹' + selectedFare.estimatedToll})\n🏢 State Tax: ${selectedFare.estimatedStateTax === "As applicable" ? "TBD" : '₹' + selectedFare.estimatedStateTax}`;
-        messageText += `\n💰 Final Quoted Fare: ₹${selectedFare.totalFare}\n\n🌐 Source: Website Auto Fare Engine\n\nPlease call customer immediately to confirm.`;
+        messageText += `\n💰 Final Quoted Fare: ₹${selectedFare.totalFare}\n\n🏢 Location: ${locationData.city}\n🌐 Source: ${window.location.hostname} Auto Fare Engine\n\nPlease call customer immediately to confirm.`;
       }
       
       const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(messageText)}`;

@@ -4,10 +4,12 @@ import { CheckCircle2, Clock, MapPin, CreditCard, HelpCircle, ArrowRight, Link a
 import { fareData, calculateFare } from '../data/fareData';
 import { googleReviews } from '../data/googleReviews';
 import { VEHICLE_RATES } from '../lib/pricingRules';
+import { getCurrentLocationConfig } from '../lib/location';
 
 const RouteSEOContent = ({ data, onOpenLeadForm }) => {
   const location = useLocation();
   const currentFareData = fareData[location.pathname];
+  const locationData = getCurrentLocationConfig();
 
   if (!data) return null;
 
@@ -100,7 +102,7 @@ const RouteSEOContent = ({ data, onOpenLeadForm }) => {
 
                     const distanceStr = currentFareData ? currentFareData.distance : data.distance;
                     const routeName = currentFareData ? currentFareData.route : data.title;
-                    const waMessage = `Hi, I am looking for a ${type} taxi for ${routeName}. What's the best discounted fare?`;
+                    const waMessage = `Hi, I am looking for a ${type} taxi for ${routeName}. What's the best discounted fare?\n\nFrom ${locationData.city} (${window.location.hostname})`;
 
                     return (
                       <tr key={type} className="hover:bg-gray-50 transition-colors">
@@ -110,7 +112,7 @@ const RouteSEOContent = ({ data, onOpenLeadForm }) => {
                         <td className="px-3 sm:px-6 py-4 text-[#00a859] font-black text-right text-base sm:text-lg">₹{calcInfo.fare}</td>
                         <td className="px-3 sm:px-6 py-4 text-center">
                           <a 
-                            href={`https://wa.me/918595066033?text=${encodeURIComponent(waMessage)}`}
+                            href={`https://wa.me/${locationData.whatsapp}?text=${encodeURIComponent(waMessage)}`}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="inline-block bg-[#25D366] hover:bg-[#128C7E] text-white text-[10px] sm:text-xs font-bold py-1.5 sm:py-2 px-2 sm:px-3 rounded-md transition-colors shadow-sm"
@@ -141,7 +143,7 @@ const RouteSEOContent = ({ data, onOpenLeadForm }) => {
                 Get Custom Quote
               </button>
               <a 
-                href={`https://wa.me/918595066033?text=Hi,%20I%20want%20to%20know%20the%20exact%20fare%20for%20a%20taxi%20from%20${currentFareData.route.replace(' ', '%20')}.`}
+                href={`https://wa.me/${locationData.whatsapp}?text=${encodeURIComponent(`Hi, I want to know the exact fare for a taxi from ${currentFareData.route}.\n\nFrom ${locationData.city} (${window.location.hostname})`)}`}
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="w-full sm:w-auto inline-flex items-center justify-center bg-[#1877F2] hover:bg-[#155fc2] text-white font-bold py-3 px-6 rounded-full transition-colors shadow-md"
@@ -248,7 +250,7 @@ const RouteSEOContent = ({ data, onOpenLeadForm }) => {
               Get Instant Quote
             </button>
             <a 
-              href={`https://wa.me/918595066033?text=Hi,%20I%20want%20to%20book%20a%20taxi%20for%20${currentFareData ? currentFareData.route.replace(' ', '%20') : ''}.`}
+              href={`https://wa.me/${locationData.whatsapp}?text=${encodeURIComponent(`Hi, I want to book a taxi for ${currentFareData ? currentFareData.route : ''}.\n\nFrom ${locationData.city} (${window.location.hostname})`)}`}
               target="_blank" 
               rel="noopener noreferrer"
               className="w-full sm:w-auto inline-flex items-center justify-center bg-[#00a859] hover:bg-[#00904d] text-white font-bold py-4 px-8 rounded-full transition-transform transform hover:scale-105 shadow-xl"
@@ -267,7 +269,7 @@ const RouteSEOContent = ({ data, onOpenLeadForm }) => {
             {data.faqs.map((faq, idx) => (
               <div key={idx} className="bg-white border border-gray-200 rounded-xl p-6 hover:border-blue-300 transition-colors shadow-sm">
                 <h4 className="font-bold text-gray-900 text-lg mb-3 pr-8">{faq.q}</h4>
-                <p className="text-gray-600 leading-relaxed">{faq.a}</p>
+                <p className="text-gray-600 leading-relaxed">{faq.a.replace('+91 7310651940', locationData.phone.replace('+91', '+91 '))}</p>
               </div>
             ))}
           </div>
