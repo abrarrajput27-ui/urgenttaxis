@@ -1,45 +1,50 @@
 import React from 'react';
+import carDzire from '../assets/images/car-dzire.png';
+import carErtiga from '../assets/images/car-ertiga.png';
+import carInnova from '../assets/images/car-innova.png';
+import carCrysta from '../assets/images/car-crysta.png';
+import carTraveller from '../assets/images/car-traveller.png';
 
 // Updated fleet categories with correct vehicle names and price tiers (plain & hill)
 const fleetCategories = [
   {
     title: 'Sedan – Maruti Dzire / Toyota Etios (or similar: Aura, Amaze)',
-    image: require('../assets/images/car-dzire.png'), // placeholder image
+    image: carDzire, // placeholder image
     description: 'Compact and fuel‑efficient sedan for city rides and short inter‑city trips.',
     plainRate: '₹ 1,200',
     hillRate: '₹ 1,500',
   },
   {
     title: 'MPV – Maruti Ertiga',
-    image: require('../assets/images/car-ertiga.png'),
+    image: carErtiga,
     description: 'Spacious seven‑seater ideal for family outings and group travel.',
     plainRate: '₹ 2,000',
     hillRate: '₹ 2,400',
   },
   {
     title: 'MUV – Toyota Innova',
-    image: require('../assets/images/car-innova.png'),
+    image: carInnova,
     description: 'Robust multi‑utility vehicle suitable for varied terrains and larger groups.',
     plainRate: '₹ 2,500',
     hillRate: '₹ 3,000',
   },
   {
     title: 'SUV – Toyota Crysta',
-    image: require('../assets/images/car-crysta.png'),
+    image: carCrysta,
     description: 'Luxury SUV offering comfort and power for long journeys and hill routes.',
     plainRate: '₹ 3,200',
     hillRate: '₹ 3,800',
   },
   {
     title: 'Hatchback – Maruti Swift (or similar)',
-    image: require('../assets/images/car-dzire.png'), // placeholder image
+    image: carDzire, // placeholder image
     description: 'Compact hatchback perfect for quick city trips and easy parking.',
     plainRate: '₹ 1,000',
     hillRate: '₹ 1,300',
   },
   {
     title: 'Other – Toyota Traveller',
-    image: require('../assets/images/car-traveller.png'),
+    image: carTraveller,
     description: 'Large capacity vehicle for group travel, weddings, and corporate outings.',
     plainRate: '₹ 4,000',
     hillRate: '₹ 4,500',
