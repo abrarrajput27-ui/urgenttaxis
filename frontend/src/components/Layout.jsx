@@ -79,8 +79,14 @@ export default function Layout({ children }) {
             </a>
             <div className="h-4 w-[1px] bg-gray-200"></div>
             <div className="flex items-center space-x-3">
+              <a href="https://www.facebook.com/p/Urgent-Taxis-100094316769562/" target="_blank" rel="noopener noreferrer" className="hover:opacity-80" aria-label="Facebook">
+                <FacebookIcon className="w-4 h-4 text-[#1877F2]" />
+              </a>
               <a href="https://www.instagram.com/urgent.taxis" target="_blank" rel="noopener noreferrer" className="hover:opacity-80" aria-label="Instagram">
                 <InstagramIcon className="w-4 h-4 text-[#E1306C]" />
+              </a>
+              <a href="https://www.youtube.com/@urgenttaxis" target="_blank" rel="noopener noreferrer" className="hover:opacity-80" aria-label="YouTube">
+                <YoutubeIcon className="w-4 h-4 text-[#FF0000]" />
               </a>
             </div>
           </div>
@@ -171,12 +177,20 @@ export default function Layout({ children }) {
            <Link to="/about" onClick={() => setMobileMenuOpen(false)} className="block py-3 text-gray-700 font-bold border-b border-gray-50">About Us</Link>
            <Link to="/blog" onClick={() => setMobileMenuOpen(false)} className="block py-3 text-gray-700 font-bold border-b border-gray-50">Blog</Link>
            <Link to="/contact" onClick={() => setMobileMenuOpen(false)} className="block py-3 text-gray-700 font-bold border-b border-gray-50">Contact Us</Link>
-           <div className="flex items-center space-x-4 pt-4">
-              <span className="text-sm font-bold text-gray-500">Follow Us:</span>
-              <a href="https://www.instagram.com/urgent.taxis" target="_blank" rel="noopener noreferrer" className="bg-gradient-to-tr from-[#FD1D1D] via-[#E1306C] to-[#833AB4] text-white p-2 rounded-full hover:opacity-80 transition" aria-label="Instagram">
-                <InstagramIcon className="w-[16px] h-[16px]" />
-              </a>
-           </div>
+            <div className="flex items-center space-x-4 pt-4 border-t border-gray-100 mt-2">
+               <span className="text-sm font-bold text-gray-500">Follow Us:</span>
+               <div className="flex space-x-3">
+                 <a href="https://www.facebook.com/p/Urgent-Taxis-100094316769562/" target="_blank" rel="noopener noreferrer" className="bg-[#1877F2] text-white p-2 rounded-full hover:opacity-80 transition" aria-label="Facebook">
+                   <FacebookIcon className="w-[16px] h-[16px]" />
+                 </a>
+                 <a href="https://www.instagram.com/urgent.taxis" target="_blank" rel="noopener noreferrer" className="bg-gradient-to-tr from-[#FD1D1D] via-[#E1306C] to-[#833AB4] text-white p-2 rounded-full hover:opacity-80 transition" aria-label="Instagram">
+                   <InstagramIcon className="w-[16px] h-[16px]" />
+                 </a>
+                 <a href="https://www.youtube.com/@urgenttaxis" target="_blank" rel="noopener noreferrer" className="bg-[#FF0000] text-white p-2 rounded-full hover:opacity-80 transition" aria-label="YouTube">
+                   <YoutubeIcon className="w-[16px] h-[16px]" />
+                 </a>
+               </div>
+            </div>
         </div>
       )}
 
@@ -200,8 +214,14 @@ export default function Layout({ children }) {
                 Your reliable travel partner for outstation trips, local rentals and airport transfers across India.
               </p>
               <div className="flex space-x-3">
+                <a href="https://www.facebook.com/p/Urgent-Taxis-100094316769562/" target="_blank" rel="noopener noreferrer" className="bg-[#1877F2] text-white p-2.5 rounded-full hover:opacity-80 transition" aria-label="Facebook">
+                  <FacebookIcon className="w-[15px] h-[15px]" />
+                </a>
                 <a href="https://www.instagram.com/urgent.taxis" target="_blank" rel="noopener noreferrer" className="bg-gradient-to-tr from-[#FD1D1D] via-[#E1306C] to-[#833AB4] text-white p-2.5 rounded-full hover:opacity-80 transition" aria-label="Instagram">
                   <InstagramIcon className="w-[15px] h-[15px]" />
+                </a>
+                <a href="https://www.youtube.com/@urgenttaxis" target="_blank" rel="noopener noreferrer" className="bg-[#FF0000] text-white p-2.5 rounded-full hover:opacity-80 transition" aria-label="YouTube">
+                  <YoutubeIcon className="w-[15px] h-[15px]" />
                 </a>
               </div>
             </div>

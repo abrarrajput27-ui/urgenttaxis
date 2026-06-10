@@ -162,7 +162,9 @@ export default function Home() {
         "url": "https://urgenttaxis.com",
         "logo": "https://urgenttaxis.com/assets/images/logo.jpg",
         "sameAs": [
-          "https://www.instagram.com/urgent.taxis"
+          "https://www.facebook.com/p/Urgent-Taxis-100094316769562/",
+          "https://www.instagram.com/urgent.taxis",
+          "https://www.youtube.com/@urgenttaxis"
         ],
         "contactPoint": {
           "@type": "ContactPoint",
