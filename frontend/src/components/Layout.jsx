@@ -79,10 +79,9 @@ export default function Layout({ children }) {
             </a>
             <div className="h-4 w-[1px] bg-gray-200"></div>
             <div className="flex items-center space-x-3">
-              <a href="#" className="hover:opacity-80"><FacebookIcon className="w-4 h-4 text-[#1877F2]" /></a>
-              <a href="#" className="hover:opacity-80"><InstagramIcon className="w-4 h-4 text-[#E1306C]" /></a>
-              <a href="#" className="hover:opacity-80"><TwitterIcon className="w-4 h-4 text-[#1DA1F2]" /></a>
-              <a href="#" className="hover:opacity-80"><YoutubeIcon className="w-4 h-4 text-[#FF0000]" /></a>
+              <a href="https://www.instagram.com/urgent.taxis" target="_blank" rel="noopener noreferrer" className="hover:opacity-80" aria-label="Instagram">
+                <InstagramIcon className="w-4 h-4 text-[#E1306C]" />
+              </a>
             </div>
           </div>
         </div>
@@ -171,7 +170,13 @@ export default function Layout({ children }) {
            <Link to="/fleet" onClick={() => setMobileMenuOpen(false)} className="block py-3 text-gray-700 font-bold border-b border-gray-50">Fleet</Link>
            <Link to="/about" onClick={() => setMobileMenuOpen(false)} className="block py-3 text-gray-700 font-bold border-b border-gray-50">About Us</Link>
            <Link to="/blog" onClick={() => setMobileMenuOpen(false)} className="block py-3 text-gray-700 font-bold border-b border-gray-50">Blog</Link>
-           <Link to="/contact" onClick={() => setMobileMenuOpen(false)} className="block py-3 text-gray-700 font-bold">Contact Us</Link>
+           <Link to="/contact" onClick={() => setMobileMenuOpen(false)} className="block py-3 text-gray-700 font-bold border-b border-gray-50">Contact Us</Link>
+           <div className="flex items-center space-x-4 pt-4">
+              <span className="text-sm font-bold text-gray-500">Follow Us:</span>
+              <a href="https://www.instagram.com/urgent.taxis" target="_blank" rel="noopener noreferrer" className="bg-gradient-to-tr from-[#FD1D1D] via-[#E1306C] to-[#833AB4] text-white p-2 rounded-full hover:opacity-80 transition" aria-label="Instagram">
+                <InstagramIcon className="w-[16px] h-[16px]" />
+              </a>
+           </div>
         </div>
       )}
 
@@ -195,10 +200,9 @@ export default function Layout({ children }) {
                 Your reliable travel partner for outstation trips, local rentals and airport transfers across India.
               </p>
               <div className="flex space-x-3">
-                <a href="#" className="bg-[#1877F2] text-white p-2.5 rounded-full hover:opacity-80 transition"><FacebookIcon className="w-[15px] h-[15px]" /></a>
-                <a href="#" className="bg-gradient-to-tr from-[#FD1D1D] via-[#E1306C] to-[#833AB4] text-white p-2.5 rounded-full hover:opacity-80 transition"><InstagramIcon className="w-[15px] h-[15px]" /></a>
-                <a href="#" className="bg-[#1DA1F2] text-white p-2.5 rounded-full hover:opacity-80 transition"><TwitterIcon className="w-[15px] h-[15px]" /></a>
-                <a href="#" className="bg-[#FF0000] text-white p-2.5 rounded-full hover:opacity-80 transition"><YoutubeIcon className="w-[15px] h-[15px]" /></a>
+                <a href="https://www.instagram.com/urgent.taxis" target="_blank" rel="noopener noreferrer" className="bg-gradient-to-tr from-[#FD1D1D] via-[#E1306C] to-[#833AB4] text-white p-2.5 rounded-full hover:opacity-80 transition" aria-label="Instagram">
+                  <InstagramIcon className="w-[15px] h-[15px]" />
+                </a>
               </div>
             </div>
 
