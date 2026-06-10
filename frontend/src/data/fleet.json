@@ -1,0 +1,51 @@
+// src/data/fleet.json
+[
+  {
+    "id": "sedan",
+    "name": "Sedan",
+    "vehicles": ["Dzire", "Aura", "Amaze"],
+    "seating": "4",
+    "luggage": "2 bags",
+    "ac": true,
+    "suitableFor": "Small groups, city rides",
+    "startingFare": "₹ 8/km",
+    "image": "/assets/images/fleet/sedan.webp",
+    "phoneKey": "default"
+  },
+  {
+    "id": "ertiga",
+    "name": "Ertiga / MPV",
+    "vehicles": ["Ertiga"],
+    "seating": "6",
+    "luggage": "3 bags",
+    "ac": true,
+    "suitableFor": "Families, group trips",
+    "startingFare": "₹ 10/km",
+    "image": "/assets/images/fleet/ertiga.webp",
+    "phoneKey": "default"
+  },
+  {
+    "id": "innova",
+    "name": "Innova Crysta",
+    "vehicles": ["Innova Crysta"],
+    "seating": "7",
+    "luggage": "4 bags",
+    "ac": true,
+    "suitableFor": "Large groups, office trips",
+    "startingFare": "₹ 12/km",
+    "image": "/assets/images/fleet/innova.webp",
+    "phoneKey": "default"
+  },
+  {
+    "id": "traveller",
+    "name": "Tempo Traveller",
+    "vehicles": ["Tempo Traveller"],
+    "seating": "10",
+    "luggage": "5 bags",
+    "ac": true,
+    "suitableFor": "Big families, corporate",
+    "startingFare": "₹ 14/km",
+    "image": "/assets/images/fleet/traveller.webp",
+    "phoneKey": "default"
+  }
+]

@@ -57,7 +57,7 @@ export default function Layout({ children }) {
 
   const handleSimpleWhatsApp = (message) => {
     ReactGA.event({ category: "Contact", action: "whatsapp_click", label: "Direct WhatsApp Button" });
-    const fullMessage = `${message}\n\nFrom ${city} (${window.location.hostname})`;
+    const fullMessage = `${message}`;
     window.open(`https://wa.me/${whatsapp}?text=${encodeURIComponent(fullMessage)}`, '_blank');
   };
 

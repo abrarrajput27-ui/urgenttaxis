@@ -766,7 +766,7 @@ Please share the pricing and availability.`;
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
       {fleetCards.map((car, idx) => (
         <div key={idx} className="bg-white rounded-3xl overflow-hidden border border-gray-100 hover:shadow-xl transition-all duration-300 flex flex-col h-full group">
-          <img src={car.image} alt={car.title} className="w-full h-48 object-cover" />
+          <img src={car.image} alt={car.title} className="w-full h-64 object-contain bg-gray-50 p-2" />
           <div className="p-6 flex-grow flex flex-col justify-between">
             <h3 className="text-xl font-bold text-gray-900 mb-2.5">{car.title}</h3>
             <p className="text-gray-500 mb-4">{car.description}</p>
