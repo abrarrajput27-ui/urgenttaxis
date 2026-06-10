@@ -4,7 +4,7 @@ import { Helmet } from 'react-helmet-async';
 import ReactGA from 'react-ga4';
 import { useJsApiLoader } from '@react-google-maps/api';
 import { 
-  Calendar, Clock, Zap, Headphones, Users, Check, ArrowRight, ArrowLeftRight, Loader2
+  Calendar, Clock, Zap, Headphones, Users, Check, ArrowRight, ArrowLeftRight, Loader2, Phone, HelpCircle, MessageCircle, Link as LinkIcon
 } from 'lucide-react';
 
 import { supabase } from '../lib/supabase';
@@ -14,6 +14,7 @@ import { TRIP_TYPES } from '../lib/pricingRules';
 import FareBreakup from '../components/FareBreakup';
 import LocationInput from '../components/LocationInput';
 import StatCard from '../components/StatCard';
+import LeadCapturePopup from '../components/LeadCapturePopup';
 
 // Import images statically
 import heroBg from '../assets/images/hero-bg.webp';
@@ -23,13 +24,19 @@ import { routesData } from '../data/routesData';
 const RouteSEOContent = lazy(() => import('../components/RouteSEOContent'));
 
 import { getCurrentLocationConfig } from '../lib/location';
+import { getCityRouteConfig } from '../config/locationRoutes';
 
 const libraries = ['places'];
 
 export default function Home() {
   const currentLocation = getCurrentLocationConfig();
+  const cityRouteConfig = getCityRouteConfig();
   const location = useLocation();
   const isRoutePage = !!routesData[location.pathname];
+  const displayPhone = currentLocation.phone.replace('+91', '+91 ');
+
+  const [isLeadFormOpen, setIsLeadFormOpen] = useState(false);
+  const [popupPreFill, setPopupPreFill] = useState({ pickup: '', drop: '', routeName: '' });
 
   const { isLoaded } = useJsApiLoader({
     id: 'google-map-script',
@@ -53,10 +60,10 @@ export default function Home() {
 
   const getRouteData = (path) => {
     const data = {
-      h1: <>Book Trusted <br/><span className="text-[#1e3b8a]">Taxi</span> in {currentLocation.city}</>,
+      h1: <>Book Trusted <br/><span className="text-[#1e3b8a]">Taxi</span> in {cityRouteConfig.city}</>,
       subtitle: <>One Way <span className="mx-1.5 md:mx-2 font-light">|</span> Round Trip <span className="mx-1.5 md:mx-2 font-light">|</span> Airport Transfers</>,
-      title: currentLocation.seoTitle || "Urgent Taxis - Book Trusted Taxi in Seconds",
-      desc: currentLocation.seoDescription || "Book affordable outstation taxis, airport transfers, and local rentals. Urgent Taxis - your reliable travel partner.",
+      title: cityRouteConfig.seoTitle || currentLocation.seoTitle || "Urgent Taxis - Book Trusted Taxi in Seconds",
+      desc: cityRouteConfig.seoDescription || currentLocation.seoDescription || "Book affordable outstation taxis, airport transfers, and local rentals. Urgent Taxis - your reliable travel partner.",
       heading: "Home"
     };
 
@@ -74,10 +81,16 @@ export default function Home() {
   const routeData = getRouteData(location.pathname);
   const canonicalUrl = `https://urgenttaxis.com${location.pathname === '/' ? '' : location.pathname}`;
 
-  const [pickup, setPickup] = useState('');
+  const [pickup, setPickup] = useState(currentLocation.city || '');
   const [drop, setDrop] = useState('');
   const [date, setDate] = useState('');
   const [time, setTime] = useState('');
+
+  useEffect(() => {
+    if (currentLocation && currentLocation.city) {
+      setPickup(currentLocation.city);
+    }
+  }, [currentLocation]);
   
   // Trip State
   const [tripType, setTripType] = useState(TRIP_TYPES.ONE_WAY);
@@ -475,25 +488,152 @@ export default function Home() {
       {/* Route SEO Content (If Route Page) */}
       {isRoutePage && (
         <Suspense fallback={<div className="h-[200px] flex items-center justify-center"><Loader2 className="animate-spin text-blue-500 w-8 h-8" /></div>}>
-          <RouteSEOContent routeData={routesData[location.pathname]} routePath={location.pathname} />
+          <RouteSEOContent 
+            data={routesData[location.pathname]} 
+            onOpenLeadForm={() => {
+              const route = routesData[location.pathname];
+              setPopupPreFill({
+                pickup: route?.pickupPoints?.[0] || currentLocation.city,
+                drop: route?.dropPoints?.[0] || '',
+                routeName: route?.heading || 'Route Booking'
+              });
+              setIsLeadFormOpen(true);
+            }} 
+          />
         </Suspense>
       )}
 
       {/* Default Content (If NOT Route Page) */}
       {!isRoutePage && (
-        <section className="py-16 bg-white text-center">
-          <div className="max-w-[800px] mx-auto px-4">
-             <h2 className="text-3xl font-bold text-[#1e3b8a] mb-6">Welcome to Urgent Taxis - {currentLocation.city} Taxi Service</h2>
-             <p className="text-gray-600 text-lg leading-relaxed">
-               Your premier choice for outstation cabs, local rentals, and airport transfers. We provide transparent pricing, verified drivers, and comfortable rides in {currentLocation.city} and surrounding areas.
-             </p>
-             <div className="mt-8 flex justify-center space-x-4">
-               <Link to="/services" className="bg-[#1e3b8a] text-white px-6 py-3 rounded-full font-bold shadow-lg hover:bg-[#152e73] transition">Explore Services</Link>
-               <Link to="/about" className="bg-gray-100 text-[#1e3b8a] px-6 py-3 rounded-full font-bold shadow-sm hover:bg-gray-200 transition">About Us</Link>
-             </div>
-          </div>
-        </section>
+        <>
+          {/* Welcome Section */}
+          <section className="py-16 bg-white text-center">
+            <div className="max-w-[800px] mx-auto px-4">
+               <h2 className="text-3xl md:text-4xl font-black text-gray-900 mb-6">Welcome to Urgent Taxis - {cityRouteConfig.city} Taxi Service</h2>
+               <div className="w-24 h-1 bg-[#1877F2] mx-auto rounded-full mb-6"></div>
+               <p className="text-gray-600 text-lg leading-relaxed mb-8">
+                 Your premier choice for outstation cabs, local rentals, and airport transfers. We provide transparent pricing, verified drivers, and comfortable rides in {cityRouteConfig.city} and surrounding areas.
+               </p>
+               <div className="flex justify-center space-x-4">
+                 <Link to="/services" className="bg-[#1e3b8a] text-white px-6 py-3 rounded-full font-bold shadow-lg hover:bg-[#152e73] transition">Explore Services</Link>
+                 <Link to="/about" className="bg-gray-100 text-[#1e3b8a] px-6 py-3 rounded-full font-bold shadow-sm hover:bg-gray-200 transition">About Us</Link>
+               </div>
+            </div>
+          </section>
+
+          {/* Popular Route Cards */}
+          <section className="py-16 bg-[#f8f9fa] border-t border-gray-100">
+            <div className="max-w-[1200px] mx-auto px-4">
+              <div className="text-center mb-12">
+                <h2 className="text-3xl md:text-4xl font-black text-gray-900 mb-4">Popular Outstation Routes from {cityRouteConfig.city}</h2>
+                <div className="w-24 h-1 bg-[#1877F2] mx-auto rounded-full mb-6"></div>
+                <p className="text-gray-600 font-medium">Select your destination and book instantly with our premium outstation taxi services.</p>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {cityRouteConfig.routeCards.map((card, idx) => {
+                  const waMessage = `Hi Urgent Taxis, I want to book a taxi for:
+🛣️ Route: ${card.title}
+📍 Pickup: ${cityRouteConfig.city}
+📍 Drop: ${card.destination}
+
+Please share the pricing and availability.
+(From ${window.location.hostname} / ${cityRouteConfig.city})`;
+                  
+                  return (
+                    <div key={idx} className="bg-white rounded-3xl p-6 border border-gray-100 hover:shadow-xl transition-all duration-300 flex flex-col h-full">
+                      <h3 className="text-xl font-bold text-gray-900 mb-3">{card.title}</h3>
+                      <p className="text-gray-500 text-sm mb-4 leading-relaxed flex-grow">{card.description}</p>
+                      
+                      <div className="bg-blue-50 border border-blue-100 rounded-xl p-3 mb-6 text-center text-[#1e3b8a] font-bold text-sm">
+                        💰 {card.pricing}
+                      </div>
+                      
+                      <div className="grid grid-cols-1 gap-2.5">
+                        <button 
+                          onClick={() => {
+                            setPopupPreFill({
+                              pickup: cityRouteConfig.city,
+                              drop: card.destination,
+                              routeName: card.title
+                            });
+                            setIsLeadFormOpen(true);
+                          }}
+                          className="w-full bg-[#1e3b8a] hover:bg-[#152e73] text-white font-bold py-2.5 rounded-xl transition-colors text-center text-sm shadow-md shadow-blue-900/10"
+                        >
+                          Get Quote
+                        </button>
+                        <div className="grid grid-cols-2 gap-2">
+                          <a 
+                            href={`https://wa.me/${currentLocation.whatsapp}?text=${encodeURIComponent(waMessage)}`}
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="bg-[#00a859] hover:bg-[#00904d] text-white font-bold py-2 px-3 rounded-xl transition-colors text-center text-xs flex items-center justify-center"
+                          >
+                            <MessageCircle className="w-4 h-4 mr-1" /> WhatsApp
+                          </a>
+                          <a 
+                            href={`tel:${currentLocation.phone}`}
+                            className="bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold py-2 px-3 rounded-xl transition-colors text-center text-xs flex items-center justify-center"
+                          >
+                            <Phone className="w-3.5 h-3.5 mr-1" /> Call Now
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </section>
+
+          {/* Frequently Asked Questions */}
+          <section className="py-16 bg-white border-t border-gray-100">
+            <div className="max-w-[800px] mx-auto px-4">
+              <h3 className="text-2xl md:text-3xl font-black text-gray-900 mb-8 flex items-center justify-center">
+                <HelpCircle className="w-7 h-7 mr-3 text-[#1877F2]" /> Frequently Asked Questions
+              </h3>
+              <div className="space-y-4">
+                {cityRouteConfig.faqs.map((faq, idx) => (
+                  <div key={idx} className="bg-white border border-gray-200 rounded-xl p-6 hover:border-blue-300 transition-colors shadow-sm">
+                    <h4 className="font-bold text-gray-900 text-lg mb-3 pr-8">{faq.q}</h4>
+                    <p className="text-gray-600 leading-relaxed">
+                      {faq.a.replace('+91 7310651940', displayPhone)}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          {/* Related Routes Link Bar */}
+          <section className="py-12 bg-[#f8f9fa] border-t border-gray-100">
+            <div className="max-w-[800px] mx-auto px-4">
+              <h3 className="text-xl font-bold text-gray-900 mb-6 text-center">Explore More Taxi Routes</h3>
+              <div className="flex flex-wrap justify-center gap-4">
+                {cityRouteConfig.routePageLinks.map((route, idx) => (
+                  <Link 
+                    key={idx} 
+                    to={route.path}
+                    className="bg-white hover:bg-blue-50 border border-gray-200 hover:border-blue-200 text-gray-700 hover:text-[#1877F2] font-medium py-3 px-6 rounded-full transition-colors flex items-center shadow-sm"
+                  >
+                    <LinkIcon className="w-4 h-4 mr-2 text-gray-400" /> {route.name}
+                  </Link>
+                ))}
+              </div>
+            </div>
+          </section>
+        </>
       )}
+
+      {/* local LeadCapturePopup */}
+      <LeadCapturePopup 
+        isOpen={isLeadFormOpen} 
+        onClose={() => setIsLeadFormOpen(false)} 
+        routeName={popupPreFill.routeName} 
+        initialPickup={popupPreFill.pickup} 
+        initialDrop={popupPreFill.drop} 
+      />
     </>
   );
 }

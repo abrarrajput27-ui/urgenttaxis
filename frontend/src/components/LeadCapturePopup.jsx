@@ -5,7 +5,7 @@ import { supabase } from '../lib/supabase';
 import { useLocation } from 'react-router-dom';
 import { getCurrentLocationConfig } from '../lib/location';
 
-const LeadCapturePopup = ({ isOpen, onClose, routeName = "General Booking" }) => {
+const LeadCapturePopup = ({ isOpen, onClose, routeName = "General Booking", initialPickup = '', initialDrop = '' }) => {
   const location = useLocation();
   const locationData = getCurrentLocationConfig();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -32,8 +32,13 @@ const LeadCapturePopup = ({ isOpen, onClose, routeName = "General Booking" }) =>
       });
       setIsSuccess(false); // Reset success state when opened
       setBlockedUrl(null);
+      setFormData(prev => ({
+        ...prev,
+        pickup: initialPickup || locationData.city || '',
+        drop_location: initialDrop || ''
+      }));
     }
-  }, [isOpen, routeName, location.pathname]);
+  }, [isOpen, routeName, location.pathname, locationData, initialPickup, initialDrop]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;

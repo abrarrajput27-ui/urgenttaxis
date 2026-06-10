@@ -9,6 +9,7 @@ import ReactGA from 'react-ga4';
 import logoImg from '../assets/images/logo.jpg';
 import StickyMobileBar from './StickyMobileBar';
 import FloatingQuoteWidget from './FloatingQuoteWidget';
+import { routesData } from '../data/routesData';
 import LeadCapturePopup from './LeadCapturePopup';
 
 const locationData = getCurrentLocationConfig();
@@ -32,17 +33,21 @@ export default function Layout({ children }) {
 
   // SEO title and meta description
   useEffect(() => {
-    document.title = locationData.seoTitle || 'Urgent Taxis';
-    const meta = document.querySelector('meta[name="description"]');
-    if (meta) {
-      meta.setAttribute('content', locationData.seoDescription || '');
-    } else if (locationData.seoDescription) {
-      const metaTag = document.createElement('meta');
-      metaTag.name = 'description';
-      metaTag.content = locationData.seoDescription;
-      document.head.appendChild(metaTag);
+    const isRoutePage = !!routesData[location.pathname];
+    const isBlogPost = location.pathname.startsWith('/blog/');
+    if (!isRoutePage && !isBlogPost) {
+      document.title = currentLocation.seoTitle || 'Urgent Taxis';
+      const meta = document.querySelector('meta[name="description"]');
+      if (meta) {
+        meta.setAttribute('content', currentLocation.seoDescription || '');
+      } else if (currentLocation.seoDescription) {
+        const metaTag = document.createElement('meta');
+        metaTag.name = 'description';
+        metaTag.content = currentLocation.seoDescription;
+        document.head.appendChild(metaTag);
+      }
     }
-  }, [locationData]);
+  }, [currentLocation, location.pathname]);
 
   const handlePhoneClick = () => {
     ReactGA.event({ category: "Contact", action: "phone_call_click" });
@@ -312,7 +317,7 @@ export default function Layout({ children }) {
 
       <StickyMobileBar onOpenLeadForm={() => setIsLeadFormOpen(true)} />
       <FloatingQuoteWidget onOpenLeadForm={() => setIsLeadFormOpen(true)} />
-      <LeadCapturePopup isOpen={isLeadFormOpen} onClose={() => setIsLeadFormOpen(false)} routeName="General" />
+      <LeadCapturePopup isOpen={isLeadFormOpen} onClose={() => setIsLeadFormOpen(false)} routeName="General" initialPickup={currentLocation.city} />
     </div>
   );
 }
