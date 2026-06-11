@@ -1,14 +1,56 @@
-import { getStaticRouteData } from './fareData';
+// src/lib/mapsApi.js
+import { getStaticRouteData } from './fareData.js';
 
 const routeCache = new Map();
 
 /**
- * Attempts to get distance using Google Maps Distance Matrix API.
- * If API key is missing or request fails, falls back to static route database.
+ * Attempts to resolve coordinates via Nominatim geocoder and road distance via OSRM.
+ */
+const getOSRMRouteDistance = async (pickup, drop) => {
+  try {
+    console.log("Attempting Nominatim + OSRM routing fallback for:", pickup, "to", drop);
+    const originResult = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(pickup)}&format=json&limit=1`).then(r => r.json());
+    const destResult = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(drop)}&format=json&limit=1`).then(r => r.json());
+    
+    if (originResult && originResult.length > 0 && destResult && destResult.length > 0) {
+      const originLon = originResult[0].lon;
+      const originLat = originResult[0].lat;
+      const destLon = destResult[0].lon;
+      const destLat = destResult[0].lat;
+      
+      const osrmResult = await fetch(`https://router.project-osrm.org/route/v1/driving/${originLon},${originLat};${destLon},${destLat}?overview=false`).then(r => r.json());
+      
+      if (osrmResult && osrmResult.routes && osrmResult.routes.length > 0) {
+        const route = osrmResult.routes[0];
+        const distanceKm = Math.round(route.distance / 1000);
+        const travelTime = `${Math.round(route.duration / 3600)} hrs ${Math.round((route.duration % 3600) / 60)} mins`;
+        
+        console.log("OSRM routing successful:", distanceKm, "km");
+        return {
+          distanceKm,
+          travelTime,
+          estimatedToll: 350,
+          estimatedStateTax: 250,
+          tollCount: 2,
+          source: 'osrm_maps',
+          distanceSource: 'Estimated Road Route',
+          isUnknownRoute: false
+        };
+      }
+    }
+  } catch (err) {
+    console.error("OSRM + Nominatim routing fallback failed:", err);
+  }
+  return null;
+};
+
+/**
+ * Attempts to get distance using:
+ * 1. Static route database lookup
+ * 2. Google Maps Distance Matrix API (if key is valid)
+ * 3. OSRM + Nominatim geocoding & routing fallback
  * 
- * @param {string} pickup 
- * @param {string} drop 
- * @returns {Promise<{distanceKm: number, tollsAndTaxes: number, source: string}>}
+ * Returns null if all calculation chains fail.
  */
 export const getRouteDistance = async (pickup, drop) => {
   const cacheKey = `${pickup.toLowerCase().trim()}|${drop.toLowerCase().trim()}`;
@@ -16,112 +58,123 @@ export const getRouteDistance = async (pickup, drop) => {
     console.log("Using cached route data for:", cacheKey);
     return routeCache.get(cacheKey);
   }
-  const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
+  const apiKey = import.meta?.env?.VITE_GOOGLE_MAPS_API_KEY || "";
   const staticData = getStaticRouteData(pickup, drop);
   
-  const fallback = {
-    distanceKm: staticData ? staticData.distance : null,
-    travelTime: staticData && staticData.travelTime ? staticData.travelTime : null,
-    estimatedToll: staticData ? staticData.tolls : 0,
-    estimatedStateTax: staticData ? staticData.stateTax : 0,
-    tollCount: staticData && staticData.tollCount !== undefined ? staticData.tollCount : 0,
-    source: staticData ? 'static_route' : 'fallback_estimate',
-    distanceSource: staticData ? 'Static Route' : 'Estimated',
-    isUnknownRoute: !staticData
-  };
-
-  if (!apiKey) {
-    console.log("No Google Maps API Key found. Using static/fallback route data.");
-    if (!staticData) throw new Error("Google Maps distance failed: Missing API Key");
-    return fallback;
+  // 1. Static Route Database First
+  if (staticData) {
+    const staticResult = {
+      distanceKm: staticData.distance,
+      travelTime: staticData.travelTime || null,
+      estimatedToll: staticData.tolls || 0,
+      estimatedStateTax: staticData.stateTax || 0,
+      tollCount: staticData.tollCount || 0,
+      source: 'static_route',
+      distanceSource: 'Static Route',
+      isUnknownRoute: false
+    };
+    routeCache.set(cacheKey, staticResult);
+    return staticResult;
   }
 
-  try {
-    // Use the native Google Maps JavaScript SDK if loaded
-    if (window.google && window.google.maps && window.google.maps.DistanceMatrixService) {
-      console.log("Using Google Maps JS SDK for Distance Matrix...");
-      const service = new window.google.maps.DistanceMatrixService();
-      
-      return new Promise((resolve, reject) => {
-        service.getDistanceMatrix({
-          origins: [pickup],
-          destinations: [drop],
-          travelMode: window.google.maps.TravelMode.DRIVING,
-          unitSystem: window.google.maps.UnitSystem.METRIC,
-        }, (response, status) => {
-          if (status === 'OK' && response.rows[0].elements[0].status === 'OK') {
-            const distanceKm = Math.round(response.rows[0].elements[0].distance.value / 1000);
-            const travelTime = response.rows[0].elements[0].duration.text;
-            
-            console.log("Resolved Distance KM (JS SDK):", distanceKm);
-            const result = {
-              distanceKm,
-              travelTime,
-              estimatedToll: staticData ? fallback.estimatedToll : "To be confirmed",
-              estimatedStateTax: staticData ? fallback.estimatedStateTax : "As applicable",
-              tollCount: staticData ? fallback.tollCount : "Varies",
-              source: 'google_maps',
-              distanceSource: 'Google Maps',
-              isUnknownRoute: false
-            };
-            routeCache.set(cacheKey, result);
-            resolve(result);
-          } else if (status === 'OK' && response.rows[0].elements[0].status === 'ZERO_RESULTS') {
-            console.error("No route found on Google Maps.");
-            reject(new Error("No route found between these locations on Google Maps."));
-          } else {
-            console.error("Distance Matrix Service failed:", status, response);
-            reject(new Error("Distance Matrix Service failed."));
-          }
+  // 2. Google Maps (If Key is Valid)
+  if (apiKey && apiKey.trim() !== "") {
+    try {
+      // Try Google Maps JS SDK
+      if (window.google && window.google.maps && window.google.maps.DistanceMatrixService) {
+        console.log("Using Google Maps JS SDK for Distance Matrix...");
+        const service = new window.google.maps.DistanceMatrixService();
+        
+        const googleResult = await new Promise((resolve, reject) => {
+          service.getDistanceMatrix({
+            origins: [pickup],
+            destinations: [drop],
+            travelMode: window.google.maps.TravelMode.DRIVING,
+            unitSystem: window.google.maps.UnitSystem.METRIC,
+          }, (response, status) => {
+            if (status === 'OK' && response.rows[0].elements[0].status === 'OK') {
+              const distanceKm = Math.round(response.rows[0].elements[0].distance.value / 1000);
+              const travelTime = response.rows[0].elements[0].duration.text;
+              resolve({
+                distanceKm,
+                travelTime,
+                estimatedToll: "To be confirmed",
+                estimatedStateTax: "As applicable",
+                tollCount: "Varies",
+                source: 'google_maps',
+                distanceSource: 'Google Maps',
+                isUnknownRoute: false
+              });
+            } else {
+              reject(new Error("Google Maps JS SDK failed"));
+            }
+          });
         });
-      }).catch((error) => {
-        console.error("Distance Matrix SDK Error:", error);
-        if (staticData) return fallback;
-        throw error;
-      });
-    }
+        routeCache.set(cacheKey, googleResult);
+        return googleResult;
+      }
 
-    // Fallback to fetch if JS SDK is not loaded for some reason
-    console.log("JS SDK not loaded, falling back to fetch...");
-    const url = `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${encodeURIComponent(pickup)}&destinations=${encodeURIComponent(drop)}&key=${apiKey}`;
-    const response = await fetch(url);
-    const data = await response.json();
-    
-    console.log("Google API Key Exists:", !!apiKey);
-    console.log("Google Maps Response:", data);
-    
-    if (data.status === 'OK' && data.rows[0].elements[0].status === 'OK') {
-      const distanceKm = Math.round(data.rows[0].elements[0].distance.value / 1000);
-      const travelTime = data.rows[0].elements[0].duration.text;
-      
-      console.log("Resolved Distance KM:", distanceKm);
-      console.log("Route Source:", 'google_maps');
-      console.log("Is Unknown Route:", false);
+      // Try Google Maps fetch fallback
+      console.log("JS SDK not loaded, falling back to fetch...");
+      const url = `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${encodeURIComponent(pickup)}&destinations=${encodeURIComponent(drop)}&key=${apiKey}`;
+      const response = await fetch(url);
+      const data = await response.json();
+      if (data.status === 'OK' && data.rows[0].elements[0].status === 'OK') {
+        const distanceKm = Math.round(data.rows[0].elements[0].distance.value / 1000);
+        const travelTime = data.rows[0].elements[0].duration.text;
+        const googleResult = {
+          distanceKm,
+          travelTime,
+          estimatedToll: "To be confirmed",
+          estimatedStateTax: "As applicable",
+          tollCount: "Varies",
+          source: 'google_maps',
+          distanceSource: 'Google Maps',
+          isUnknownRoute: false
+        };
+        routeCache.set(cacheKey, googleResult);
+        return googleResult;
+      }
+    } catch (googleError) {
+      console.error("Google Maps call failed, trying OSRM fallback:", googleError);
+    }
+  }
 
-      const result = {
-        distanceKm,
-        travelTime,
-        estimatedToll: staticData ? fallback.estimatedToll : "To be confirmed",
-        estimatedStateTax: staticData ? fallback.estimatedStateTax : "As applicable",
-        tollCount: staticData ? fallback.tollCount : "Varies",
-        source: 'google_maps',
-        distanceSource: 'Google Maps',
-        isUnknownRoute: false
-      };
-      routeCache.set(cacheKey, result);
-      return result;
-    } else if (data.status === 'OK' && data.rows[0].elements[0].status === 'ZERO_RESULTS') {
-      throw new Error("No route found between these locations on Google Maps.");
-    }
-    
-    console.error("Google Maps API Error:", data.status, data.error_message || data);
-    throw new Error(data.error_message || data.status || "Unknown Google Maps API Error");
-  } catch (error) {
-    console.error("Error fetching distance from Google Maps API:", error);
-    if (staticData) {
-      console.log("Falling back to static data.");
-      return fallback;
-    }
-    throw new Error(`Google Maps distance failed: ${error.message}`);
+  // 3. OSM Nominatim + OSRM Routing Fallback
+  const osrmResult = await getOSRMRouteDistance(pickup, drop);
+  if (osrmResult) {
+    routeCache.set(cacheKey, osrmResult);
+    return osrmResult;
+  }
+
+  // 4. Absolute Failure
+  return null;
+};
+
+/**
+ * Resolve a free‑form address to structured components using Nominatim.
+ * Returns an object containing city, state, district, postcode, country, full address, lat, lng.
+ * If resolution fails, returns null.
+ */
+export const resolveAddress = async (address) => {
+  try {
+    const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(address)}&format=json&addressdetails=1&limit=1`;
+    const resp = await fetch(url, { headers: { 'Accept-Language': 'en' } });
+    const data = await resp.json();
+    if (!data || data.length === 0) return null;
+    const result = data[0];
+    const a = result.address || {};
+    const city = a.city || a.town || a.village || a.municipality || a.county || '';
+    const state = a.state || a.state_district || '';
+    const district = a.county || a.state_district || '';
+    const postcode = a.postcode || '';
+    const country = a.country || '';
+    const full = result.display_name || '';
+    const lat = result.lat;
+    const lon = result.lon;
+    return { city, state, district, postcode, country, full, lat, lon };
+  } catch (e) {
+    console.error('Address resolution error:', e);
+    return null;
   }
 };

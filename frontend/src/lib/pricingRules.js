@@ -1,6 +1,6 @@
 // Master Pricing Rules - Delhi Transporters Club Revised Rates
 
-export const MIN_BILLABLE_ROUND_TRIP_KM_PER_DAY = 300;
+export const MIN_BILLABLE_ROUND_TRIP_KM_PER_DAY = 250; // Updated per new minimum km per day
 export const AIRPORT_TRANSFER_SURCHARGE = 200; // Flat base fare component for airport
 
 export const TRIP_TYPES = {
@@ -11,6 +11,24 @@ export const TRIP_TYPES = {
 };
 
 export const VEHICLE_RATES = {
+  "Hatchback": {
+    category: "Hatchback",
+    seats: 4,
+    description: "Maruti Swift, WagonR or similar",
+    oneWayRate: 10,
+    roundTripRate: 10,
+    minOneWayFare: 3000,
+    driverAllowance: 300,
+    localRates: {
+      "4hr/40km": 1200,
+      "6hr/60km": 1700,
+      "8hr/80km": 2200,
+      "10hr/100km": 2700,
+      "12hr/120km": 3200
+    },
+    localExtraKmRate: 10,
+    localExtraHrRate: 100
+  },
   "Sedan": {
     category: "Sedan",
     seats: 4,
@@ -155,4 +173,33 @@ export const VEHICLE_RATES = {
     minOneWayFare: 35000,
     driverAllowance: 1000
   }
+};
+
+// One‑Way package tier fares (city/airport, short drop, mini outstation, regular outstation)
+export const ONE_WAY_TIER_RATES = {
+  "Hatchback": [
+    { maxKm: 30, fare: 999 },
+    { maxKm: 80, fare: 1499 },
+    { maxKm: 130, fare: 1999 }
+  ],
+  "Sedan": [
+    { maxKm: 30, fare: 1299 },
+    { maxKm: 80, fare: 1999 },
+    { maxKm: 130, fare: 2499 }
+  ],
+  "Ertiga": [
+    { maxKm: 30, fare: 1799 },
+    { maxKm: 80, fare: 2499 },
+    { maxKm: 130, fare: 3499 }
+  ],
+  "Innova": [
+    { maxKm: 30, fare: 2499 },
+    { maxKm: 80, fare: 3499 },
+    { maxKm: 130, fare: 4999 }
+  ],
+  "Innova Crysta": [
+    { maxKm: 30, fare: 2999 },
+    { maxKm: 80, fare: 3999 },
+    { maxKm: 130, fare: 5999 }
+  ]
 };

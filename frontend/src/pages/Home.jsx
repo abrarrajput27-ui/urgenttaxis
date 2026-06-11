@@ -5,7 +5,7 @@ import ReactGA from 'react-ga4';
 import { useJsApiLoader } from '@react-google-maps/api';
 import { 
   Calendar, Clock, Zap, Headphones, Users, Check, ArrowRight, ArrowLeftRight, Loader2, Phone, HelpCircle, MessageCircle, MapPin, Link as LinkIcon,
-  ShieldCheck, Star, Car, ChevronDown, ChevronLeft, ChevronRight
+  ShieldCheck, Star, Car, ChevronDown, ChevronLeft, ChevronRight, X
 } from 'lucide-react';
 
 
@@ -41,6 +41,7 @@ import routeJaipur from '../assets/images/route-jaipur.png';
 import routeAgra from '../assets/images/route-agra.png';
 
 // Fleet images
+import carSwift from '../assets/images/car-swift.png';
 import carDzire from '../assets/images/car-dzire.png';
 import carErtiga from '../assets/images/car-ertiga.png';
 import carInnova from '../assets/images/car-innova.png';
@@ -80,10 +81,10 @@ const fleetCards = [
   {
     title: "Maruti Swift",
     subtitle: "Hatchback or Similar",
-    image: carDzire,
+    image: carSwift,
     seating: "4 Seater",
     ac: "AC",
-    luggage: "1 Bag",
+    luggage: "2 Small Bags",
     plainRate: "₹10/km",
     hillRate: "₹13/km",
     description: "Compact hatchback perfect for quick city trips and easy parking."
@@ -223,14 +224,18 @@ export default function Home() {
   const displayPhone = currentLocation.phone.replace('+91', '+91 ');
 
   const [isLeadFormOpen, setIsLeadFormOpen] = useState(false);
-  const [selectedVehicle, setSelectedVehicle] = useState('all');
   const [popupPreFill, setPopupPreFill] = useState({ pickup: '', drop: '', routeName: '' });
 
-  const { isLoaded } = useJsApiLoader({
+  const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
+  const hasMapsKey = !!(apiKey && apiKey.trim() !== "");
+
+  const { isLoaded: mapsScriptLoaded } = useJsApiLoader({
     id: 'google-map-script',
-    googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
+    googleMapsApiKey: apiKey,
     libraries: libraries
   });
+
+  const isLoaded = hasMapsKey && mapsScriptLoaded;
 
   useEffect(() => {
     ReactGA.send({ hitType: "pageview", page: location.pathname + location.search });
@@ -299,11 +304,22 @@ export default function Home() {
       setPickup(currentLocation.city);
     }
   }, [currentLocation]);
-  
+
   // Trip State
   const [tripType, setTripType] = useState(TRIP_TYPES.ONE_WAY);
   const [returnDate, setReturnDate] = useState('');
   const [localPackage, setLocalPackage] = useState('8hr/80km');
+
+  const [prevPickupDate, setPrevPickupDate] = useState(date);
+
+  useEffect(() => {
+    if (date !== prevPickupDate) {
+      if (returnDate && returnDate < date) {
+        setReturnDate('');
+      }
+      setPrevPickupDate(date);
+    }
+  }, [date, returnDate, prevPickupDate]);
   
   // Fare Engine State
   const [isCalculating, setIsCalculating] = useState(false);
@@ -327,9 +343,15 @@ export default function Home() {
       alert("Please fill drop location");
       return;
     }
-    if (tripType === TRIP_TYPES.ROUND_TRIP && !returnDate) {
-      alert("Please select a return date");
-      return;
+    if (tripType === TRIP_TYPES.ROUND_TRIP) {
+      if (!returnDate) {
+        alert("Please select a return date");
+        return;
+      }
+      if (returnDate < date) {
+        alert("Return date cannot be before pickup date.");
+        return;
+      }
     }
     
     setIsCalculating(true);
@@ -341,9 +363,13 @@ export default function Home() {
       });
 
       const routeResult = tripType === TRIP_TYPES.LOCAL ? 
-                        { distanceKm: 0, tollsAndTaxes: 0 } : 
+                        { distanceKm: 0, tollsAndTaxes: 0, source: 'local', distanceSource: 'local', isUnknownRoute: false } : 
                         await getRouteDistance(pickup, drop);
       
+      if (!routeResult || routeResult.distanceKm === null || routeResult.distanceKm === undefined) {
+        throw new Error("Unable to calculate route distance. Please check pickup/drop address.");
+      }
+
       const fares = getAllVehicleFares({
         tripType,
         distanceKm: routeResult.distanceKm,
@@ -356,7 +382,8 @@ export default function Home() {
         isUnknownRoute: routeResult.isUnknownRoute,
         pickupDate: date,
         returnDate: returnDate,
-        localPackage: localPackage
+        localPackage: localPackage,
+        pickupTime: time
       });
 
       if (fares.length === 0) throw new Error("Could not calculate fares");
@@ -367,7 +394,7 @@ export default function Home() {
 
     } catch (err) {
       console.error("Error calculating fare:", err);
-      alert(err.message || "Unable to calculate fare for this route. Please contact us directly.");
+      alert(err.message || "Unable to calculate route distance. Please check pickup/drop address.");
     } finally {
       setIsCalculating(false);
     }
@@ -509,20 +536,6 @@ export default function Home() {
                   </div>
                 </div>
                 
-                {showFareBreakup ? (
-                  <FareBreakup 
-                    pickup={pickup}
-                    drop={drop}
-                    date={date}
-                    time={time}
-                    tripType={tripType}
-                    returnDate={returnDate}
-                    localPackage={localPackage}
-                    distanceKm={calculatedDistance}
-                    fares={calculatedFares}
-                    onBack={() => setShowFareBreakup(false)}
-                  />
-                ) : (
                   <form className="p-4 sm:p-6 space-y-4" onSubmit={handleCalculateFare}>
                     
                     {/* Trip Type Toggles */}
@@ -615,6 +628,7 @@ export default function Home() {
                           <input 
                             type={date ? "date" : "text"} 
                             placeholder="Select Journey Date"
+                            min={new Date().toISOString().split('T')[0]}
                             onFocus={(e) => (e.target.type = "date")}
                             onBlur={(e) => !e.target.value && (e.target.type = "text")}
                             value={date} onChange={(e) => setDate(e.target.value)}
@@ -648,6 +662,7 @@ export default function Home() {
                             placeholder="Select Return Date"
                             onFocus={(e) => (e.target.type = "date")}
                             onBlur={(e) => !e.target.value && (e.target.type = "text")}
+                            min={date}
                             value={returnDate} onChange={(e) => setReturnDate(e.target.value)}
                             className="w-full pl-10 pr-2 py-3 border border-gray-200 rounded-lg text-[14px] sm:text-[13px] text-gray-700 outline-none focus:border-blue-500 bg-white min-h-[46px] appearance-none"
                             required
@@ -656,26 +671,7 @@ export default function Home() {
                       </div>
                     )}
 
-                    {/* Select Vehicle */}
-                    <div>
-                      <label className="block text-[12px] font-bold text-gray-800 mb-1.5 ml-1">Select Vehicle</label>
-                      <div className="relative">
-                        <Car className="absolute left-3.5 top-[14px] w-[18px] h-[18px] text-gray-400 pointer-events-none" />
-                        <select 
-                          value={selectedVehicle} onChange={(e) => setSelectedVehicle(e.target.value)}
-                          className="w-full pl-10 pr-10 py-3 border border-gray-200 rounded-lg text-[14px] sm:text-[13px] text-gray-700 outline-none focus:border-blue-500 appearance-none bg-white min-h-[46px]"
-                        >
-                          <option value="all">Select cab type</option>
-                          <option value="Swift Dzire">Maruti Dzire or Similar</option>
-                          <option value="Maruti Ertiga">Maruti Ertiga</option>
-                          <option value="Toyota Innova">Toyota Innova</option>
-                          <option value="Innova Crysta">Innova Crysta</option>
-                          <option value="Maruti Swift">Maruti Swift (Hatchback)</option>
-                          <option value="Tempo Traveller">Tempo Traveller</option>
-                        </select>
-                        <ChevronDown className="absolute right-3.5 top-[14px] w-[16px] h-[16px] text-gray-400 pointer-events-none" />
-                      </div>
-                    </div>
+
 
                     <button 
                       type="submit" 
@@ -694,7 +690,6 @@ export default function Home() {
                       </p>
                     </div>
                   </form>
-                )}
               </div>
             </div>
             
@@ -1265,6 +1260,41 @@ export default function Home() {
         initialPickup={popupPreFill.pickup} 
         initialDrop={popupPreFill.drop} 
       />
+
+      {/* Fare Calculation Result Modal Overlay */}
+      {showFareBreakup && (
+        <div className="fixed inset-0 z-[9999] bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-0 md:p-6 animate-in fade-in duration-200">
+          <div className="relative bg-white w-full h-full md:w-[90vw] md:h-[90vh] md:rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-in zoom-in-95 duration-200">
+            {/* Modal Close Button */}
+            <div className="absolute top-4 right-4 z-[101]">
+              <button
+                type="button"
+                onClick={() => setShowFareBreakup(false)}
+                className="bg-black/40 hover:bg-black/60 text-white rounded-full p-2 transition-all cursor-pointer active:scale-95 flex items-center justify-center"
+                aria-label="Close"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            
+            {/* Scrollable Modal Content */}
+            <div className="flex-1 overflow-y-auto">
+              <FareBreakup 
+                pickup={pickup}
+                drop={drop}
+                date={date}
+                time={time}
+                tripType={tripType}
+                returnDate={returnDate}
+                localPackage={localPackage}
+                distanceKm={calculatedDistance}
+                fares={calculatedFares}
+                onBack={() => setShowFareBreakup(false)}
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }
