@@ -613,7 +613,10 @@ export default function Home() {
                         <div className="relative">
                           <Calendar className="absolute left-3.5 top-[14px] w-[18px] h-[18px] text-gray-400 pointer-events-none" />
                           <input 
-                            type="date" 
+                            type={date ? "date" : "text"} 
+                            placeholder="Select Journey Date"
+                            onFocus={(e) => (e.target.type = "date")}
+                            onBlur={(e) => !e.target.value && (e.target.type = "text")}
                             value={date} onChange={(e) => setDate(e.target.value)}
                             className="w-full pl-10 pr-2 py-3 border border-gray-200 rounded-lg text-[14px] sm:text-[13px] text-gray-700 outline-none focus:border-blue-500 bg-white min-h-[46px] appearance-none"
                             required
@@ -622,7 +625,10 @@ export default function Home() {
                         <div className="relative">
                           <Clock className="absolute left-3.5 top-[14px] w-[18px] h-[18px] text-gray-400 pointer-events-none" />
                           <input 
-                            type="time" 
+                            type={time ? "time" : "text"} 
+                            placeholder="Select Pickup Time"
+                            onFocus={(e) => (e.target.type = "time")}
+                            onBlur={(e) => !e.target.value && (e.target.type = "text")}
                             value={time} onChange={(e) => setTime(e.target.value)}
                             className="w-full pl-10 pr-2 py-3 border border-gray-200 rounded-lg text-[14px] sm:text-[13px] text-gray-700 outline-none focus:border-blue-500 bg-white min-h-[46px] appearance-none"
                             required
@@ -638,7 +644,10 @@ export default function Home() {
                         <div className="relative">
                           <Calendar className="absolute left-3.5 top-[14px] w-[18px] h-[18px] text-gray-400 pointer-events-none" />
                           <input 
-                            type="date" 
+                            type={returnDate ? "date" : "text"} 
+                            placeholder="Select Return Date"
+                            onFocus={(e) => (e.target.type = "date")}
+                            onBlur={(e) => !e.target.value && (e.target.type = "text")}
                             value={returnDate} onChange={(e) => setReturnDate(e.target.value)}
                             className="w-full pl-10 pr-2 py-3 border border-gray-200 rounded-lg text-[14px] sm:text-[13px] text-gray-700 outline-none focus:border-blue-500 bg-white min-h-[46px] appearance-none"
                             required
