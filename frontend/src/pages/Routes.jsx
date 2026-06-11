@@ -4,6 +4,7 @@ import { getCityRouteConfig } from '../config/locationRoutes';
 import { Phone, MessageCircle, MapPin, Clock, HelpCircle, ChevronRight, Compass } from 'lucide-react';
 import LeadCapturePopup from '../components/LeadCapturePopup';
 import ReactGA from 'react-ga4';
+import { createWhatsAppUrl } from '../lib/whatsapp';
 
 // Import images statically
 import routeDehradun from '../assets/images/route-dehradun.webp';
@@ -139,7 +140,7 @@ Please share the pricing and availability.
                       </button>
                       <div className="grid grid-cols-2 gap-2">
                         <a 
-                          href={`https://wa.me/${currentLocation.whatsapp}?text=${encodeURIComponent(waMessage)}`}
+                          href={createWhatsAppUrl(currentLocation.whatsapp, waMessage)}
                           target="_blank" 
                           rel="noopener noreferrer"
                           className="bg-[#00a859] hover:bg-[#00904d] text-white font-bold py-2 px-3 rounded-xl transition-colors text-center text-xs flex items-center justify-center shadow-sm"

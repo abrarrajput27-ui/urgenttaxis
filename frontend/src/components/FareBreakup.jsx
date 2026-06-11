@@ -303,7 +303,7 @@ Branch Phone: ${locationData.phone}
       messageText += `\n📏 Actual Route Distance: ${selectedFare.originalDistanceKm} km\n⏱️ Est. Travel Time: ${selectedFare.travelTime}\n🛣️ Est. Tolls: ${selectedFare.tollCount} (${selectedFare.estimatedToll === "To be confirmed" ? "TBD" : '₹' + selectedFare.estimatedToll})\n🏢 State Tax: ${selectedFare.estimatedStateTax === "As applicable" ? "TBD" : '₹' + selectedFare.estimatedStateTax}`;
       messageText += `\n💰 Final Quoted Fare: ₹${selectedFare.totalFare}\n\n🏢 Location: ${locationData.city}\n🌐 Source: ${window.location.hostname} Auto Fare Engine\n\nPlease call customer immediately to confirm.`;
       
-      const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(messageText)}`;
+      const whatsappUrl = createWhatsAppUrl(WHATSAPP_NUMBER, messageText);
       const newWindow = window.open(whatsappUrl, '_blank');
 
       if (!newWindow || newWindow.closed || typeof newWindow.closed === 'undefined') {

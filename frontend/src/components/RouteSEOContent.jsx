@@ -2,6 +2,7 @@ import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { CheckCircle2, Clock, MapPin, CreditCard, HelpCircle, ArrowRight, Link as LinkIcon, MessageCircle, Info, ShieldCheck, Users, Star, ThumbsUp } from 'lucide-react';
 import { fareData, calculateFare } from '../data/fareData';
+import { createWhatsAppUrl } from '../lib/whatsapp';
 import { googleReviews } from '../data/googleReviews';
 import { VEHICLE_RATES } from '../lib/pricingRules';
 import { getCurrentLocationConfig } from '../lib/location';
@@ -112,7 +113,7 @@ const RouteSEOContent = ({ data, onOpenLeadForm }) => {
                         <td className="px-3 sm:px-6 py-4 text-[#00a859] font-black text-right text-base sm:text-lg">₹{calcInfo.fare}</td>
                         <td className="px-3 sm:px-6 py-4 text-center">
                           <a 
-                            href={`https://wa.me/${locationData.whatsapp}?text=${encodeURIComponent(waMessage)}`}
+                            href={createWhatsAppUrl(locationData.whatsapp, waMessage)}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="inline-block bg-[#25D366] hover:bg-[#128C7E] text-white text-[10px] sm:text-xs font-bold py-1.5 sm:py-2 px-2 sm:px-3 rounded-md transition-colors shadow-sm"
@@ -143,7 +144,7 @@ const RouteSEOContent = ({ data, onOpenLeadForm }) => {
                 Get Custom Quote
               </button>
               <a 
-                href={`https://wa.me/${locationData.whatsapp}?text=${encodeURIComponent(`Hi, I want to know the exact fare for a taxi from ${currentFareData.route}.\n\nFrom ${locationData.city} (${window.location.hostname})`)}`}
+                href={createWhatsAppUrl(locationData.whatsapp, `Hi, I want to know the exact fare for a taxi from ${currentFareData.route}.\n\nFrom ${locationData.city} (${window.location.hostname})`)}
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="w-full sm:w-auto inline-flex items-center justify-center bg-[#1877F2] hover:bg-[#155fc2] text-white font-bold py-3 px-6 rounded-full transition-colors shadow-md"
@@ -250,7 +251,7 @@ const RouteSEOContent = ({ data, onOpenLeadForm }) => {
               Get Instant Quote
             </button>
             <a 
-              href={`https://wa.me/${locationData.whatsapp}?text=${encodeURIComponent(`Hi, I want to book a taxi for ${currentFareData ? currentFareData.route : ''}.\n\nFrom ${locationData.city} (${window.location.hostname})`)}`}
+              href={createWhatsAppUrl(locationData.whatsapp, `Hi, I want to book a taxi for ${currentFareData ? currentFareData.route : ''}.\n\nFrom ${locationData.city} (${window.location.hostname})`)}
               target="_blank" 
               rel="noopener noreferrer"
               className="w-full sm:w-auto inline-flex items-center justify-center bg-[#00a859] hover:bg-[#00904d] text-white font-bold py-4 px-8 rounded-full transition-transform transform hover:scale-105 shadow-xl"

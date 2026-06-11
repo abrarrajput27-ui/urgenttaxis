@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { getCurrentLocationConfig } from '../lib/location';
+import { createWhatsAppUrl } from '../lib/whatsapp';
 import { Phone, MessageCircle, Star, Shield, Award, Users } from 'lucide-react';
 import ReactGA from 'react-ga4';
 
@@ -159,7 +160,7 @@ export default function Fleet() {
                       <Phone className="w-3.5 h-3.5 mr-1" /> Call Now
                     </a>
                     <a 
-                      href={`https://wa.me/${currentLocation.whatsapp}?text=` + encodeURIComponent("Hi Urgent Taxis, I am interested in booking the " + car.title + " from " + currentLocation.city + ". Please share details.")}
+                      href={createWhatsAppUrl(currentLocation.whatsapp, "Hi Urgent Taxis, I want to book a taxi from " + currentLocation.city + ". Please confirm availability.")}
                       target="_blank" 
                       rel="noopener noreferrer"
                       className="bg-[#00a859] hover:bg-[#00904d] text-white font-bold py-2.5 rounded-xl transition-colors text-center text-xs flex items-center justify-center shadow-sm"

@@ -2,6 +2,7 @@ import React, { useState, useEffect, Suspense, lazy } from 'react';
 import { useLocation, Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import ReactGA from 'react-ga4';
+import { createWhatsAppUrl } from '../lib/whatsapp';
 import { useJsApiLoader } from '@react-google-maps/api';
 import { 
   Calendar, Clock, Zap, Headphones, Users, Check, ArrowRight, ArrowLeftRight, Loader2, Phone, HelpCircle, MessageCircle, MapPin, Link as LinkIcon,
@@ -1184,7 +1185,7 @@ export default function Home() {
                     <Phone className="w-4 h-4 mr-2 fill-current" /> Call Now
                   </a>
                   <a 
-                    href={`https://wa.me/${currentLocation.whatsapp}?text=` + encodeURIComponent("Hi Urgent Taxis, I want to book a taxi from " + currentLocation.city + ". Please confirm availability.")}
+                    href={createWhatsAppUrl(currentLocation.whatsapp, "Hi Urgent Taxis, I want to book a taxi from " + currentLocation.city + ". Please confirm availability.")}
                     target="_blank" 
                     rel="noopener noreferrer"
                     className="bg-[#00a859] hover:bg-[#00904d] text-white font-bold px-8 py-3.5 rounded-full flex items-center justify-center shadow-lg transition-all text-sm w-full sm:w-auto text-center"

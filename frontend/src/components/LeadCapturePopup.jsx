@@ -4,6 +4,7 @@ import { X, Loader2, CheckCircle2, MessageCircle } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useLocation } from 'react-router-dom';
 import { getCurrentLocationConfig } from '../lib/location';
+import { createWhatsAppUrl } from '../lib/whatsapp';
 
 const LeadCapturePopup = ({ isOpen, onClose, routeName = "General Booking", initialPickup = '', initialDrop = '' }) => {
   const location = useLocation();
@@ -140,7 +141,7 @@ Branch Phone: ${locationData.phone}
       const BUSINESS_WHATSAPP_NUMBER = locationData.whatsapp;
       const messageText = `🚖 New Quote Request - Urgent Taxis (${locationData.city})\n\n👤 Name: ${formData.name}\n📞 Mobile: ${formData.mobile}\n📍 Pickup: ${formData.pickup}\n📍 Drop: ${formData.drop_location}\n📅 Trip Date: ${formData.trip_date}\n🚘 Vehicle: ${formData.vehicle_type}\n💬 Message: ${formData.message || 'N/A'}\n\n🏢 Location: ${locationData.city}\n🌐 Source Page: ${window.location.hostname}${location.pathname}\n🛣️ Route Name: ${routeName}\n📌 Lead Source: Website Get Quote Form\n\nPlease call customer as soon as possible.`;
 
-      const whatsappUrl = `https://wa.me/${BUSINESS_WHATSAPP_NUMBER}?text=${encodeURIComponent(messageText)}`;
+      const whatsappUrl = createWhatsAppUrl(BUSINESS_WHATSAPP_NUMBER, messageText);
       
       const newWindow = window.open(whatsappUrl, "_blank");
       

@@ -3,6 +3,7 @@ import React from 'react';
 import fleetData from '../data/fleet.json';
 import { Phone, MessageCircle } from 'lucide-react';
 import { getCurrentLocationConfig } from '../lib/location';
+import { createWhatsAppUrl } from '../lib/whatsapp';
 
 export default function FleetSection() {
   const { phone, whatsapp, city } = getCurrentLocationConfig();
@@ -22,7 +23,7 @@ export default function FleetSection() {
               <a href={`tel:${phone}`} className="flex items-center px-3 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">
                 <Phone className="w-4 h-4 mr-1" /> Call
               </a>
-              <a href={`https://wa.me/${whatsapp}?text=${encodeURIComponent('Hi, I need a taxi from ${city}')}`}
+              <a href={createWhatsAppUrl(whatsapp, `Hi, I need a taxi from ${city}`)}
                  className="flex items-center px-3 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition">
                 <MessageCircle className="w-4 h-4 mr-1" /> WhatsApp
               </a>

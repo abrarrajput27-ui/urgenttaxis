@@ -58,7 +58,7 @@ export default function Layout({ children }) {
   const handleSimpleWhatsApp = (message) => {
     ReactGA.event({ category: "Contact", action: "whatsapp_click", label: "Direct WhatsApp Button" });
     const fullMessage = `${message}`;
-    window.open(`https://wa.me/${whatsapp}?text=${encodeURIComponent(fullMessage)}`, '_blank');
+    window.open(createWhatsAppUrl(whatsapp, fullMessage), '_blank');
   };
 
   // Nav link style helper

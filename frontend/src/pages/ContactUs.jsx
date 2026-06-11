@@ -1,4 +1,5 @@
 import { getCurrentLocationConfig } from '../lib/location';
+import { createWhatsAppUrl } from '../lib/whatsapp';
 
 const FacebookIcon = ({ className }) => (
   <svg className={className} fill="currentColor" viewBox="0 0 24 24">
@@ -58,7 +59,7 @@ export default function ContactUs() {
               <div>
                 <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-0.5">WhatsApp Booking</p>
                 <a 
-                  href={`https://wa.me/${WHATSAPP}?text=${encodeURIComponent(`Hi Urgent Taxis, I am looking to book a taxi from ${CITY}.\n\nFrom ${CITY} (${window.location.hostname})`)}`}
+                  href={createWhatsAppUrl(WHATSAPP, `Hi Urgent Taxis, I am looking to book a taxi from ${CITY}.\n\nFrom ${CITY} (${window.location.hostname})`)}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-xl font-bold text-[#0aa63f] hover:text-[#088c34] flex items-center"

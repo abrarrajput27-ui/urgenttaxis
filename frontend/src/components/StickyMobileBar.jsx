@@ -1,5 +1,6 @@
 import React from 'react';
 import { PhoneCall, MessageCircle, FileText } from 'lucide-react';
+import { createWhatsAppUrl } from '../lib/whatsapp';
 import ReactGA from 'react-ga4';
 import { getCurrentLocationConfig } from '../lib/location';
 
@@ -43,7 +44,7 @@ const StickyMobileBar = ({ onOpenLeadForm }) => {
       </button>
 
       <a 
-        href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(whatsappMessage)}`}
+        href={createWhatsAppUrl(WHATSAPP_NUMBER, whatsappMessage)}
         target="_blank"
         rel="noopener noreferrer"
         onClick={handleWhatsApp}
