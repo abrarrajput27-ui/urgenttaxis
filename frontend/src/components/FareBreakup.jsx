@@ -21,6 +21,8 @@ const FareBreakup = ({
   const [expandedIndex, setExpandedIndex] = useState(null);
   const [name, setName] = useState('');
   const [mobile, setMobile] = useState('');
+  const [passengers, setPassengers] = useState('1 Passenger');
+  const [luggage, setLuggage] = useState('No Luggage');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
   const [blockedUrl, setBlockedUrl] = useState(null);
@@ -93,7 +95,9 @@ Branch Phone: ${locationData.phone}
         drop: drop || localPackage,
         travel_date: date,
         vehicle: selectedFare.category,
-        customer_name: name
+        customer_name: name,
+        passenger_count: passengers,
+        luggage_count: luggage
       };
 
       try {
@@ -119,7 +123,7 @@ Branch Phone: ${locationData.phone}
         messageText += `\n📅 Return Date: ${returnDate}`;
       }
 
-      messageText += `\n\n🚘 Vehicle: ${selectedFare.category}\n`;
+      messageText += `\n\n🚘 Vehicle: ${selectedFare.category}\n👥 Passengers: ${passengers}\n💼 Luggage: ${luggage}\n`;
       if (selectedFare.isUnknownRoute) {
         messageText += `💰 Starting Base Fare: ₹${selectedFare.baseFare}\n\n*Exact distance and fare will be confirmed shortly on WhatsApp.*\n\n🏢 Location: ${locationData.city}\n🌐 Source: ${window.location.hostname} Auto Fare Engine\n\nPlease call customer immediately.`;
       } else {
@@ -313,6 +317,54 @@ Branch Phone: ${locationData.phone}
                     </div>
                   </div>
 
+                  {/* Includes / Excludes */}
+                  <div className="grid grid-cols-2 gap-3 mb-6 bg-white p-4 rounded-xl border border-gray-200 text-[12px]">
+                    <div>
+                      <h4 className="font-bold text-green-700 mb-2 pb-1 border-b border-green-50 flex items-center">
+                        <CheckCircle2 className="w-3.5 h-3.5 mr-1 text-green-600" /> Included
+                      </h4>
+                      <ul className="space-y-1 text-gray-600">
+                        {tripType === 'One Way' ? (
+                          <>
+                            <li>• Toll Included</li>
+                            <li>• State Tax Included</li>
+                            <li>• Driver Allowance Included</li>
+                            <li>• Fuel Included</li>
+                          </>
+                        ) : (
+                          <>
+                            <li>• Driver Allowance Included</li>
+                            <li>• Fuel Included</li>
+                            <li>• Base Kilometers Included</li>
+                          </>
+                        )}
+                      </ul>
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-red-700 mb-2 pb-1 border-b border-red-50 flex items-center">
+                        <AlertCircle className="w-3.5 h-3.5 mr-1 text-red-600" /> Excluded
+                      </h4>
+                      <ul className="space-y-1 text-gray-600">
+                        {tripType === 'One Way' ? (
+                          <>
+                            <li>• Parking Extra</li>
+                            <li>• Airport Entry Extra</li>
+                            <li>• Railway Entry Extra</li>
+                            <li>• Local Sightseeing Extra</li>
+                          </>
+                        ) : (
+                          <>
+                            <li>• Toll Extra</li>
+                            <li>• State Tax Extra</li>
+                            <li>• Parking Extra</li>
+                            <li>• Airport Entry Extra</li>
+                            <li>• Railway Entry Extra</li>
+                          </>
+                        )}
+                      </ul>
+                    </div>
+                  </div>
+
                   {/* Lead Capture Form to Confirm */}
                   {blockedUrl ? (
                     <div className="p-4 bg-blue-50 rounded-xl w-full text-center border border-blue-100">
@@ -343,6 +395,42 @@ Branch Phone: ${locationData.phone}
                           className="w-full px-3 py-3 border border-gray-200 rounded-lg text-[13px] outline-none focus:border-blue-500 bg-white"
                           required
                         />
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-3">
+                        <div>
+                          <label className="block text-[11px] font-bold text-gray-700 mb-1 ml-0.5">Passengers</label>
+                          <select 
+                            value={passengers} 
+                            onChange={(e) => setPassengers(e.target.value)}
+                            className="w-full px-3 py-3 border border-gray-200 rounded-lg text-[13px] outline-none focus:border-blue-500 bg-white text-gray-700"
+                          >
+                            <option value="1 Passenger">1 Passenger</option>
+                            <option value="2 Passengers">2 Passengers</option>
+                            <option value="3 Passengers">3 Passengers</option>
+                            <option value="4 Passengers">4 Passengers</option>
+                            <option value="5 Passengers">5 Passengers</option>
+                            <option value="6 Passengers">6 Passengers</option>
+                            <option value="7 Passengers">7 Passengers</option>
+                            <option value="8 Passengers">8 Passengers</option>
+                            <option value="9+ Passengers">9+ Passengers</option>
+                          </select>
+                        </div>
+                        <div>
+                          <label className="block text-[11px] font-bold text-gray-700 mb-1 ml-0.5">Luggage</label>
+                          <select 
+                            value={luggage} 
+                            onChange={(e) => setLuggage(e.target.value)}
+                            className="w-full px-3 py-3 border border-gray-200 rounded-lg text-[13px] outline-none focus:border-blue-500 bg-white text-gray-700"
+                          >
+                            <option value="No Luggage">No Luggage</option>
+                            <option value="1 Bag">1 Bag</option>
+                            <option value="2 Bags">2 Bags</option>
+                            <option value="3 Bags">3 Bags</option>
+                            <option value="4 Bags">4 Bags</option>
+                            <option value="5+ Bags">5+ Bags</option>
+                          </select>
+                        </div>
                       </div>
                       
                       <button 
