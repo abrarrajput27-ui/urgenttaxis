@@ -21,7 +21,9 @@ export const VEHICLE_RATES = {
     driverAllowance: 300,
     localRates: {
       "4hr/40km": 1600,
+      "6hr/60km": 2200,
       "8hr/80km": 2800,
+      "10hr/100km": 3500,
       "12hr/120km": 4200
     },
     localExtraKmRate: 14,
@@ -37,7 +39,9 @@ export const VEHICLE_RATES = {
     driverAllowance: 400,
     localRates: {
       "4hr/40km": 2200,
+      "6hr/60km": 3000,
       "8hr/80km": 3800,
+      "10hr/100km": 4650,
       "12hr/120km": 5500
     },
     localExtraKmRate: 16,
@@ -53,7 +57,9 @@ export const VEHICLE_RATES = {
     driverAllowance: 500,
     localRates: {
       "4hr/40km": 3000,
+      "6hr/60km": 4100,
       "8hr/80km": 5200,
+      "10hr/100km": 6350,
       "12hr/120km": 7500
     },
     localExtraKmRate: 24,
@@ -69,7 +75,9 @@ export const VEHICLE_RATES = {
     driverAllowance: 500,
     localRates: {
       "4hr/40km": 3500,
+      "6hr/60km": 4750,
       "8hr/80km": 6000,
+      "10hr/100km": 7250,
       "12hr/120km": 8500
     },
     localExtraKmRate: 25,
