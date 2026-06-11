@@ -239,11 +239,11 @@ export default function AdminDashboard() {
                       leads.map((lead) => (
                       <tr key={lead.id}>
                         <td className="px-6 py-4 text-sm text-gray-500">{new Date(lead.created_at).toLocaleDateString()}</td>
-                        <td className="px-6 py-4"><div className="text-sm font-medium text-gray-900">{lead.name}</div><div className="text-sm text-gray-500">{lead.phone}</div></td>
+                        <td className="px-6 py-4"><div className="text-sm font-medium text-gray-900">{lead.name}</div><div className="text-sm text-gray-500">{lead.mobile}</div></td>
                         <td className="px-6 py-4">
                           <div className="text-sm font-medium">{lead.trip_type}</div>
-                          <div className="text-xs text-gray-500">{lead.pickup_location} → {lead.drop_location || 'N/A'}</div>
-                          <div className="text-xs text-blue-600">{lead.vehicle_category}</div>
+                          <div className="text-xs text-gray-500">{lead.pickup} → {lead.drop_location || 'N/A'}</div>
+                          <div className="text-xs text-blue-600">{lead.vehicle_type}</div>
                         </td>
                         <td className="px-6 py-4">
                           <select value={lead.status || 'New'} onChange={(e) => updateLeadStatus(lead.id, e.target.value)} className="text-sm rounded border-gray-300">
@@ -347,11 +347,11 @@ export default function AdminDashboard() {
                 <h3 className="text-lg leading-6 font-bold text-gray-900 mb-4 border-b pb-2">Lead Details</h3>
                 <div className="space-y-3 text-sm">
                   <p><strong>Name:</strong> {selectedLead.name}</p>
-                  <p><strong>Phone:</strong> {selectedLead.phone}</p>
-                  <p><strong>Date of Travel:</strong> {selectedLead.travel_date}</p>
+                  <p><strong>Phone:</strong> {selectedLead.mobile}</p>
+                  <p><strong>Date of Travel:</strong> {selectedLead.trip_date}</p>
                   <p><strong>Trip Type:</strong> {selectedLead.trip_type}</p>
-                  <p><strong>Vehicle:</strong> {selectedLead.vehicle_category}</p>
-                  <p><strong>Pickup:</strong> {selectedLead.pickup_location}</p>
+                  <p><strong>Vehicle:</strong> {selectedLead.vehicle_type}</p>
+                  <p><strong>Pickup:</strong> {selectedLead.pickup}</p>
                   <p><strong>Drop:</strong> {selectedLead.drop_location || 'N/A'}</p>
                   <p><strong>Route Source:</strong> {selectedLead.route_source || 'Website Home'}</p>
                 </div>

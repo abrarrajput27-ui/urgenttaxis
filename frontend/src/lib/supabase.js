@@ -12,17 +12,47 @@ if (supabaseUrl && supabaseAnonKey) {
   // Graceful fallback if keys are missing
   isMocked = true;
   supabaseInstance = {
-    from: (table) => ({
-      insert: async (data) => {
-        console.warn('⚠️ SUPABASE KEYS MISSING ⚠️');
-        console.log(`Mock inserting lead into table [${table}]:`, data);
-        
-        // Simulate network delay
-        await new Promise(resolve => setTimeout(resolve, 800));
-        
-        return { data, error: null };
-      }
-    })
+    from: (table) => {
+      let isSingle = false;
+      const chain = {
+        insert: (data) => {
+          console.warn('⚠️ SUPABASE KEYS MISSING ⚠️');
+          console.log(`Mock inserting into table [${table}]:`, data);
+          return chain;
+        },
+        select: (columns) => {
+          console.warn('⚠️ SUPABASE KEYS MISSING ⚠️');
+          return chain;
+        },
+        update: (data) => {
+          console.warn('⚠️ SUPABASE KEYS MISSING ⚠️');
+          console.log(`Mock updating table [${table}]:`, data);
+          return chain;
+        },
+        delete: () => {
+          console.warn('⚠️ SUPABASE KEYS MISSING ⚠️');
+          console.log(`Mock deleting from table [${table}]`);
+          return chain;
+        },
+        order: (column, options) => {
+          return chain;
+        },
+        eq: (column, value) => {
+          return chain;
+        },
+        single: () => {
+          isSingle = true;
+          return chain;
+        },
+        then: (onFulfilled) => {
+          const result = isSingle
+            ? { data: null, error: { message: 'Mock data not found' } }
+            : { data: [], error: null };
+          return Promise.resolve(result).then(onFulfilled);
+        }
+      };
+      return chain;
+    }
   };
 }
 
