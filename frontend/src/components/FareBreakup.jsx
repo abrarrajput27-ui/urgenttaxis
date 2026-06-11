@@ -23,6 +23,11 @@ const FareBreakup = ({
   const [mobile, setMobile] = useState('');
   const [passengers, setPassengers] = useState('1 Passenger');
   const [luggage, setLuggage] = useState('No Luggage');
+  const [email, setEmail] = useState('');
+  const [landmark, setLandmark] = useState('');
+  const [adults, setAdults] = useState('1 Adult');
+  const [children, setChildren] = useState('No Children');
+  const [requirements, setRequirements] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
   const [blockedUrl, setBlockedUrl] = useState(null);
@@ -40,6 +45,14 @@ const FareBreakup = ({
       });
 
       // Prepare message with tracking details explicitly as a safe fallback
+      const extraDetails = `
+--- Additional Details ---
+Email: ${email || 'N/A'}
+Landmark: ${landmark || 'N/A'}
+Adults: ${adults}
+Children: ${children}
+Special Requirements: ${requirements || 'None'}
+`;
       const trackingDetails = `
 --- Tracking Details ---
 Domain: ${window.location.hostname}
@@ -53,7 +66,7 @@ Customer Name: ${name}
 Mobile: ${mobile}
 Branch Phone: ${locationData.phone}
 `;
-      const finalMessage = `Type: ${tripType} | Fare: ₹${selectedFare.isUnknownRoute ? 'TBD' : selectedFare.totalFare} | Dist: ${selectedFare.isUnknownRoute ? 'TBD' : selectedFare.originalDistanceKm}km\n${trackingDetails}`;
+      const finalMessage = `Type: ${tripType} | Fare: ₹${selectedFare.isUnknownRoute ? 'TBD' : selectedFare.totalFare} | Dist: ${selectedFare.isUnknownRoute ? 'TBD' : selectedFare.originalDistanceKm}km\n${trackingDetails}${extraDetails}`;
 
       const basePayload = {
         name,
@@ -97,7 +110,12 @@ Branch Phone: ${locationData.phone}
         vehicle: selectedFare.category,
         customer_name: name,
         passenger_count: passengers,
-        luggage_count: luggage
+        luggage_count: luggage,
+        email: email || null,
+        pickup_landmark: landmark || null,
+        adults_count: adults,
+        children_count: children,
+        special_requirements: requirements || null
       };
 
       try {
@@ -117,13 +135,13 @@ Branch Phone: ${locationData.phone}
         }
       }
 
-      let messageText = `🚖 New Confirmed Booking - Urgent Taxis (${locationData.city})\n\n👤 Name: ${name}\n📞 Mobile: ${mobile}\n🚕 Trip Type: ${tripType}\n📍 Pickup: ${pickup}\n📍 Drop/Package: ${drop || localPackage}\n📅 Date: ${date} at ${time}`;
+      let messageText = `🚖 New Confirmed Booking - Urgent Taxis (${locationData.city})\n\n👤 Name: ${name}\n📞 Mobile: ${mobile}\n📧 Email: ${email || 'N/A'}\n🚕 Trip Type: ${tripType}\n📍 Pickup: ${pickup}\n📍 Landmark: ${landmark || 'N/A'}\n📍 Drop/Package: ${drop || localPackage}\n📅 Date: ${date} at ${time}`;
       
       if (tripType === 'Round Trip' && returnDate) {
         messageText += `\n📅 Return Date: ${returnDate}`;
       }
 
-      messageText += `\n\n🚘 Vehicle: ${selectedFare.category}\n👥 Passengers: ${passengers}\n💼 Luggage: ${luggage}\n`;
+      messageText += `\n\n🚘 Vehicle: ${selectedFare.category}\n👥 Passengers: ${passengers}\n💼 Luggage: ${luggage}\n👥 Adults: ${adults}\n👶 Children: ${children}\n📝 Special Requirements: ${requirements || 'None'}\n`;
       if (selectedFare.isUnknownRoute) {
         messageText += `💰 Starting Base Fare: ₹${selectedFare.baseFare}\n\n*Exact distance and fare will be confirmed shortly on WhatsApp.*\n\n🏢 Location: ${locationData.city}\n🌐 Source: ${window.location.hostname} Auto Fare Engine\n\nPlease call customer immediately.`;
       } else {
@@ -431,6 +449,64 @@ Branch Phone: ${locationData.phone}
                             <option value="5+ Bags">5+ Bags</option>
                           </select>
                         </div>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-3">
+                        <input 
+                          type="email" 
+                          placeholder="Email Address (Optional)" 
+                          value={email} onChange={(e) => setEmail(e.target.value)}
+                          className="w-full px-3 py-3 border border-gray-200 rounded-lg text-[13px] outline-none focus:border-blue-500 bg-white text-gray-700"
+                        />
+                        <input 
+                          type="text" 
+                          placeholder="Pickup Landmark (Optional)" 
+                          value={landmark} onChange={(e) => setLandmark(e.target.value)}
+                          className="w-full px-3 py-3 border border-gray-200 rounded-lg text-[13px] outline-none focus:border-blue-500 bg-white text-gray-700"
+                        />
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-3">
+                        <div>
+                          <label className="block text-[11px] font-bold text-gray-700 mb-1 ml-0.5">Adults</label>
+                          <select 
+                            value={adults} 
+                            onChange={(e) => setAdults(e.target.value)}
+                            className="w-full px-3 py-3 border border-gray-200 rounded-lg text-[13px] outline-none focus:border-blue-500 bg-white text-gray-700"
+                          >
+                            <option value="1 Adult">1 Adult</option>
+                            <option value="2 Adults">2 Adults</option>
+                            <option value="3 Adults">3 Adults</option>
+                            <option value="4 Adults">4 Adults</option>
+                            <option value="5 Adults">5 Adults</option>
+                            <option value="6 Adults">6 Adults</option>
+                            <option value="7 Adults">7 Adults</option>
+                            <option value="8+ Adults">8+ Adults</option>
+                          </select>
+                        </div>
+                        <div>
+                          <label className="block text-[11px] font-bold text-gray-700 mb-1 ml-0.5">Children</label>
+                          <select 
+                            value={children} 
+                            onChange={(e) => setChildren(e.target.value)}
+                            className="w-full px-3 py-3 border border-gray-200 rounded-lg text-[13px] outline-none focus:border-blue-500 bg-white text-gray-700"
+                          >
+                            <option value="No Children">No Children</option>
+                            <option value="1 Child">1 Child</option>
+                            <option value="2 Children">2 Children</option>
+                            <option value="3 Children">3 Children</option>
+                            <option value="4+ Children">4+ Children</option>
+                          </select>
+                        </div>
+                      </div>
+
+                      <div>
+                        <textarea 
+                          placeholder="Special Requirements (e.g. child seat, carrier, specific route requests...)" 
+                          value={requirements} onChange={(e) => setRequirements(e.target.value)}
+                          className="w-full px-3 py-3 border border-gray-200 rounded-lg text-[13px] outline-none focus:border-blue-500 bg-white text-gray-700 min-h-[80px]"
+                          rows={2}
+                        />
                       </div>
                       
                       <button 
